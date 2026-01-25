@@ -150,3 +150,39 @@ export async function sendEmployeeRejectionNotification(
 
   await transporter.sendMail(mailOptions);
 }
+
+export async function sendPasswordResetEmail(
+  email: string,
+  token: string,
+  username: string,
+) {
+  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: "Password Reset Request",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Hello ${username},</h2>
+        <p>We received a request to reset your password. Click the button below to create a new password:</p>
+        
+        <div style="margin: 30px 0;">
+          <a href="${resetUrl}" 
+             style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+            Reset Password
+          </a>
+        </div>
+
+        <p>Or copy and paste this link into your browser:</p>
+        <p style="color: #666; word-break: break-all;">${resetUrl}</p>
+
+        <p style="color: #999; font-size: 12px; margin-top: 30px;">
+          This link will expire in 1 hour. If you didn't request a password reset, please ignore this email and your password will remain unchanged.
+        </p>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}

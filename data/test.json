@@ -1,0 +1,38 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "Alice Johnson",
+            "email": "alice@example.com",
+            "role": "admin"
+        },
+        {
+            "id": 2,
+            "name": "Bob Smith",
+            "email": "bob@example.com",
+            "role": "user"
+        },
+        {
+            "id": 3,
+            "name": "Carol White",
+            "email": "carol@example.com",
+            "role": "user"
+        }
+    ],
+    "posts": [
+        {
+            "id": 101,
+            "title": "Getting Started with JSON",
+            "author": "Alice Johnson",
+            "content": "Learn the basics of JSON data format.",
+            "timestamp": "2024-01-15T10:30:00Z"
+        },
+        {
+            "id": 102,
+            "title": "Web Development Tips",
+            "author": "Bob Smith",
+            "content": "Essential tips for modern web development.",
+            "timestamp": "2024-01-16T14:20:00Z"
+        }
+    ]
+}

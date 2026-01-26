@@ -50,15 +50,9 @@ export const AuthSplitLayout = ({
                       </div>
                     )}
                     {title && (
-                      <p className="font-jakarta text-2xl font-semibold text-neutral-900">
-                        {title}
-                      </p>
+                      <p className="text-3xl font-semibold ">{title}</p>
                     )}
-                    {subtitle && (
-                      <p className="font-sans text-sm text-neutral-900">
-                        {subtitle}
-                      </p>
-                    )}
+                    {subtitle && <p className=" ">{subtitle}</p>}
                   </div>
                 ) : null}
                 {showHeaderActions ? (

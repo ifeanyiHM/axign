@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useAuth } from "@/context/AuthContext";
@@ -9,6 +9,8 @@ import { SignupFormValues, signupSchema } from "@/schemas/signupSchema";
 import Link from "next/link";
 import InputField from "../primitives/form/InputField";
 import SelectField from "../primitives/form/SelectField";
+import { Button } from "../ui/button";
+import { Alert } from "../ui/alert";
 
 interface Organization {
   _id: string;
@@ -25,6 +27,8 @@ export default function SignupForm() {
     register,
     handleSubmit,
     watch,
+    control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -74,6 +78,7 @@ export default function SignupForm() {
           };
 
     await signup(payload);
+    reset();
   };
 
   return (
@@ -112,14 +117,21 @@ export default function SignupForm() {
           />
 
           {/* Role */}
-          <SelectField
-            label="Account Type"
-            error={errors.userStatus?.message}
-            options={[
-              { label: "Employee", value: "employee" },
-              { label: "CEO", value: "ceo" },
-            ]}
-            {...register("userStatus")}
+          <Controller
+            name="userStatus"
+            control={control}
+            render={({ field }) => (
+              <SelectField
+                label="Account Type"
+                error={errors.userStatus?.message}
+                options={[
+                  { label: "Employee", value: "employee" },
+                  { label: "CEO", value: "ceo" },
+                ]}
+                value={field.value}
+                onValueChange={field.onChange}
+              />
+            )}
           />
         </div>
 
@@ -138,37 +150,44 @@ export default function SignupForm() {
                 Loading organizations...
               </div>
             ) : (
-              <SelectField
-                label="Organization"
-                error={errors.organizationId?.message}
-                options={[
-                  { label: "Select organization", value: "" },
-                  ...organizations.map((org) => ({
-                    label: org.name,
-                    value: org._id,
-                  })),
-                ]}
-                {...register("organizationId")}
+              <Controller
+                name="organizationId"
+                control={control}
+                render={({ field }) => (
+                  <SelectField
+                    label="Organization"
+                    error={errors.organizationId?.message}
+                    options={[
+                      { label: "Select organization", value: "" },
+                      ...organizations.map((org) => ({
+                        label: org.name,
+                        value: org._id,
+                      })),
+                    ]}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
+                )}
               />
             )}
           </>
         )}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition disabled:bg-gray-400"
-        >
-          {isSubmitting ? "Signing Up..." : "Sign Up"}
-        </button>
-
         {/* Success message */}
         {message && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
-            {message}
-          </div>
+          <Alert
+            variant="success"
+            title="Success"
+            description={message}
+            dismissible={false}
+          />
         )}
+
+        {/* Submit */}
+
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
+        </Button>
       </form>
       {/* Login */}
       <div className="text-center mt-4">

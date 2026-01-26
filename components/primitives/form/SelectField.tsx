@@ -1,17 +1,28 @@
 import { forwardRef, SelectHTMLAttributes } from "react";
 import clsx from "clsx";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Option {
   label: string;
   value: string;
 }
 
-interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement> {
+interface SelectFieldProps extends Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  "onChange"
+> {
   label?: string;
   error?: string;
   options: Option[];
   containerClassName?: string;
   selectClassName?: string;
+  onValueChange?: (value: string) => void;
 }
 
 const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
@@ -23,6 +34,8 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
       containerClassName,
       selectClassName,
       id,
+      value,
+      onValueChange,
       ...props
     },
     ref,
@@ -35,26 +48,24 @@ const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
           </label>
         )}
 
-        <select
-          ref={ref}
-          id={id}
-          className={clsx(
-            "w-full rounded-md border px-3 py-3 text-sm",
-            "outline-none transition-colors",
-            "bg-transparent shadow-xs file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500",
-            error ? "border-red-500 focus:ring-red-500" : "border-[#e5e5e5]",
-            selectClassName,
-          )}
-          aria-invalid={!!error}
-          {...props}
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <Select value={value as string} onValueChange={onValueChange}>
+          <SelectTrigger
+            className={clsx("w-full", selectClassName)}
+            id={id}
+            aria-invalid={!!error}
+          >
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            {options
+              .filter((option) => option.value !== "")
+              .map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
 
         {error && <p className="text-xs text-red-500">{error}</p>}
       </div>

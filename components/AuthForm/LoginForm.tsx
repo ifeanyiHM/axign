@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { LoginFormValues, loginSchema } from "@/schemas/loginSchema";
 import InputField from "../primitives/form/InputField";
+import { Button } from "../ui/button";
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -73,13 +74,9 @@ export default function LoginForm() {
       </div>
 
       {/* Submit */}
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition disabled:bg-gray-400"
-      >
+      <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Logging in..." : "Login"}
-      </button>
+      </Button>
 
       {/* Error */}
       {formError && (

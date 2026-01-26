@@ -2,7 +2,7 @@ import SignupForm from "@/components/AuthForm/SignupForm";
 import AuthSplitLayout from "@/components/layout/AuthSplitLayout";
 import Image from "next/image";
 
-const heroImage = "/signUp.svg";
+const heroImage = "/signup.jpg";
 const logoSrc = "/axign_logo.png";
 
 export default function RegisterPage() {
@@ -56,11 +56,11 @@ export default function RegisterPage() {
   return (
     <AuthSplitLayout
       heroImage={heroImage}
-      title="Create your CCG account"
-      subtitle="Join groups, events, volunteer, and grow in community."
+      title="Register Account Form"
+      subtitle="Please fill in this form to create an account!"
       // headerActions={headerActions}
       header={
-        <Image src={logoSrc} alt="CCG logo" width={120} height={60} priority />
+        <Image src={logoSrc} alt="CCG logo" width={150} height={80} priority />
       }
       form={<SignupForm />}
     />

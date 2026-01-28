@@ -111,7 +111,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("Signup response:", data);
       setMessage(data.message);
       setUser(data.user);
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setMessage(
+        error.message.includes("E11000")
+          ? "User already exists. Please use a different email or username."
+          : error.message,
+      );
       console.error("Signup error:", error);
       throw error;
     }

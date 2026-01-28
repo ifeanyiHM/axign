@@ -36,7 +36,7 @@ export const AuthSplitLayout = ({
       <div className="grid min-h-screen w-full lg:grid-cols-[minmax(0,0.6fr)_minmax(0,0.4fr)]">
         <section className="flex w-full bg-white">
           <div className="flex min-h-screen w-full flex-col">
-            <div className="sticky top-0 z-10 bg-white px-6 pt-4">
+            <div className="sticky top-0 z-10 bg-white px-6 pt-6">
               <div className="flex items-start">{header}</div>
             </div>
             <div className="flex-1 overflow-y-auto px-6 pb-10 pt-10">

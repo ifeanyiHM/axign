@@ -176,8 +176,18 @@ export default function SignupForm() {
         {/* Success message */}
         {message && (
           <Alert
-            variant="success"
-            title="Success"
+            variant={
+              message.toLowerCase().includes("already") ||
+              message.toLowerCase().includes("exists")
+                ? "warning"
+                : "success"
+            }
+            title={
+              message.toLowerCase().includes("already") ||
+              message.toLowerCase().includes("exists")
+                ? "Warning"
+                : "Success"
+            }
             description={message}
             dismissible={false}
           />
@@ -186,7 +196,7 @@ export default function SignupForm() {
         {/* Submit */}
 
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in..." : "Login"}
+          {isSubmitting ? "Submitting..." : "Sign Up"}
         </Button>
       </form>
       {/* Login */}

@@ -44,7 +44,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400",
+          "bg-gray-800 text-white hover:bg-gray-700 disabled:bg-gray-400",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 disabled:bg-destructive/50",
         outline: "border border-gray-300 bg-background hover:bg-gray-100",

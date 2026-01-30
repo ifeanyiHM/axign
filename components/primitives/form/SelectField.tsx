@@ -22,6 +22,7 @@ interface SelectFieldProps extends Omit<
   options: Option[];
   containerClassName?: string;
   selectClassName?: string;
+  labelClassName?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
 }
@@ -32,6 +33,7 @@ const SelectField = ({
   options,
   containerClassName,
   selectClassName,
+  labelClassName,
   id,
   value,
   onValueChange,
@@ -40,7 +42,11 @@ const SelectField = ({
   return (
     <div className={clsx("flex flex-col gap-1", containerClassName)}>
       {label && (
-        <label htmlFor={id} className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor={id}
+          className={clsx("text-sm font-medium", labelClassName)}
+          // className={clsx("text-sm font-medium text-gray-700", labelClassName)}
+        >
           {label}
         </label>
       )}

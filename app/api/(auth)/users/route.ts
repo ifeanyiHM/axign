@@ -16,62 +16,6 @@ export const GET = async () => {
   }
 };
 
-// export const POST = async (request: Request) => {
-//   try {
-//     const body = await request.json();
-//     const { email, username, password, userStatus } = body;
-//     console.log("REQUEST BODY:", body);
-
-//     await connectToDatabase();
-
-//     let organizationId;
-
-//     if (userStatus === "ceo") {
-//       if (!body.organizationName) {
-//         return NextResponse.json(
-//           { error: "Organization name is required for CEO" },
-//           { status: 400 },
-//         );
-//       }
-//       console.log("ORG MODEL:", Organization);
-
-//       const organization = await Organization.create({
-//         name: body.organizationName,
-//       });
-
-//       organizationId = organization._id;
-//     }
-
-//     if (userStatus === "employee") {
-//       if (!body.organizationId) {
-//         return NextResponse.json(
-//           { error: "Organization selection is required" },
-//           { status: 400 },
-//         );
-//       }
-
-//       organizationId = body.organizationId;
-//     }
-
-//     const hashedPassword = await bcrypt.hash(password, 12);
-//     const user = await User.create({
-//       email,
-//       username,
-//       password: hashedPassword,
-//       userStatus,
-//       organizationId,
-//     });
-
-//     return NextResponse.json(
-//       { message: "User created successfully", user },
-//       { status: 201 },
-//     );
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   } catch (error: any) {
-//     return NextResponse.json({ error: error.message }, { status: 500 });
-//   }
-// };
-
 export const PATCH = async (request: Request) => {
   try {
     const body = await request.json();

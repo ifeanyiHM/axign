@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, ReactNode } from "react";
 
-interface User {
+export interface User {
   email: string;
   username: string;
   userStatus: "ceo" | "employee";

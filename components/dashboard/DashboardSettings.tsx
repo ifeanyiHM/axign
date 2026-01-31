@@ -1,6 +1,7 @@
 import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
 import { Check, Moon, Sun, Waves } from "lucide-react";
+import Header from "./Header";
 
 export default function DashboardSettings() {
   const { theme, setTheme } = useTheme();
@@ -33,12 +34,11 @@ export default function DashboardSettings() {
     <div className="">
       <div className="max-w-4xl mx-auto p-6 sm:p-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Settings</h1>
-          <p className={colors.textMuted}>
-            Customize your dashboard appearance and preferences
-          </p>
-        </div>
+
+        <Header
+          title="Settings"
+          subtitle="Customize your dashboard appearance and preferences"
+        />
 
         {/* Theme Selection */}
         <div

@@ -31,10 +31,10 @@ function CeoDashboard() {
   return (
     <DashboardLayout links={links}>
       {/* Main Content */}
-      <>
-        <Header user={user} />
+      <div className="p-4 sm:p-6">
+        <Header user={user} title="My Dashboard" subtitle="Welcome back," />
 
-        <div className="p-4 sm:p-6">
+        <div>
           {/* Stats Cards – stack on very small screens */}
           <StatusCard status={stats} />
 
@@ -143,7 +143,7 @@ function CeoDashboard() {
             </div>
           </section>
         </div>
-      </>
+      </div>
     </DashboardLayout>
   );
 }

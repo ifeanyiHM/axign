@@ -37,6 +37,7 @@ import {
 } from "recharts";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { links } from "../data";
+import Header from "@/components/dashboard/Header";
 
 // Mock data
 const monthlyPerformance = [
@@ -134,15 +135,11 @@ function ReportsPage() {
         className={`min-h-screen ${colors.bg} ${colors.text} p-3 sm:p-4 md:p-6`}
       >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">
-              Reports & Analytics
-            </h1>
-            <p className={`${colors.textMuted} text-sm sm:text-base`}>
-              Track performance, analyze trends, and generate insights
-            </p>
-          </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          <Header
+            title="Reports & Analytics"
+            subtitle="Track performance, analyze trends, and generate insights"
+          />
 
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             {/* Period Selector */}

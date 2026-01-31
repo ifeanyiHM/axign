@@ -12,7 +12,32 @@ import {
   Clock,
   AlertTriangle,
   CircleCheckBig,
+  User,
 } from "lucide-react";
+
+export type TaskProps = {
+  id: string;
+  title: string;
+  description: string;
+  assignedTo: {
+    name: string;
+    avatar: string;
+  };
+  dueDate: string;
+  priority: "High" | "Medium" | "Low";
+  status: "Not Started" | "In Progress" | "Pending Review" | "Completed";
+  category:
+    | "Audit"
+    | "Documentation"
+    | "Training"
+    | "Reporting"
+    | "Maintenance"
+    | "Assessment"
+    | "HR";
+  progress: number;
+  createdAt: string;
+  tags: string[];
+};
 
 export const stats = [
   {
@@ -106,5 +131,129 @@ export const links: LinkItem[] = [
   { href: "/dashboard/ceo/create", label: "Create Task", icon: Plus },
   { href: "/dashboard/ceo/reports", label: "Reports", icon: FileBarChart },
   { href: "/dashboard/ceo/employees", label: "Employees", icon: Users },
+  { href: "/dashboard/ceo/profile", label: "My Profile", icon: User },
   { href: "/dashboard/ceo/settings", label: "Settings", icon: Settings },
+];
+
+export const allEmployees = [
+  {
+    id: "EMP-001",
+    name: "Aisha Bello",
+    email: "aisha.bello@company.com",
+    phone: "+234 801 234 5678",
+    position: "Senior Quality Auditor",
+    department: "Quality Assurance",
+    location: "Lagos, Nigeria",
+    status: "Active",
+    joinDate: "2023-03-15",
+    avatar: "AB",
+    tasksAssigned: 12,
+    tasksCompleted: 8,
+    performanceRating: 4.5,
+  },
+  {
+    id: "EMP-002",
+    name: "Michael Okoro",
+    email: "michael.okoro@company.com",
+    phone: "+234 802 345 6789",
+    position: "Environmental Consultant",
+    department: "Environmental",
+    location: "Port Harcourt, Nigeria",
+    status: "Active",
+    joinDate: "2022-11-20",
+    avatar: "MO",
+    tasksAssigned: 10,
+    tasksCompleted: 7,
+    performanceRating: 4.2,
+  },
+  {
+    id: "EMP-003",
+    name: "Fatima Yusuf",
+    email: "fatima.yusuf@company.com",
+    phone: "+234 803 456 7890",
+    position: "Safety Officer",
+    department: "Health & Safety",
+    location: "Abuja, Nigeria",
+    status: "Active",
+    joinDate: "2023-01-10",
+    avatar: "FY",
+    tasksAssigned: 15,
+    tasksCompleted: 12,
+    performanceRating: 4.8,
+  },
+  {
+    id: "EMP-004",
+    name: "David Adebayo",
+    email: "david.adebayo@company.com",
+    phone: "+234 804 567 8901",
+    position: "Compliance Manager",
+    department: "Compliance",
+    location: "Lagos, Nigeria",
+    status: "Active",
+    joinDate: "2021-08-05",
+    avatar: "DA",
+    tasksAssigned: 8,
+    tasksCompleted: 6,
+    performanceRating: 4.3,
+  },
+  {
+    id: "EMP-005",
+    name: "Sarah Johnson",
+    email: "sarah.johnson@company.com",
+    phone: "+234 805 678 9012",
+    position: "Documentation Specialist",
+    department: "Documentation",
+    location: "Lagos, Nigeria",
+    status: "Active",
+    joinDate: "2023-05-18",
+    avatar: "SJ",
+    tasksAssigned: 9,
+    tasksCompleted: 9,
+    performanceRating: 5.0,
+  },
+  {
+    id: "EMP-006",
+    name: "Emmanuel Okafor",
+    email: "emmanuel.okafor@company.com",
+    phone: "+234 806 789 0123",
+    position: "Risk Analyst",
+    department: "Risk Management",
+    location: "Abuja, Nigeria",
+    status: "On Leave",
+    joinDate: "2022-06-12",
+    avatar: "EO",
+    tasksAssigned: 5,
+    tasksCompleted: 3,
+    performanceRating: 4.0,
+  },
+  {
+    id: "EMP-007",
+    name: "Grace Nwosu",
+    email: "grace.nwosu@company.com",
+    phone: "+234 807 890 1234",
+    position: "Training Coordinator",
+    department: "Training",
+    location: "Port Harcourt, Nigeria",
+    status: "Active",
+    joinDate: "2023-09-22",
+    avatar: "GN",
+    tasksAssigned: 11,
+    tasksCompleted: 8,
+    performanceRating: 4.6,
+  },
+  {
+    id: "EMP-008",
+    name: "Ibrahim Musa",
+    email: "ibrahim.musa@company.com",
+    phone: "+234 808 901 2345",
+    position: "Equipment Technician",
+    department: "Maintenance",
+    location: "Kano, Nigeria",
+    status: "Inactive",
+    joinDate: "2020-04-30",
+    avatar: "IM",
+    tasksAssigned: 3,
+    tasksCompleted: 2,
+    performanceRating: 3.8,
+  },
 ];

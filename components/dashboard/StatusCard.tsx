@@ -4,7 +4,8 @@ import { LucideIcon } from "lucide-react";
 import React from "react";
 
 export type StatusItem = {
-  title: string;
+  title?: string;
+  label?: string;
   value: number;
   icon: LucideIcon;
 };
@@ -27,12 +28,12 @@ export default function StatusCard({ status }: StatusCardProps) {
         return (
           <div
             key={i}
-            className={`flex justify-between items-start p-4 sm:px-6 sm:py-4 rounded-md ${colors.bgCard} text-center sm:text-left`}
+            className={`flex justify-between ${stat.title ? "items-start  sm:py-4" : "items-center  sm:py-5"} p-4 sm:px-6 rounded-md ${colors.bgCard} text-center sm:text-left`}
             style={{ boxShadow: colors.cardShadow }}
           >
             <div className="flex flex-col h-full">
               <p className={`text-xs flex-1 sm:text-sm ${colors.textMuted}`}>
-                {stat.title}
+                {stat.title || stat.label}
               </p>
               <p className="text-2xl sm:text-2xl font-bold mt-1 sm:mt-2">
                 {stat.value}

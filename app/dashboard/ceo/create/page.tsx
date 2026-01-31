@@ -27,6 +27,7 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { links } from "../data";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/primitives/form/InputField";
+import Header from "@/components/dashboard/Header";
 // import SelectField from "@/components/primitives/form/SelectField";
 
 // Mock data - Replace with real API calls
@@ -211,15 +212,19 @@ function CreateTaskPage() {
           <Button
             variant="ghost"
             onClick={() => router.back()}
-            className={`${colors.textMuted} hover:${colors.text} mb-3 sm:mb-4`}
+            className={`${colors.textMuted} hover:${colors.text}`}
           >
             <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
             Back
           </Button>
-          <h1 className="text-2xl font-bold">Create New Task</h1>
+          {/* <h1 className="text-2xl font-bold">Create New Task</h1>
           <p className={`${colors.textMuted} text-sm`}>
             Fill in the details below to create a new task for your team
-          </p>
+          </p> */}
+          <Header
+            title="Create New Task"
+            subtitle="Fill in the details below to create a new task for your team"
+          />
         </div>
 
         {/* Success Message */}

@@ -16,10 +16,10 @@ function EmployeeDashboard() {
     <>
       <DashboardLayout links={navItems}>
         {/* Main Content */}
-        <>
-          <Header user={user} />
+        <div className="p-4 sm:p-6">
+          <Header user={user} title="My Dashboard" subtitle="Welcome back," />
 
-          <div className="p-4 sm:p-6">
+          <div>
             {/* Personal Stats Cards */}
             <StatusCard status={personalStats} />
 
@@ -33,7 +33,7 @@ function EmployeeDashboard() {
               <TaskTable taskList={myTasks} title="My Tasks" />
             </div>
           </div>
-        </>
+        </div>
       </DashboardLayout>
     </>
   );

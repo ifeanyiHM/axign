@@ -131,40 +131,37 @@ function ReportsPage() {
 
   return (
     <DashboardLayout links={links}>
-      <div
-        className={`min-h-screen ${colors.bg} ${colors.text} p-3 sm:p-4 md:p-6`}
-      >
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          <Header
-            title="Reports & Analytics"
-            subtitle="Track performance, analyze trends, and generate insights"
-          />
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b my-3 sm:my-4 px-3 sm:px-4 md:px-6">
+        <Header
+          title="Reports & Analytics"
+          subtitle="Track performance, analyze trends, and generate insights"
+          className=""
+        />
 
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            {/* Period Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
-                className={`w-full sm:w-auto flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg text-sm`}
-              >
-                <Calendar size={16} />
-                <span>{periodLabels[selectedPeriod]}</span>
-                <ChevronDown size={16} />
-              </button>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          {/* Period Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
+              className={`w-full sm:w-auto flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg text-sm`}
+            >
+              <Calendar size={16} />
+              <span>{periodLabels[selectedPeriod]}</span>
+              <ChevronDown size={16} />
+            </button>
 
-              {showPeriodDropdown && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowPeriodDropdown(false)}
-                  />
-                  <div
-                    className={`absolute right-0 mt-2 w-48 ${colors.bgCard} border ${colors.border} rounded-lg shadow-lg z-20 overflow-hidden`}
-                  >
-                    {(
-                      ["week", "month", "quarter", "year"] as ReportPeriod[]
-                    ).map((period) => (
+            {showPeriodDropdown && (
+              <>
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setShowPeriodDropdown(false)}
+                />
+                <div
+                  className={`absolute right-0 mt-2 w-48 ${colors.bgCard} border ${colors.border} rounded-lg shadow-lg z-20 overflow-hidden`}
+                >
+                  {(["week", "month", "quarter", "year"] as ReportPeriod[]).map(
+                    (period) => (
                       <button
                         key={period}
                         onClick={() => {
@@ -179,22 +176,27 @@ function ReportsPage() {
                       >
                         {periodLabels[period]}
                       </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Export Button */}
-            <button
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm`}
-            >
-              <Download size={16} />
-              Export Report
-            </button>
+                    ),
+                  )}
+                </div>
+              </>
+            )}
           </div>
-        </div>
 
+          {/* Export Button */}
+          <button
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm`}
+          >
+            <Download size={16} />
+            Export Report
+          </button>
+        </div>
+      </div>
+
+      {/* main */}
+      <div
+        className={`min-h-screen ${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}
+      >
         {/* Key Metrics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           {/* Total Tasks */}

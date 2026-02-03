@@ -9,6 +9,7 @@ interface HeaderProps {
   subtitle: string;
   buttonTitle?: string;
   icon?: LucideIcon;
+  className?: string;
 }
 
 export default function Header({
@@ -16,13 +17,15 @@ export default function Header({
   title,
   subtitle,
   buttonTitle,
+  className,
 }: HeaderProps) {
   const { theme } = useTheme();
   const colors = themes[theme];
 
   return (
     <header
-      className={` ${!user ? "py-2 sm:py-2" : "border-b py-4 sm:py-5"} ${colors.border} flex justify-between items-center mb-4 sm:mb-6`}
+      // className={` ${!user ? "py-2 sm:py-2" : "border-b py-4 sm:py-5"} ${colors.border} flex justify-between items-center mb-4 sm:mb-6`}
+      className={`${className} ${colors.border} flex justify-between items-center mb-4 sm:mb-6`}
     >
       <div>
         <h1 className="text-xl font-bold">{title}</h1>

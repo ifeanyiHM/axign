@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
 import { Filter, Search } from "lucide-react";
@@ -12,16 +13,29 @@ const statusColors: Record<string, string> = {
 export type TaskTableItem = {
   id: string;
   title: string;
-  assignedTo: string;
+  description: string;
+  assignedTo: {
+    name: string;
+    avatar: string;
+  };
   assignedBy: string;
   dueDate: string;
   priority: "High" | "Medium" | "Low";
-  status:
-    | "To Do"
-    | "In Progress"
-    | "Completed"
-    | "Not Started"
-    | "Pending Review";
+  status: "Not Started" | "In Progress" | "Pending Review" | "Completed";
+  category?:
+    | "Audit"
+    | "Documentation"
+    | "Training"
+    | "Reporting"
+    | "Maintenance"
+    | "Assessment"
+    | "HR";
+  progress: number;
+  createdAt: string;
+  tags?: string[];
+  estimatedHours: number;
+  hoursLogged: number;
+  startDate: string;
 };
 
 interface taskTableProps {
@@ -30,6 +44,7 @@ interface taskTableProps {
 }
 
 export default function TaskTable({ taskList, title }: taskTableProps) {
+  const { user } = useAuth();
   const { theme } = useTheme();
   const colors = themes[theme];
 
@@ -39,7 +54,9 @@ export default function TaskTable({ taskList, title }: taskTableProps) {
       style={{ boxShadow: colors.cardShadow }}
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 pl-5 pr-3 sm:pl-6 sm:pr-4">
-        <h3 className="text-base font-semibold">{title}</h3>
+        <h3 className="text-base font-semibold">
+          {title} ({taskList?.length})
+        </h3>
         <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
           <button
             className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 py-2 ${colors.bgCard} ${colors.border} border rounded-lg text-xs sm:text-sm ${colors.hover}`}
@@ -62,7 +79,9 @@ export default function TaskTable({ taskList, title }: taskTableProps) {
             >
               <th className="pl-6 pr-2 sm:pl-7 py-3 text-left">ID</th>
               <th className="py-3 px-2 text-left">Title</th>
-              <th className="py-3 px-2 text-left">Assigned</th>
+              <th className="py-3 px-2 text-left">
+                {user?.userStatus === "ceo" ? "Assigned To" : "Category"}
+              </th>
               <th className="py-3 px-2 text-left">Due</th>
               <th className="py-3 px-2 text-left">Pri</th>
               <th className="py-3 pl-2 pr-4 sm:pr-5 text-left">Status</th>
@@ -79,7 +98,9 @@ export default function TaskTable({ taskList, title }: taskTableProps) {
                   <div className="lg:min-w-40 xl:min-w-0">{task.title}</div>
                 </td>
                 <td className="py-3 px-2 truncate max-w-35 sm:max-w-none">
-                  {task.assignedTo}
+                  {user?.userStatus === "ceo"
+                    ? task.assignedTo.name
+                    : task.category}
                 </td>
                 <td className="py-3 px-2 truncate">{task.dueDate}</td>
                 <td className="py-3 px-2">

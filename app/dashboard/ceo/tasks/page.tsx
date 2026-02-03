@@ -16,121 +16,16 @@ import {
   AlertCircle,
   ArrowUpDown,
   Plus,
+  ListTodo,
+  CircleCheckBig,
+  AlertTriangle,
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { links, stats } from "../data";
+import { links, myTaskStats, recentTasks } from "../data";
 import StatusCard from "@/components/dashboard/StatusCard";
 import { Button } from "@/components/ui/button";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import Header from "@/components/dashboard/Header";
-
-// Mock data - Replace with real API calls
-export const allTasks = [
-  {
-    id: "T-001",
-    title: "Conduct ISO 9001 Audit for Access Bank",
-    description: "Complete annual ISO 9001 certification audit",
-    assignedTo: { name: "Aisha Bello", avatar: "AB" },
-    dueDate: "2026-02-05",
-    priority: "High",
-    status: "In Progress",
-    category: "Audit",
-    progress: 65,
-    createdAt: "2026-01-15",
-    tags: ["ISO", "Banking", "Compliance"],
-  },
-  {
-    id: "T-002",
-    title: "Update Risk Register QHSE",
-    description: "Quarterly update of risk assessment documentation",
-    assignedTo: { name: "Michael Okoro", avatar: "MO" },
-    dueDate: "2026-02-10",
-    priority: "Medium",
-    status: "Not Started",
-    category: "Documentation",
-    progress: 0,
-    createdAt: "2026-01-20",
-    tags: ["QHSE", "Risk Management"],
-  },
-  {
-    id: "T-003",
-    title: "Safety Training Session Prep",
-    description: "Prepare materials for monthly safety training",
-    assignedTo: { name: "Fatima Yusuf", avatar: "FY" },
-    dueDate: "2026-01-30",
-    priority: "High",
-    status: "Completed",
-    category: "Training",
-    progress: 100,
-    createdAt: "2026-01-10",
-    tags: ["Safety", "Training"],
-  },
-  {
-    id: "T-004",
-    title: "Client Report Submission",
-    description: "Submit monthly compliance report to GT Bank",
-    assignedTo: { name: "David Adebayo", avatar: "DA" },
-    dueDate: "2026-02-01",
-    priority: "Medium",
-    status: "Pending Review",
-    category: "Reporting",
-    progress: 90,
-    createdAt: "2026-01-18",
-    tags: ["Reporting", "Banking"],
-  },
-  {
-    id: "T-005",
-    title: "Equipment Calibration",
-    description: "Calibrate testing equipment as per schedule",
-    assignedTo: { name: "Aisha Bello", avatar: "AB" },
-    dueDate: "2026-02-15",
-    priority: "Low",
-    status: "In Progress",
-    category: "Maintenance",
-    progress: 30,
-    createdAt: "2026-01-22",
-    tags: ["Equipment", "Maintenance"],
-  },
-  {
-    id: "T-006",
-    title: "Environmental Impact Assessment",
-    description: "Conduct EIA for new client project",
-    assignedTo: { name: "Michael Okoro", avatar: "MO" },
-    dueDate: "2026-02-20",
-    priority: "High",
-    status: "In Progress",
-    category: "Assessment",
-    progress: 45,
-    createdAt: "2026-01-25",
-    tags: ["Environment", "Assessment"],
-  },
-  {
-    id: "T-007",
-    title: "Update ISO Documentation",
-    description: "Review and update ISO 14001 procedures",
-    assignedTo: { name: "Fatima Yusuf", avatar: "FY" },
-    dueDate: "2026-02-12",
-    priority: "Medium",
-    status: "Not Started",
-    category: "Documentation",
-    progress: 0,
-    createdAt: "2026-01-26",
-    tags: ["ISO", "Documentation"],
-  },
-  {
-    id: "T-008",
-    title: "Staff Performance Review",
-    description: "Quarterly performance evaluation",
-    assignedTo: { name: "David Adebayo", avatar: "DA" },
-    dueDate: "2026-02-08",
-    priority: "Medium",
-    status: "In Progress",
-    category: "HR",
-    progress: 55,
-    createdAt: "2026-01-12",
-    tags: ["HR", "Performance"],
-  },
-];
 
 const statusColors: Record<string, string> = {
   "Not Started": "bg-slate-800/30 border-slate-700/50",
@@ -164,7 +59,7 @@ function AllTasksPage() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Filter and sort tasks
-  const filteredTasks = allTasks.filter((task) => {
+  const filteredTasks = recentTasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -241,19 +136,42 @@ function AllTasksPage() {
     selectedPriority !== "all" ||
     selectedCategory !== "all";
 
+  const statsConfig = [
+    {
+      label: "Total Tasks",
+      value: myTaskStats.total,
+      icon: ListTodo,
+    },
+    {
+      label: "Pending",
+      value: myTaskStats.pending,
+      icon: Clock,
+    },
+    {
+      label: "Completed",
+      value: myTaskStats.completed,
+      icon: CircleCheckBig,
+    },
+    {
+      label: "Overdue",
+      value: myTaskStats.overdue,
+      icon: AlertTriangle,
+    },
+  ];
+
   return (
     <DashboardLayout links={links}>
-      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:p-6`}>
-        {/* Header */}
-        <Header
-          title="All Tasks"
-          subtitle="Manage and track all tasks across your organization"
-          buttonTitle="Create Task"
-          icon={Plus}
-        />
-
+      {/* Header */}
+      <Header
+        title="All Tasks"
+        subtitle="Manage and track all tasks across your organization"
+        buttonTitle="Create Task"
+        icon={Plus}
+        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+      />
+      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Stats Overview */}
-        <StatusCard status={stats} />
+        <StatusCard status={statsConfig} />
 
         {/* Filters and Actions */}
         <FiltersandActions
@@ -273,8 +191,9 @@ function AllTasksPage() {
           viewMode={viewMode}
           setViewMode={setViewMode}
           clearFilters={clearFilters}
+          label="not started"
         >
-          Showing {sortedTasks.length} of {allTasks.length} tasks
+          Showing {sortedTasks.length} of {recentTasks.length} tasks
         </FiltersandActions>
 
         {/* Table View */}
@@ -357,7 +276,7 @@ function AllTasksPage() {
                           <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
                             {task.assignedTo.avatar}
                           </div>
-                          <span className="text-xs sm:text-sm hidden sm:inline">
+                          <span className="text-xs sm:text-sm hidden truncate sm:inline">
                             {task.assignedTo.name}
                           </span>
                         </div>
@@ -496,9 +415,9 @@ function AllTasksPage() {
                 </p>
 
                 {/* Tags */}
-                {task.tags.length > 0 && (
+                {task.tags && task.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-3">
-                    {task.tags.slice(0, 2).map((tag) => (
+                    {task.tags?.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
                         className={`px-2 py-0.5 ${colors.bgSidebar} rounded text-xs`}
@@ -506,7 +425,7 @@ function AllTasksPage() {
                         {tag}
                       </span>
                     ))}
-                    {task.tags.length > 2 && (
+                    {task.tags && task.tags?.length > 2 && (
                       <span
                         className={`px-2 py-0.5 ${colors.bgSidebar} rounded text-xs`}
                       >

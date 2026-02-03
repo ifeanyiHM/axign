@@ -5,7 +5,7 @@ import React, { ReactNode } from "react";
 import InputField from "../primitives/form/InputField";
 import { Button } from "../ui/button";
 import SelectField from "../primitives/form/SelectField";
-import { allEmployees, TaskProps } from "@/app/dashboard/ceo/data";
+import { allEmployees } from "@/app/dashboard/ceo/data";
 
 export type ViewMode = "table" | "grid";
 
@@ -38,6 +38,8 @@ export interface FiltersAndActionsProps {
 
   clearFilters: () => void;
 
+  label?: string;
+
   children: ReactNode;
 }
 
@@ -61,6 +63,7 @@ export default function FiltersandActions({
   setViewMode,
   clearFilters,
   children,
+  label,
 }: FiltersAndActionsProps) {
   const { theme } = useTheme();
   const colors = themes[theme];
@@ -163,13 +166,22 @@ export default function FiltersandActions({
                 selectClassName={`w-full ${colors.text} border-0 px-3 py-2 text-sm ${colors.select}`}
                 labelClassName={`${colors.textMuted}`}
                 onValueChange={(value) => setSelectedStatus(value)}
-                options={[
-                  { label: "All Statues", value: "all" },
-                  { label: "Not Started", value: "Not Started" },
-                  { label: "In Progress", value: "In Progress" },
-                  { label: "Pending Review", value: "Pending Review" },
-                  { label: "Completed", value: "Completed" },
-                ]}
+                options={
+                  label === "not started"
+                    ? [
+                        { label: "All Statues", value: "all" },
+                        { label: "Not Started", value: "Not Started" },
+                        { label: "In Progress", value: "In Progress" },
+                        { label: "Pending Review", value: "Pending Review" },
+                        { label: "Completed", value: "Completed" },
+                      ]
+                    : [
+                        { label: "All Statues", value: "all" },
+                        { label: "Active", value: "Active" },
+                        { label: "On Leave", value: "On Leave" },
+                        { label: "In Active", value: "In Active" },
+                      ]
+                }
               />
 
               {selectedPriority && setSelectedPriority && (
@@ -182,9 +194,9 @@ export default function FiltersandActions({
                   onValueChange={(value) => setSelectedPriority(value)}
                   options={[
                     { label: "All Priorities", value: "all" },
-                    { label: "Active", value: "Active" },
-                    { label: "On Leave", value: "On Leave" },
-                    { label: "In Active", value: "In Active" },
+                    { label: "High", value: "High" },
+                    { label: "Medium", value: "Medium" },
+                    { label: "Low", value: "Low" },
                   ]}
                 />
               )}

@@ -150,15 +150,15 @@ function EmployeesPage() {
 
   return (
     <DashboardLayout links={links}>
-      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:p-6`}>
-        {/* Header */}
-        <Header
-          title="Employees"
-          subtitle="Manage your team members and their information"
-          buttonTitle="Add Employee"
-          icon={UserPlus}
-        />
-
+      {/* Header */}
+      <Header
+        title="Employees"
+        subtitle="Manage your team members and their information"
+        buttonTitle="Add Employee"
+        icon={UserPlus}
+        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+      />
+      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Stats Overview */}
         <StatusCard status={statsConfig} />
 
@@ -178,6 +178,7 @@ function EmployeesPage() {
           viewMode={viewMode}
           setViewMode={setViewMode}
           clearFilters={clearFilters}
+          label="active"
         >
           Showing {sortedEmployees.length} of {allEmployees.length} employees
         </FiltersandActions>

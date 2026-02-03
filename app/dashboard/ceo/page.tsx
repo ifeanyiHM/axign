@@ -10,7 +10,13 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Plus } from "lucide-react";
+import {
+  CircleCheckBig,
+  ClipboardList,
+  Clock,
+  Loader2,
+  Plus,
+} from "lucide-react";
 import SelectField from "@/components/primitives/form/SelectField";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/primitives/form/InputField";
@@ -21,22 +27,49 @@ import TaskTable from "@/components/dashboard/TaskTable";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Header from "@/components/dashboard/Header";
 import PieChartComponent from "@/components/dashboard/PieChartComponent";
-import { links, pieData, recentTasks, stats } from "./data";
+import { links, myTaskStats, pieData, recentTasks } from "./data";
 
 function CeoDashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
   const colors = themes[theme];
 
+  const statsConfig = [
+    {
+      label: "Total Tasks",
+      value: myTaskStats.total,
+      icon: ClipboardList,
+    },
+    {
+      label: "Pending",
+      value: myTaskStats.pending,
+      icon: Clock,
+    },
+    {
+      label: "In Progress",
+      value: myTaskStats.inProgress,
+      icon: Loader2,
+    },
+    {
+      label: "Completed",
+      value: myTaskStats.completed,
+      icon: CircleCheckBig,
+    },
+  ];
+
   return (
     <DashboardLayout links={links}>
+      <Header
+        user={user}
+        title="My Dashboard"
+        subtitle="Welcome back,"
+        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+      />
       {/* Main Content */}
-      <div className="p-4 sm:p-6">
-        <Header user={user} title="My Dashboard" subtitle="Welcome back," />
-
+      <div className="p-4 sm:px-6 sm:py-0">
         <div>
           {/* Stats Cards – stack on very small screens */}
-          <StatusCard status={stats} />
+          <StatusCard status={statsConfig} />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
             {/* Quick Create Task */}

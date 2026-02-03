@@ -5,16 +5,14 @@ import { withAuth } from "@/utils/withAuth";
 import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
 import { useRouter } from "next/navigation";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   ArrowLeft,
-  Calendar,
   Users,
   Tag,
   FileText,
-  Clock,
   AlertCircle,
   CheckCircle2,
   Plus,
@@ -28,7 +26,7 @@ import { links } from "../data";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/primitives/form/InputField";
 import Header from "@/components/dashboard/Header";
-// import SelectField from "@/components/primitives/form/SelectField";
+import SelectField from "@/components/primitives/form/SelectField";
 
 // Mock data - Replace with real API calls
 const employees = [
@@ -92,20 +90,21 @@ function CreateTaskPage() {
       description: "",
       assignedTo: [],
       dueDate: "",
-      priority: undefined,
+      priority: "",
       category: "",
       tags: [],
       estimatedHours: "",
+      attachments: [],
       notifyAssignees: true,
       recurring: false,
-      recurringFrequency: undefined,
+      recurringFrequency: "",
     },
   });
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [customTag, setCustomTag] = useState("");
   const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
-  const [attachments, setAttachments] = useState<File[]>([]);
+  // const [attachments, setAttachments] = useState<File[]>([]);
   const [submitError, setSubmitError] = useState("");
 
   // Watch form values
@@ -115,6 +114,7 @@ function CreateTaskPage() {
   const recurring = useWatch({ control, name: "recurring" });
   const priority = useWatch({ control, name: "priority" });
   const category = useWatch({ control, name: "category" });
+  const attachments = useWatch({ control, name: "attachments" }) || [];
 
   // const assignedTo = watch("assignedTo");
   // const tags = watch("tags");
@@ -161,12 +161,17 @@ function CreateTaskPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
-      setAttachments((prev) => [...prev, ...newFiles]);
+      const currentAttachments = getValues("attachments") || [];
+      setValue("attachments", [...currentAttachments, ...newFiles]);
     }
   };
 
   const handleRemoveAttachment = (index: number) => {
-    setAttachments((prev) => prev.filter((_, i) => i !== index));
+    const currentAttachments = getValues("attachments") || [];
+    setValue(
+      "attachments",
+      currentAttachments.filter((_, i) => i !== index),
+    );
   };
 
   const onSubmit = async (data: TaskFormData) => {
@@ -182,7 +187,7 @@ function CreateTaskPage() {
 
       // Reset form
       reset();
-      setAttachments([]);
+      // setAttachments([]);
 
       setTimeout(() => {
         setShowSuccessMessage(false);
@@ -206,7 +211,7 @@ function CreateTaskPage() {
 
   return (
     <DashboardLayout links={links}>
-      <div className={`${colors.bg} ${colors.text} p-4 sm:p-6`}>
+      <div className={`${colors.bg} ${colors.text} pt-4 px-4 sm:p-6`}>
         {/* Header */}
         <div className="mb-4 sm:mb-6">
           <Button
@@ -217,13 +222,11 @@ function CreateTaskPage() {
             <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
             Back
           </Button>
-          {/* <h1 className="text-2xl font-bold">Create New Task</h1>
-          <p className={`${colors.textMuted} text-sm`}>
-            Fill in the details below to create a new task for your team
-          </p> */}
+
           <Header
             title="Create New Task"
             subtitle="Fill in the details below to create a new task for your team"
+            className="py-2 sm:py-2"
           />
         </div>
 
@@ -282,48 +285,32 @@ function CreateTaskPage() {
                       }`}
                     />
                     {errors.description && (
-                      <p className="text-red-400 text-xs sm:text-sm mt-1 flex items-center gap-1">
-                        <AlertCircle size={12} className="sm:w-4 sm:h-4" />
+                      <p className="text-red-400 text-xs flex items-center gap-1">
+                        <AlertCircle size={12} className="sm:w-3 sm:h-3" />
                         {errors.description.message}
                       </p>
                     )}
                   </div>
                   {/* Category */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Category <span className="text-red-400">*</span>
-                    </label>
-                    <select
-                      {...register("category")}
-                      className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.category ? "ring-2 ring-red-500" : ""
-                      }`}
-                    >
-                      <option value="">Select a category</option>
-                      {categories.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.category && (
-                      <p className="text-red-400 text-xs sm:text-sm mt-1 flex items-center gap-1">
-                        <AlertCircle size={12} className="sm:w-4 sm:h-4" />
-                        {errors.category.message}
-                      </p>
+                  <Controller
+                    name="category"
+                    control={control}
+                    render={({ field }) => (
+                      <SelectField
+                        label="Cetegory *"
+                        placeholder="Select a category"
+                        containerClassName="sm:gap-2"
+                        selectClassName={`w-full border-0 text-sm ${colors.input}`}
+                        options={categories.map((cat) => ({
+                          label: cat,
+                          value: cat,
+                        }))}
+                        error={errors.category?.message}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      />
                     )}
-                  </div>
-                  {/* <SelectField
-                    label="Cetegory *"
-                    placeholder="Select a category"
-                    {...register("category")}
-                    selectClassName={`w-full border-0 text-sm ${colors.input}`}
-                    options={categories.map((cat) => ({
-                      label: cat,
-                      value: cat,
-                    }))}
-                    error={errors.category?.message}
-                  /> */}
+                  />
                 </div>
               </div>
 
@@ -348,7 +335,7 @@ function CreateTaskPage() {
                         onClick={() =>
                           setShowEmployeeDropdown(!showEmployeeDropdown)
                         }
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base ${colors.input} rounded-lg text-left flex items-center justify-between ${
+                        className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm ${colors.input} rounded-lg text-left flex items-center justify-between ${
                           errors.assignedTo ? "ring-2 ring-red-500" : ""
                         }`}
                       >
@@ -415,8 +402,8 @@ function CreateTaskPage() {
                       )}
                     </div>
                     {errors.assignedTo && (
-                      <p className="text-red-400 text-xs sm:text-sm mt-1 flex items-center gap-1">
-                        <AlertCircle size={12} className="sm:w-4 sm:h-4" />
+                      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                        <AlertCircle size={12} className="sm:w-3 sm:h-3" />
                         {errors.assignedTo.message}
                       </p>
                     )}
@@ -453,58 +440,41 @@ function CreateTaskPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {/* Due Date */}
-                    <div>
-                      <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                        Due Date <span className="text-red-400">*</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="date"
-                          {...register("dueDate")}
-                          className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            errors.dueDate ? "ring-2 ring-red-500" : ""
-                          }`}
-                        />
-                        <Calendar
-                          size={16}
-                          className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${colors.textMuted} pointer-events-none sm:w-5 sm:h-5`}
-                        />
-                      </div>
-                      {errors.dueDate && (
-                        <p className="text-red-400 text-xs sm:text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={12} className="sm:w-4 sm:h-4" />
-                          {errors.dueDate.message}
-                        </p>
-                      )}
-                    </div>
+                    <InputField
+                      label="Due Date *"
+                      type="date"
+                      {...register("dueDate")}
+                      error={errors.dueDate?.message}
+                      className={`w-full text-sm border-0 ${colors.input}`}
+                      containerClassName="sm:gap-2"
+                    />
 
                     {/* Priority */}
-                    <div>
-                      <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                        Priority <span className="text-red-400">*</span>
-                      </label>
-                      <select
-                        {...register("priority")}
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.priority ? "ring-2 ring-red-500" : ""
-                        }`}
-                      >
-                        <option value="">Select priority</option>
-                        <option value="Low">Low</option>
-                        <option value="Medium">Medium</option>
-                        <option value="High">High</option>
-                      </select>
-                      {errors.priority && (
-                        <p className="text-red-400 text-xs sm:text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={12} className="sm:w-4 sm:h-4" />
-                          {errors.priority.message}
-                        </p>
+                    <Controller
+                      name="priority"
+                      control={control}
+                      render={({ field }) => (
+                        <SelectField
+                          label="Priority *"
+                          containerClassName="sm:gap-2"
+                          placeholder="Select priority"
+                          selectClassName={`w-full border-0 text-sm ${colors.input}`}
+                          options={[
+                            // { label: "Select Priority", value: "Not set" },
+                            { label: "Low", value: "Low" },
+                            { label: "Medium", value: "Medium" },
+                            { label: "High", value: "High" },
+                          ]}
+                          error={errors.priority?.message}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        />
                       )}
-                    </div>
+                    />
                   </div>
 
                   {/* Estimated Hours */}
-                  <div>
+                  {/* <div>
                     <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
                       Estimated Hours (Optional)
                     </label>
@@ -522,7 +492,7 @@ function CreateTaskPage() {
                         className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${colors.textMuted} pointer-events-none sm:w-5 sm:h-5`}
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -560,8 +530,9 @@ function CreateTaskPage() {
 
                     {/* Custom Tag Input */}
                     <div className="flex gap-2">
-                      <input
+                      <InputField
                         type="text"
+                        placeholder="Add custom tag"
                         value={customTag}
                         onChange={(e) => setCustomTag(e.target.value)}
                         onKeyPress={(e) => {
@@ -570,16 +541,16 @@ function CreateTaskPage() {
                             handleAddCustomTag();
                           }
                         }}
-                        placeholder="Add custom tag"
-                        className={`flex-1 px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        className={`ext-sm border-0 ${colors.input}`}
+                        containerClassName="flex-1"
                       />
-                      <button
+                      <Button
                         type="button"
                         onClick={handleAddCustomTag}
-                        className={`px-3 sm:px-4 py-2 ${colors.button} rounded-lg shrink-0`}
+                        className={` ${colors.button} shrink-0`}
                       >
                         <Plus size={18} className="sm:w-5 sm:h-5" />
-                      </button>
+                      </Button>
                     </div>
 
                     {/* Selected Tags */}
@@ -588,16 +559,18 @@ function CreateTaskPage() {
                         {tags.map((tag) => (
                           <div
                             key={tag}
-                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-full`}
+                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-0.5 bg-blue-600/20 border border-blue-500/30 rounded-full`}
                           >
                             <span className="text-xs sm:text-sm">{tag}</span>
-                            <button
+                            <Button
+                              variant="ghost"
+                              size="xs"
                               type="button"
                               onClick={() => handleRemoveTag(tag)}
-                              className="text-gray-400 hover:text-red-400 shrink-0"
+                              className="text-gray-400 shrink-0 py-0"
                             >
                               <X size={12} className="sm:w-3.5 sm:h-3.5" />
-                            </button>
+                            </Button>
                           </div>
                         ))}
                       </div>
@@ -612,7 +585,7 @@ function CreateTaskPage() {
                     <div
                       className={`border-2 border-dashed ${colors.border} rounded-lg p-4 sm:p-6 text-center ${colors.hover} transition-colors`}
                     >
-                      <input
+                      <InputField
                         type="file"
                         id="file-upload"
                         multiple
@@ -665,13 +638,15 @@ function CreateTaskPage() {
                                 </p>
                               </div>
                             </div>
-                            <button
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               type="button"
                               onClick={() => handleRemoveAttachment(index)}
-                              className="text-gray-400 hover:text-red-400 shrink-0 ml-2"
+                              className="text-gray-400 shrink-0 ml-2"
                             >
                               <X size={14} className="sm:w-4 sm:h-4" />
-                            </button>
+                            </Button>
                           </div>
                         ))}
                       </div>
@@ -682,10 +657,10 @@ function CreateTaskPage() {
 
               {/* Mobile Action Buttons */}
               <div className="lg:hidden space-y-2 sm:space-y-3 sticky bottom-0 bg-gray-950 p-4 -mx-4 border-t border-gray-800">
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-2.5 sm:py-3 ${colors.button} rounded-lg font-medium flex items-center justify-center gap-2 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`w-full px-4 py-2.5 sm:py-3 ${colors.button}`}
                 >
                   {isSubmitting ? (
                     <>
@@ -698,26 +673,26 @@ function CreateTaskPage() {
                       Create Task
                     </>
                   )}
-                </button>
+                </Button>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <button
+                  <Button
                     type="button"
                     onClick={handleSaveDraft}
                     disabled={isSubmitting}
-                    className={`px-4 py-2 ${colors.button} rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`px-4 py-2 ${colors.button}`}
                   >
                     Save Draft
-                  </button>
+                  </Button>
 
-                  <button
+                  <Button
                     type="button"
                     onClick={() => router.back()}
                     disabled={isSubmitting}
-                    className={`px-4 py-2 ${colors.button} rounded-lg font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`px-4 py-2 ${colors.button}`}
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -765,28 +740,26 @@ function CreateTaskPage() {
 
                   {/* Recurring Frequency */}
                   {recurring && (
-                    <div>
-                      <label className="block text-sm font-medium mb-2">
-                        Frequency <span className="text-red-400">*</span>
-                      </label>
-                      <select
-                        {...register("recurringFrequency")}
-                        className={`w-full px-4 py-2 ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          errors.recurringFrequency ? "ring-2 ring-red-500" : ""
-                        }`}
-                      >
-                        <option value="">Select frequency</option>
-                        <option value="daily">Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                      </select>
-                      {errors.recurringFrequency && (
-                        <p className="text-red-400 text-sm mt-1 flex items-center gap-1">
-                          <AlertCircle size={14} />
-                          {errors.recurringFrequency.message}
-                        </p>
+                    <Controller
+                      control={control}
+                      name="recurringFrequency"
+                      render={({ field }) => (
+                        <SelectField
+                          label="Frequency *"
+                          placeholder="Select Frequency"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          containerClassName="sm:gap-2"
+                          selectClassName={`w-full border-0 text-sm ${colors.input}`}
+                          options={[
+                            { label: "Daily", value: "daily" },
+                            { label: "Weekly", value: "weekly" },
+                            { label: "Monthly", value: "monthly" },
+                          ]}
+                          error={errors.recurringFrequency?.message}
+                        />
                       )}
-                    </div>
+                    />
                   )}
                 </div>
               </div>
@@ -832,10 +805,10 @@ function CreateTaskPage() {
 
               {/* Desktop Action Buttons */}
               <div className="space-y-3">
-                <button
+                <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-3 ${colors.button} rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`w-full px-4 py-3 ${colors.button}`}
                 >
                   {isSubmitting ? (
                     <>
@@ -848,25 +821,25 @@ function CreateTaskPage() {
                       Create Task
                     </>
                   )}
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
                   onClick={handleSaveDraft}
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-3 ${colors.button} rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`w-full px-4 py-3 ${colors.button}`}
                 >
                   Save as Draft
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
                   onClick={() => router.back()}
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-3 ${colors.button} rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`w-full px-4 py-3 ${colors.button}`}
                 >
                   Cancel
-                </button>
+                </Button>
               </div>
 
               {/* Error Message */}

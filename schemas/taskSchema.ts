@@ -14,8 +14,8 @@ export const taskSchema = z
         (date) => new Date(date) >= new Date(new Date().toDateString()),
         "Due date cannot be in the past",
       ),
-    priority: z.string().min(1, "Priority is required"),
-    category: z.string().min(1, "Category is required"),
+    priority: z.string().min(1, "Please select a Priority"),
+    category: z.string().min(1, "Please select a Category"),
 
     // 👇 FIXED
     tags: z.array(z.string()),
@@ -24,9 +24,17 @@ export const taskSchema = z
 
     notifyAssignees: z.boolean(),
     recurring: z.boolean(),
-    recurringFrequency: z.enum(["daily", "weekly", "monthly"]).optional(),
+    // recurringFrequency: z.enum(["daily", "weekly", "monthly"]).optional(),
+    recurringFrequency: z
+      .enum(["daily", "weekly", "monthly"])
+      .or(z.literal("")),
   })
-  .refine((data) => !data.recurring || !!data.recurringFrequency, {
+
+  // .refine((data) => !data.recurring || !!data.recurringFrequency, {
+  //   path: ["recurringFrequency"],
+  //   message: "Please select recurring frequency",
+  // });
+  .refine((data) => !data.recurring || data.recurringFrequency !== "", {
     path: ["recurringFrequency"],
     message: "Please select recurring frequency",
   });

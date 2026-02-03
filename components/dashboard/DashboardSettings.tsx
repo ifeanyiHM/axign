@@ -32,14 +32,13 @@ export default function DashboardSettings() {
   ];
   return (
     <div className="">
+      {/* Header */}
+      <Header
+        title="Settings"
+        subtitle="Customize your dashboard appearance and preferences"
+        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+      />
       <div className="max-w-4xl mx-auto p-6 sm:p-8">
-        {/* Header */}
-
-        <Header
-          title="Settings"
-          subtitle="Customize your dashboard appearance and preferences"
-        />
-
         {/* Theme Selection */}
         <div
           className={`${colors.bgCard} rounded-xl p-6 ${colors.border} border`}

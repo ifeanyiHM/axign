@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AlertCircle } from "lucide-react";
 
 interface Option {
   label: string;
@@ -71,7 +72,12 @@ const SelectField = ({
         </SelectContent>
       </Select>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && (
+        <p className=" flex items-center gap-1 text-xs text-red-500">
+          <AlertCircle size={12} className="sm:w-3 sm:h-3" />
+          {error}
+        </p>
+      )}
     </div>
   );
 };

@@ -15,27 +15,23 @@ export type TaskTableItem = {
   title: string;
   description: string;
   assignedTo: {
+    id: string;
     name: string;
     avatar: string;
-  };
+  }[];
   assignedBy: string;
   dueDate: string;
   priority: "High" | "Medium" | "Low";
   status: "Not Started" | "In Progress" | "Pending Review" | "Completed";
-  category?:
-    | "Audit"
-    | "Documentation"
-    | "Training"
-    | "Reporting"
-    | "Maintenance"
-    | "Assessment"
-    | "HR";
+  category?: string;
   progress: number;
-  createdAt: string;
+  createdAt?: string;
   tags?: string[];
-  estimatedHours: number;
-  hoursLogged: number;
+  estimatedHours?: number;
+  hoursLogged?: number;
   startDate: string;
+  recurringFrequency?: "daily" | "weekly" | "monthly";
+  attachments?: File[];
 };
 
 interface taskTableProps {
@@ -88,9 +84,9 @@ export default function TaskTable({ taskList, title }: taskTableProps) {
             </tr>
           </thead>
           <tbody>
-            {taskList?.map((task) => (
+            {taskList?.map((task, index) => (
               <tr
-                key={task.id}
+                key={index}
                 className={`border-b ${colors.border} ${colors.tableHover}`}
               >
                 <td className="pl-6 pr-2 sm:pl-7 py-3 truncate">{task.id}</td>
@@ -99,7 +95,11 @@ export default function TaskTable({ taskList, title }: taskTableProps) {
                 </td>
                 <td className="py-3 px-2 truncate max-w-35 sm:max-w-none">
                   {user?.userStatus === "ceo"
-                    ? task.assignedTo.name
+                    ? task.assignedTo.map((assignee, index) => (
+                        <div className="space-y-1" key={index}>
+                          <span>{assignee.name}</span>
+                        </div>
+                      ))
                     : task.category}
                 </td>
                 <td className="py-3 px-2 truncate">{task.dueDate}</td>

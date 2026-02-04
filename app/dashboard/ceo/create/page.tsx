@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import InputField from "@/components/primitives/form/InputField";
 import Header from "@/components/dashboard/Header";
 import SelectField from "@/components/primitives/form/SelectField";
+import { useAuth } from "@/context/AuthContext";
 
 // Mock data - Replace with real API calls
 const employees = [
@@ -69,6 +70,7 @@ const predefinedTags = [
 ];
 
 function CreateTaskPage() {
+  const { user } = useAuth();
   const { theme } = useTheme();
   const colors = themes[theme];
   const router = useRouter();
@@ -79,7 +81,6 @@ function CreateTaskPage() {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-    // watch,
     setValue,
     getValues,
     reset,
@@ -88,10 +89,15 @@ function CreateTaskPage() {
     defaultValues: {
       title: "",
       description: "",
+      assignedBy: user?.username,
       assignedTo: [],
-      dueDate: "",
+      startDate: "",
       priority: "",
+      status: "Not Started",
+      dueDate: "",
       category: "",
+      categoryMode: "select",
+      progress: 0,
       tags: [],
       estimatedHours: "",
       attachments: [],
@@ -104,11 +110,9 @@ function CreateTaskPage() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [customTag, setCustomTag] = useState("");
   const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
-  // const [attachments, setAttachments] = useState<File[]>([]);
   const [submitError, setSubmitError] = useState("");
 
   // Watch form values
-
   const assignedTo = useWatch({ control, name: "assignedTo" });
   const tags = useWatch({ control, name: "tags" });
   const recurring = useWatch({ control, name: "recurring" });
@@ -116,19 +120,22 @@ function CreateTaskPage() {
   const category = useWatch({ control, name: "category" });
   const attachments = useWatch({ control, name: "attachments" }) || [];
 
-  // const assignedTo = watch("assignedTo");
-  // const tags = watch("tags");
-  // const recurring = watch("recurring");
-
-  const handleAssigneeToggle = (employeeId: string) => {
+  const handleAssigneeToggle = (employee: {
+    id: string;
+    name: string;
+    avatar: string;
+  }) => {
     const currentAssignees = assignedTo || [];
-    if (currentAssignees.includes(employeeId)) {
+
+    const exists = currentAssignees.some((a) => a.id === employee.id);
+
+    if (exists) {
       setValue(
         "assignedTo",
-        currentAssignees.filter((id) => id !== employeeId),
+        currentAssignees.filter((a) => a.id !== employee.id),
       );
     } else {
-      setValue("assignedTo", [...currentAssignees, employeeId]);
+      setValue("assignedTo", [...currentAssignees, employee]);
     }
   };
 
@@ -183,11 +190,29 @@ function CreateTaskPage() {
 
       console.log("Task created:", { ...data, attachments });
 
+      const payload = {
+        title: data.title,
+        description: data.description,
+        assignedBy: data.assignedBy,
+        assignedTo: data.assignedTo,
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        priority: data.priority,
+        status: data.status,
+        category: data.category,
+        progress: data.progress,
+        tags: data.tags,
+        estimatedHours: data.estimatedHours,
+        attachments: data.attachments,
+        recurringFrequency: data.recurringFrequency,
+      };
+
+      console.log("PAYLOAD:", payload);
+
       setShowSuccessMessage(true);
 
       // Reset form
       reset();
-      // setAttachments([]);
 
       setTimeout(() => {
         setShowSuccessMessage(false);
@@ -198,11 +223,6 @@ function CreateTaskPage() {
       setSubmitError("Failed to create task. Please try again.");
     }
   };
-
-  // const handleSaveDraft = () => {
-  //   const currentData = watch();
-  //   console.log("Saving draft:", { ...currentData, attachments });
-  // };
 
   const handleSaveDraft = () => {
     const currentData = getValues();
@@ -293,21 +313,55 @@ function CreateTaskPage() {
                   </div>
                   {/* Category */}
                   <Controller
-                    name="category"
+                    name="categoryMode"
                     control={control}
-                    render={({ field }) => (
-                      <SelectField
-                        label="Cetegory *"
-                        placeholder="Select a category"
-                        containerClassName="sm:gap-2"
-                        selectClassName={`w-full border-0 text-sm ${colors.input}`}
-                        options={categories.map((cat) => ({
-                          label: cat,
-                          value: cat,
-                        }))}
-                        error={errors.category?.message}
-                        value={field.value}
-                        onValueChange={field.onChange}
+                    render={({ field: modeField }) => (
+                      <Controller
+                        name="category"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="space-y-6">
+                            <SelectField
+                              label="Category *"
+                              placeholder="Select a category"
+                              containerClassName={`sm:gap-2`}
+                              selectClassName={`w-full border-0 text-sm ${colors.input}`}
+                              options={[
+                                ...categories.map((cat) => ({
+                                  label: cat,
+                                  value: cat,
+                                })),
+                                { label: "Other", value: "__other__" },
+                              ]}
+                              value={
+                                modeField.value === "custom"
+                                  ? "__other__"
+                                  : field.value
+                              }
+                              onValueChange={(value) => {
+                                if (value === "__other__") {
+                                  modeField.onChange("custom");
+                                  field.onChange("");
+                                } else {
+                                  modeField.onChange("select");
+                                  field.onChange(value);
+                                }
+                              }}
+                              error={errors.category?.message}
+                            />
+
+                            {modeField.value === "custom" && (
+                              <InputField
+                                type="text"
+                                placeholder="Enter custom category"
+                                className={`w-full text-sm border-0 ${colors.input}`}
+                                value={field.value}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                autoFocus
+                              />
+                            )}
+                          </div>
+                        )}
                       />
                     )}
                   />
@@ -376,13 +430,19 @@ function CreateTaskPage() {
                               >
                                 <input
                                   type="checkbox"
-                                  checked={assignedTo?.includes(employee.id)}
+                                  checked={assignedTo?.some(
+                                    (a) => a.id === employee.id,
+                                  )}
                                   onChange={() =>
-                                    handleAssigneeToggle(employee.id)
+                                    handleAssigneeToggle({
+                                      id: employee.id,
+                                      name: employee.name,
+                                      avatar: employee.avatar,
+                                    })
                                   }
-                                  className="w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-blue-500 shrink-0"
+                                  className="w-4 h-4 rounded border-gray-600 focus:ring-slate-600 text-white shrink-0"
                                 />
-                                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-semibold shrink-0">
+                                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
                                   {employee.avatar}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -411,40 +471,39 @@ function CreateTaskPage() {
                     {/* Selected Employees */}
                     {assignedTo && assignedTo.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3">
-                        {assignedTo.map((id) => {
-                          const employee = employees.find((e) => e.id === id);
-                          return (
-                            <div
-                              key={id}
-                              className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 ${colors.bgSidebar} border ${colors.border} rounded-full`}
-                            >
-                              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs font-semibold">
-                                {employee?.avatar}
-                              </div>
-                              <span className="text-xs sm:text-sm truncate max-w-24 sm:max-w-none">
-                                {employee?.name}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={() => handleAssigneeToggle(id)}
-                                className="text-gray-400 hover:text-red-400 shrink-0"
-                              >
-                                <X size={12} className="sm:w-3.5 sm:h-3.5" />
-                              </button>
+                        {assignedTo.map((employee) => (
+                          <div
+                            key={employee.id}
+                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 ${colors.bgSidebar} border ${colors.border} rounded-full`}
+                          >
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 p-1 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold">
+                              {employee.avatar}
                             </div>
-                          );
-                        })}
+
+                            <span className="text-xs sm:text-sm truncate max-w-24 sm:max-w-none">
+                              {employee.name}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() => handleAssigneeToggle(employee)}
+                              className="text-gray-400 hover:text-red-400 shrink-0"
+                            >
+                              <X size={12} className="sm:w-3.5 sm:h-3.5" />
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    {/* Due Date */}
+                    {/* Start Date */}
                     <InputField
-                      label="Due Date *"
+                      label="Start Date *"
                       type="date"
-                      {...register("dueDate")}
-                      error={errors.dueDate?.message}
+                      {...register("startDate")}
+                      error={errors.startDate?.message}
                       className={`w-full text-sm border-0 ${colors.input}`}
                       containerClassName="sm:gap-2"
                     />
@@ -473,6 +532,15 @@ function CreateTaskPage() {
                     />
                   </div>
 
+                  {/* Due Date */}
+                  <InputField
+                    label="Due Date *"
+                    type="date"
+                    {...register("dueDate")}
+                    error={errors.dueDate?.message}
+                    className={`w-full text-sm border-0 ${colors.input}`}
+                    containerClassName="sm:gap-2"
+                  />
                   {/* Estimated Hours */}
                   {/* <div>
                     <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
@@ -541,7 +609,7 @@ function CreateTaskPage() {
                             handleAddCustomTag();
                           }
                         }}
-                        className={`ext-sm border-0 ${colors.input}`}
+                        className={`text-sm border-0 ${colors.input}`}
                         containerClassName="flex-1"
                       />
                       <Button

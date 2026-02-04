@@ -33,6 +33,7 @@ import {
 } from "recharts";
 import { navItems } from "../data";
 import DashboardLayout from "@/components/layout/DashboardLayout";
+import Header from "@/components/dashboard/Header";
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
 
@@ -180,19 +181,13 @@ function OverviewPage() {
 
   return (
     <DashboardLayout links={navItems}>
-      <div
-        className={`min-h-screen ${colors.bg} ${colors.text} p-3 sm:p-4 md:p-6`}
-      >
-        {/* ── Header ────────────────────────────────────────────────────────── */}
-        <div className="mb-5 sm:mb-7">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">
-            Overview
-          </h1>
-          <p className={`${colors.textMuted} text-sm sm:text-base`}>
-            Your personal performance and task summary
-          </p>
-        </div>
-
+      {/* Header */}
+      <Header
+        title="Overview"
+        subtitle="Your personal performance and task summary"
+        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+      />
+      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* ── Top Stats Row ─────────────────────────────────────────────────── */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5 sm:mb-6">
           {/* Tasks Assigned */}
@@ -299,7 +294,7 @@ function OverviewPage() {
               className={`w-full h-2.5 rounded-full overflow-hidden ${barBg}`}
             >
               <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-700"
+                className="h-full rounded-full bg-linear-to-r from-emerald-500 to-emerald-400 transition-all duration-700"
                 style={{ width: `${completionRate}%` }}
               />
             </div>
@@ -332,7 +327,7 @@ function OverviewPage() {
               className={`w-full h-2.5 rounded-full overflow-hidden ${barBg}`}
             >
               <div
-                className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-700"
+                className="h-full rounded-full bg-linear-to-r from-blue-500 to-blue-400 transition-all duration-700"
                 style={{ width: `${hoursUtilization}%` }}
               />
             </div>
@@ -445,7 +440,7 @@ function OverviewPage() {
               {taskStatusBreakdown.map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
                   <div
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
                     style={{ backgroundColor: item.color }}
                   />
                   <span className={`text-xs ${colors.textMuted} truncate`}>
@@ -577,7 +572,7 @@ function OverviewPage() {
                       {task.title}
                     </p>
                     <span
-                      className={`flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-medium border ${priorityColors[task.priority]}`}
+                      className={`shrink-0 px-2 py-0.5 rounded-full text-xs font-medium border ${priorityColors[task.priority]}`}
                     >
                       {task.priority}
                     </span>
@@ -591,12 +586,12 @@ function OverviewPage() {
                         {task.daysLeft} day{task.daysLeft !== 1 ? "s" : ""} left
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 flex-1 max-w-[140px]">
+                    <div className="flex items-center gap-2 flex-1 max-w-35">
                       <div
                         className={`flex-1 h-1.5 rounded-full overflow-hidden ${barBg}`}
                       >
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-500"
+                          className="h-full rounded-full bg-linear-to-r from-blue-500 to-blue-400 transition-all duration-500"
                           style={{ width: `${task.progress}%` }}
                         />
                       </div>
@@ -633,7 +628,7 @@ function OverviewPage() {
                 >
                   {/* Icon circle */}
                   <div
-                    className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${m.status === "Completed" ? "bg-emerald-500/15" : "bg-purple-500/15"}`}
+                    className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${m.status === "Completed" ? "bg-emerald-500/15" : "bg-purple-500/15"}`}
                   >
                     {m.status === "Completed" ? (
                       <CheckCircle2 size={18} className="text-emerald-400" />
@@ -659,7 +654,7 @@ function OverviewPage() {
                   </div>
                   {/* Status badge */}
                   <span
-                    className={`flex-shrink-0 text-xs font-medium px-2 py-0.5 rounded-full border ${
+                    className={`shrink-0 text-xs font-medium px-2 py-0.5 rounded-full border ${
                       m.status === "Completed"
                         ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-400"
                         : "bg-purple-500/15 border-purple-500/30 text-purple-400"

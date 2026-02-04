@@ -15,10 +15,7 @@ export type TaskProps = {
   id: string;
   title: string;
   description: string;
-  assignedTo: {
-    name: string;
-    avatar: string;
-  };
+  assignedTo: { id: ""; name: string; avatar: string };
   dueDate: string;
   priority: "High" | "Medium" | "Low";
   status: "Not Started" | "In Progress" | "Pending Review" | "Completed";
@@ -31,7 +28,7 @@ export type TaskProps = {
     | "Assessment"
     | "HR";
   progress: number;
-  createdAt: string;
+  //createdAt: string;
   tags: string[];
 };
 
@@ -42,10 +39,10 @@ export const recentTasks: TaskTableItem[] = [
     description:
       "Complete annual ISO 9001 certification audit documentation and site inspection",
     assignedBy: "David Adebayo",
-    assignedTo: {
-      name: "Aisha Bello",
-      avatar: "AB",
-    },
+    assignedTo: [
+      { id: "1", name: "John Oliver", avatar: "JO" },
+      { id: "2", name: "Jane Anthony", avatar: "JA" },
+    ],
     dueDate: "2026-02-05",
     priority: "High",
     status: "In Progress",
@@ -55,7 +52,7 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 40,
     hoursLogged: 26,
     tags: ["ISO", "Banking", "Compliance"],
-    createdAt: "2026-01-15",
+    //createdAt: "2026-01-15",
     // comments: 8,
     // attachments: 3,
   },
@@ -65,10 +62,7 @@ export const recentTasks: TaskTableItem[] = [
     description:
       "Quarterly update of risk assessment documentation for all departments",
     assignedBy: "Sarah Johnson",
-    assignedTo: {
-      name: "John Tobi",
-      avatar: "JT",
-    },
+    assignedTo: [{ id: "", name: "John Tobi", avatar: "JT" }],
     dueDate: "2026-02-10",
     priority: "Medium",
     status: "Not Started",
@@ -78,7 +72,7 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 16,
     hoursLogged: 0,
     tags: ["QHSE", "Risk Management"],
-    createdAt: "2026-01-10",
+    //createdAt: "2026-01-10",
     // comments: 2,
     // attachments: 1,
   },
@@ -88,10 +82,7 @@ export const recentTasks: TaskTableItem[] = [
     description:
       "Prepare materials and venue for monthly safety training workshop",
     assignedBy: "Michael Okoro",
-    assignedTo: {
-      name: "Chibuike Chinedu",
-      avatar: "CC",
-    },
+    assignedTo: [{ id: "", name: "Chibuike Chinedu", avatar: "CC" }],
     dueDate: "2026-01-30",
     priority: "High",
     status: "Completed",
@@ -101,7 +92,7 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 8,
     hoursLogged: 8.5,
     tags: ["Safety", "Training"],
-    createdAt: "2026-02-1",
+    //createdAt: "2026-02-1",
     // comments: 5,
     // attachments: 2,
   },
@@ -110,10 +101,7 @@ export const recentTasks: TaskTableItem[] = [
     title: "Client Report Submission",
     description: "Submit monthly compliance report to GT Bank management",
     assignedBy: "David Adebayo",
-    assignedTo: {
-      name: "Ifeanyi Iheme",
-      avatar: "II",
-    },
+    assignedTo: [{ id: "", name: "Ifeanyi Iheme", avatar: "II" }],
     dueDate: "2026-02-01",
     priority: "Medium",
     status: "Pending Review",
@@ -123,7 +111,7 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 12,
     hoursLogged: 11,
     tags: ["Reporting", "Banking"],
-    createdAt: "2026-01-01",
+    //createdAt: "2026-01-01",
     // comments: 12,
     // attachments: 5,
   },
@@ -132,10 +120,7 @@ export const recentTasks: TaskTableItem[] = [
     title: "Equipment Calibration",
     description: "Calibrate all testing equipment as per annual schedule",
     assignedBy: "Emmanuel Okafor",
-    assignedTo: {
-      name: "Odumeje Ndaboski",
-      avatar: "ON",
-    },
+    assignedTo: [{ id: "", name: "Odumeje Ndaboski", avatar: "ON" }],
     dueDate: "2026-02-15",
     priority: "Low",
     status: "In Progress",
@@ -145,7 +130,7 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 20,
     hoursLogged: 6,
     tags: ["Equipment", "Maintenance"],
-    createdAt: "2026-01-15",
+    //createdAt: "2026-01-15",
     // comments: 3,
     // attachments: 1,
   },
@@ -154,10 +139,7 @@ export const recentTasks: TaskTableItem[] = [
     title: "Environmental Impact Assessment",
     description: "Conduct EIA for new manufacturing facility project",
     assignedBy: "Grace Nwosu",
-    assignedTo: {
-      name: "Ifeanyi Iheme",
-      avatar: "II",
-    },
+    assignedTo: [{ id: "", name: "Ifeanyi Iheme", avatar: "II" }],
     dueDate: "2026-02-20",
     priority: "High",
     status: "In Progress",
@@ -167,7 +149,7 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 32,
     hoursLogged: 14.5,
     tags: ["Environment", "Assessment"],
-    createdAt: "2026-01-25",
+    //createdAt: "2026-01-25",
     // comments: 6,
     // attachments: 4,
   },
@@ -176,7 +158,7 @@ export const recentTasks: TaskTableItem[] = [
     title: "Conduct ISO 9001 Audit for Access Bank",
     description: "Complete annual ISO 9001 certification audit",
     assignedBy: "Adamu Isa",
-    assignedTo: { name: "Aisha Bello", avatar: "AB" },
+    assignedTo: [{ id: "", name: "Aisha Bello", avatar: "AB" }],
     dueDate: "2026-02-05",
     priority: "High",
     status: "In Progress",
@@ -186,14 +168,14 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 32,
     hoursLogged: 14.5,
     tags: ["ISO", "Banking", "Compliance"],
-    createdAt: "2026-01-15",
+    //createdAt: "2026-01-15",
   },
   {
     id: "T-002",
     title: "Update Risk Register QHSE",
     description: "Quarterly update of risk assessment documentation",
     assignedBy: "Obi Peter",
-    assignedTo: { name: "Michael Okoro", avatar: "MO" },
+    assignedTo: [{ id: "", name: "Michael Okoro", avatar: "MO" }],
     dueDate: "2026-02-10",
     priority: "Medium",
     status: "Not Started",
@@ -203,14 +185,14 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 12,
     hoursLogged: 4.5,
     tags: ["QHSE", "Risk Management"],
-    createdAt: "2026-01-20",
+    //createdAt: "2026-01-20",
   },
   {
     id: "T-003",
     title: "Safety Training Session Prep",
     description: "Prepare materials for monthly safety training",
     assignedBy: "John Dumelo",
-    assignedTo: { name: "Fatima Yusuf", avatar: "FY" },
+    assignedTo: [{ id: "", name: "Fatima Yusuf", avatar: "FY" }],
     dueDate: "2026-01-30",
     priority: "High",
     status: "Completed",
@@ -220,14 +202,14 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 32,
     hoursLogged: 5,
     tags: ["Safety", "Training"],
-    createdAt: "2026-01-10",
+    //createdAt: "2026-01-10",
   },
   {
     id: "T-004",
     title: "Client Report Submission",
     description: "Submit monthly compliance report to GT Bank",
     assignedBy: "James Tom",
-    assignedTo: { name: "David Adebayo", avatar: "DA" },
+    assignedTo: [{ id: "", name: "David Adebayo", avatar: "DA" }],
     dueDate: "2026-02-01",
     priority: "Medium",
     status: "Pending Review",
@@ -237,14 +219,14 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 32,
     hoursLogged: 14.5,
     tags: ["Reporting", "Banking"],
-    createdAt: "2026-01-18",
+    //createdAt: "2026-01-18",
   },
   {
     id: "T-005",
     title: "Equipment Calibration",
     description: "Calibrate testing equipment as per schedule",
     assignedBy: "Imole Tobi",
-    assignedTo: { name: "Aisha Bello", avatar: "AB" },
+    assignedTo: [{ id: "", name: "Aisha Bello", avatar: "AB" }],
     dueDate: "2026-02-15",
     priority: "Low",
     status: "In Progress",
@@ -254,14 +236,14 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 32,
     hoursLogged: 14.5,
     tags: ["Equipment", "Maintenance"],
-    createdAt: "2026-01-22",
+    //createdAt: "2026-01-22",
   },
   {
     id: "T-006",
     title: "Environmental Impact Assessment",
     description: "Conduct EIA for new client project",
     assignedBy: "Amenu Tawo",
-    assignedTo: { name: "Michael Okoro", avatar: "MO" },
+    assignedTo: [{ id: "", name: "Michael Okoro", avatar: "MO" }],
     dueDate: "2026-02-20",
     priority: "High",
     status: "In Progress",
@@ -270,7 +252,7 @@ export const recentTasks: TaskTableItem[] = [
     startDate: "2026-01-25",
     estimatedHours: 32,
     hoursLogged: 14.5,
-    createdAt: "2026-01-25",
+    //createdAt: "2026-01-25",
     tags: ["Environment", "Assessment"],
   },
   {
@@ -278,7 +260,7 @@ export const recentTasks: TaskTableItem[] = [
     title: "Update ISO Documentation",
     description: "Review and update ISO 14001 procedures",
     assignedBy: "Bertha Iheme",
-    assignedTo: { name: "Fatima Yusuf", avatar: "FY" },
+    assignedTo: [{ id: "", name: "Fatima Yusuf", avatar: "FY" }],
     dueDate: "2026-02-12",
     priority: "Medium",
     status: "Not Started",
@@ -288,14 +270,14 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 32,
     hoursLogged: 14.5,
     tags: ["ISO", "Documentation"],
-    createdAt: "2026-01-26",
+    //createdAt: "2026-01-26",
   },
   {
     id: "T-008",
     title: "Staff Performance Review",
     description: "Quarterly performance evaluation",
     assignedBy: "Gabriel William",
-    assignedTo: { name: "David Adebayo", avatar: "DA" },
+    assignedTo: [{ id: "", name: "David Adebayo", avatar: "DA" }],
     dueDate: "2026-02-08",
     priority: "Medium",
     status: "In Progress",
@@ -305,7 +287,7 @@ export const recentTasks: TaskTableItem[] = [
     estimatedHours: 32,
     hoursLogged: 14.5,
     tags: ["HR", "Performance"],
-    createdAt: "2026-01-12",
+    //createdAt: "2026-01-12",
   },
 ];
 

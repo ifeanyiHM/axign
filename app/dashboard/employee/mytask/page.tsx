@@ -8,7 +8,6 @@ import {
   Calendar,
   Clock,
   CheckCircle2,
-  AlertCircle,
   MoreVertical,
   ArrowUpDown,
   AlertTriangle,
@@ -19,19 +18,8 @@ import { myTasksData, myTaskStats, navItems } from "../data";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import StatusCard from "@/components/dashboard/StatusCard";
-
-const statusColors: Record<string, string> = {
-  "Not Started": "bg-slate-800/30 border-slate-700/50 text-slate-400",
-  "In Progress": "bg-blue-900/30 border-blue-800/50 text-blue-400",
-  Completed: "bg-emerald-900/30 border-emerald-800/50 text-emerald-400",
-  "Pending Review": "bg-purple-900/30 border-purple-800/50 text-purple-400",
-};
-
-const priorityColors: Record<string, string> = {
-  High: "bg-red-600/50 shadow-[0_0_0_1px_rgba(239,68,68,0.7)]",
-  Medium: "bg-amber-600/50 shadow-[0_0_0_1px_rgba(245,158,11,0.7)]",
-  Low: "bg-emerald-600/50 shadow-[0_0_0_1px_rgba(16,185,129,0.7)]",
-};
+import Header from "@/components/dashboard/Header";
+import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
 
 type ViewMode = "table" | "grid";
 type SortField = "dueDate" | "priority" | "status" | "progress";
@@ -41,7 +29,7 @@ function MyTasksPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
 
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [selectedPriority, setSelectedPriority] = useState<string>("all");
@@ -107,19 +95,6 @@ function MyTasksPage() {
   const hasActiveFilters =
     selectedStatus !== "all" || selectedPriority !== "all";
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return <CheckCircle2 size={16} className="text-emerald-400" />;
-      case "In Progress":
-        return <Clock size={16} className="text-blue-400" />;
-      case "Pending Review":
-        return <AlertCircle size={16} className="text-purple-400" />;
-      default:
-        return <Clock size={16} className="text-slate-400" />;
-    }
-  };
-
   const getDaysUntilDue = (dueDate: string) => {
     const today = new Date();
     const due = new Date(dueDate);
@@ -153,17 +128,13 @@ function MyTasksPage() {
 
   return (
     <DashboardLayout links={navItems}>
-      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:p-6`}>
-        {/* Header */}
-        <div className="mb-4 sm:mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">
-            My Tasks
-          </h1>
-          <p className={`${colors.textMuted} text-sm sm:text-base`}>
-            Manage and track your assigned tasks
-          </p>
-        </div>
-
+      {/* Header */}
+      <Header
+        title="  My Tasks"
+        subtitle="Manage and track your assigned tasks"
+        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+      />
+      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Stats Overview */}
         <StatusCard status={statsConfig} />
 
@@ -191,14 +162,14 @@ function MyTasksPage() {
         {/* grid View */}
         {viewMode === "grid" && (
           <div className="space-y-3 sm:space-y-4">
-            {sortedTasks.map((task) => {
+            {sortedTasks.map((task, index) => {
               const daysUntilDue = getDaysUntilDue(task.dueDate);
               const isOverdue = daysUntilDue < 0 && task.status !== "Completed";
               const isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 3;
 
               return (
                 <div
-                  key={task.id}
+                  key={index}
                   className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-5 hover:shadow-lg transition-all duration-200 cursor-pointer group`}
                 >
                   {/* Card Header */}
@@ -345,9 +316,9 @@ function MyTasksPage() {
                     <div
                       className={`flex flex-wrap gap-1.5 mt-3 pt-3 border-t ${colors.border}`}
                     >
-                      {task?.tags?.map((tag) => (
+                      {task?.tags?.map((tag, index) => (
                         <span
-                          key={tag}
+                          key={index}
                           className={`px-2 py-1 ${colors.bgSidebar} border ${colors.border} rounded text-xs`}
                         >
                           #{tag}
@@ -364,19 +335,19 @@ function MyTasksPage() {
         {/* Table View */}
         {viewMode === "table" && (
           <div
-            className={`${colors.bgCard} rounded-xl border ${colors.border} overflow-hidden`}
+            className={`${colors.bgCard} rounded-lg overflow-hidden`}
+            style={{ boxShadow: colors.cardShadow }}
           >
-            {/* Desktop Table */}
-            <div className="hidden lg:block overflow-x-auto">
-              <table className="w-full">
+            <div className="overflow-x-auto">
+              <table className="min-w-240 w-full">
                 <thead
                   className={`${colors.bgSidebar} border-b ${colors.border}`}
                 >
                   <tr>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    <th className="text-left px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-semibold">
                       <button
                         onClick={() => handleSort("dueDate")}
-                        className="flex items-center gap-1 hover:text-blue-400"
+                        className="flex items-center gap-1"
                       >
                         Task
                         {sortField === "dueDate" && (
@@ -387,13 +358,13 @@ function MyTasksPage() {
                         )}
                       </button>
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    <th className="text-left px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-semibold">
                       Category
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    <th className="text-left px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-semibold">
                       <button
                         onClick={() => handleSort("status")}
-                        className="flex items-center gap-1 hover:text-blue-400"
+                        className="flex items-center gap-1"
                       >
                         Status
                         {sortField === "status" && (
@@ -404,10 +375,10 @@ function MyTasksPage() {
                         )}
                       </button>
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    <th className="text-left px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-semibold">
                       <button
                         onClick={() => handleSort("priority")}
-                        className="flex items-center gap-1 hover:text-blue-400"
+                        className="flex items-center gap-1"
                       >
                         Priority
                         {sortField === "priority" && (
@@ -418,13 +389,13 @@ function MyTasksPage() {
                         )}
                       </button>
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    <th className="text-left px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-semibold">
                       Due Date
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    <th className="text-left px-2 sm:px-3 py- sm:py-4 text-xs sm:text-sm font-semibold">
                       <button
                         onClick={() => handleSort("progress")}
-                        className="flex items-center gap-1 hover:text-blue-400"
+                        className="flex items-center gap-1"
                       >
                         Progress
                         {sortField === "progress" && (
@@ -435,16 +406,16 @@ function MyTasksPage() {
                         )}
                       </button>
                     </th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    {/* <th className="text-left px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-semibold">
                       Time
-                    </th>
-                    <th className="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+                    </th> */}
+                    <th className="text-center px-2 sm:px-3 py-3 sm:py-4 text-xs sm:text-sm font-semibold">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700/50">
-                  {sortedTasks.map((task) => {
+                  {sortedTasks.map((task, index) => {
                     const daysUntilDue = getDaysUntilDue(task.dueDate);
                     const isOverdue =
                       daysUntilDue < 0 && task.status !== "Completed";
@@ -452,11 +423,11 @@ function MyTasksPage() {
 
                     return (
                       <tr
-                        key={task.id}
-                        className={`hover:bg-gray-800/30 transition-colors cursor-pointer`}
+                        key={index}
+                        className={`border-b ${colors.border} ${colors.tableHover}`}
                       >
                         {/* Task */}
-                        <td className="px-4 py-4">
+                        <td className="px-2 sm:px-3 py-4">
                           <div className="flex items-start gap-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
@@ -466,24 +437,25 @@ function MyTasksPage() {
                                   {task.id}
                                 </span>
                                 {isOverdue && (
-                                  <span className="px-1.5 py-0.5 bg-red-900/30 border border-red-800/50 text-red-400 rounded text-xs">
+                                  <span className="rounded-md border border-red-500/30 px-2 py-0.5 text-xs font-medium text-red-600">
                                     Overdue
                                   </span>
                                 )}
+
                                 {isDueSoon && task.status !== "Completed" && (
-                                  <span className="px-1.5 py-0.5 bg-amber-900/30 border border-amber-800/50 text-amber-400 rounded text-xs">
-                                    Due Soon
+                                  <span className="rounded-md border border-amber-500/30 px-2 py-0.5 text-xs font-medium">
+                                    Due soon
                                   </span>
                                 )}
                               </div>
-                              <p className="font-medium text-sm mb-1 hover:text-blue-400 transition-colors">
+                              <p className="font-medium text-xs sm:text-sm transition-colors">
                                 {task.title}
                               </p>
-                              <p
+                              {/* <p
                                 className={`text-xs ${colors.textMuted} line-clamp-1`}
                               >
                                 {task.description}
-                              </p>
+                              </p> */}
                               {/* <div className="flex items-center gap-3 mt-2">
                                 <div className="flex items-center gap-1 text-xs">
                                   <MessageSquare
@@ -505,18 +477,18 @@ function MyTasksPage() {
                         </td>
 
                         {/* Category */}
-                        <td className="px-4 py-4">
+                        <td className="px-2 sm:px-3 py-4">
                           <span
-                            className={`px-2 py-1 ${colors.bgSidebar} rounded text-xs font-medium`}
+                            className={`px-2 py-1 ${colors.bgSidebar} rounded text-xs sm:text-sm font-medium`}
                           >
                             {task.category}
                           </span>
                         </td>
 
                         {/* Status */}
-                        <td className="px-4 py-4">
+                        <td className="px-2 sm:px-3 py-4">
                           <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[task.status]}`}
+                            className={`inline-flex items-center truncate gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${statusColors[task.status]}`}
                           >
                             {getStatusIcon(task.status)}
                             {task.status}
@@ -524,7 +496,7 @@ function MyTasksPage() {
                         </td>
 
                         {/* Priority */}
-                        <td className="px-4 py-4">
+                        <td className="px-2 sm:px-3 py-4">
                           <span
                             className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}
                           >
@@ -533,11 +505,11 @@ function MyTasksPage() {
                         </td>
 
                         {/* Due Date */}
-                        <td className="px-4 py-4">
+                        <td className="px-2 sm:px-3 py-4">
                           <div className="flex items-center gap-1.5">
                             <Calendar size={14} className={colors.textMuted} />
                             <div>
-                              <p className="text-sm font-medium">
+                              <p className="text-sm font-medium truncate">
                                 {new Date(task.dueDate).toLocaleDateString(
                                   "en-US",
                                   {
@@ -552,23 +524,25 @@ function MyTasksPage() {
                               >
                                 {isOverdue
                                   ? `${Math.abs(daysUntilDue)} days overdue`
-                                  : `${daysUntilDue} days left`}
+                                  : task.status === "Completed"
+                                    ? ""
+                                    : `${daysUntilDue} days left`}
                               </p>
                             </div>
                           </div>
                         </td>
 
                         {/* Progress */}
-                        <td className="px-4 py-4">
+                        <td className="px-2 sm:px-3 py-4">
                           <div className="w-32">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-xs font-semibold">
                                 {task.progress}%
                               </span>
                             </div>
-                            <div className="relative bg-gray-700/50 rounded-full h-2 overflow-hidden">
+                            <div className="relative bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
                               <div
-                                className="absolute inset-y-0 left-0 bg-linear-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+                                className="absolute inset-y-0 left-0 bg-slate-500 rounded-full transition-all duration-500"
                                 style={{ width: `${task.progress}%` }}
                               />
                             </div>
@@ -576,7 +550,7 @@ function MyTasksPage() {
                         </td>
 
                         {/* Time */}
-                        <td className="px-4 py-4">
+                        {/* <td className="px-2 sm:px-3 py-4">
                           <div className="flex items-center gap-1.5">
                             <Clock size={14} className={colors.textMuted} />
                             <div>
@@ -588,10 +562,10 @@ function MyTasksPage() {
                               </p>
                             </div>
                           </div>
-                        </td>
+                        </td> */}
 
                         {/* Actions */}
-                        <td className="px-4 py-4 text-center">
+                        <td className="px-2 sm:px-3 py-4 text-center">
                           <button className={`p-2 ${colors.hover} rounded-lg`}>
                             <MoreVertical size={16} />
                           </button>
@@ -601,136 +575,6 @@ function MyTasksPage() {
                   })}
                 </tbody>
               </table>
-            </div>
-
-            {/* Mobile/Tablet Cards */}
-            <div className="lg:hidden divide-y divide-gray-700/50">
-              {sortedTasks.map((task) => {
-                const daysUntilDue = getDaysUntilDue(task.dueDate);
-                const isOverdue =
-                  daysUntilDue < 0 && task.status !== "Completed";
-                const isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 3;
-
-                return (
-                  <div
-                    key={task.id}
-                    className="p-4 hover:bg-gray-800/30 transition-colors"
-                  >
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span
-                            className={`text-xs font-medium ${colors.textMuted}`}
-                          >
-                            {task.id}
-                          </span>
-                          <span
-                            className={`px-2 py-0.5 ${colors.bgSidebar} rounded text-xs`}
-                          >
-                            {task.category}
-                          </span>
-                          {isOverdue && (
-                            <span className="px-2 py-0.5 bg-red-900/30 border border-red-800/50 text-red-400 rounded text-xs">
-                              Overdue
-                            </span>
-                          )}
-                          {isDueSoon && task.status !== "Completed" && (
-                            <span className="px-2 py-0.5 bg-amber-900/30 border border-amber-800/50 text-amber-400 rounded text-xs">
-                              Due Soon
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-semibold text-sm mb-1">
-                          {task.title}
-                        </h3>
-                        <p
-                          className={`text-xs ${colors.textMuted} line-clamp-2`}
-                        >
-                          {task.description}
-                        </p>
-                      </div>
-                      <button className={`p-2 ${colors.hover} rounded-lg`}>
-                        <MoreVertical size={16} />
-                      </button>
-                    </div>
-
-                    {/* Info Grid */}
-                    <div className="grid grid-cols-2 gap-3 mb-3">
-                      <div>
-                        <p className={`text-xs ${colors.textMuted} mb-1`}>
-                          Status
-                        </p>
-                        <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${statusColors[task.status]}`}
-                        >
-                          {getStatusIcon(task.status)}
-                          {task.status}
-                        </span>
-                      </div>
-                      <div>
-                        <p className={`text-xs ${colors.textMuted} mb-1`}>
-                          Priority
-                        </p>
-                        <span
-                          className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}
-                        >
-                          {task.priority}
-                        </span>
-                      </div>
-                      <div>
-                        <p className={`text-xs ${colors.textMuted} mb-1`}>
-                          Due Date
-                        </p>
-                        <p className="text-xs font-medium">
-                          {new Date(task.dueDate).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </p>
-                      </div>
-                      <div>
-                        <p className={`text-xs ${colors.textMuted} mb-1`}>
-                          Time Logged
-                        </p>
-                        <p className="text-xs font-medium">
-                          {task.hoursLogged}/{task.estimatedHours}h
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Progress */}
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className={`text-xs ${colors.textMuted}`}>
-                          Progress
-                        </span>
-                        <span className="text-xs font-semibold">
-                          {task.progress}%
-                        </span>
-                      </div>
-                      <div className="relative bg-gray-700/50 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="absolute inset-y-0 left-0 bg-linear-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
-                          style={{ width: `${task.progress}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Footer */}
-                    {/* <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-700/50">
-                      <div className="flex items-center gap-1 text-xs">
-                        <MessageSquare size={12} className={colors.textMuted} />
-                        <span>{task.comments}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-xs">
-                        <Paperclip size={12} className={colors.textMuted} />
-                        <span>{task.attachments}</span>
-                      </div>
-                    </div> */}
-                  </div>
-                );
-              })}
             </div>
           </div>
         )}

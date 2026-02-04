@@ -11,9 +11,7 @@ import {
   Eye,
   Edit,
   Trash2,
-  CheckCircle2,
   Clock,
-  AlertCircle,
   ArrowUpDown,
   Plus,
   ListTodo,
@@ -26,19 +24,7 @@ import StatusCard from "@/components/dashboard/StatusCard";
 import { Button } from "@/components/ui/button";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import Header from "@/components/dashboard/Header";
-
-const statusColors: Record<string, string> = {
-  "Not Started": "bg-slate-800/30 border-slate-700/50",
-  "In Progress": "bg-blue-900/30 border-blue-800/50",
-  Completed: "bg-emerald-900/30 border-emerald-800/50",
-  "Pending Review": "bg-purple-900/30 border-purple-800/50",
-};
-
-const priorityColors: Record<string, string> = {
-  High: "bg-red-600/50 shadow-[0_0_0_1px_rgba(239,68,68,0.7)]",
-  Medium: "bg-amber-600/50 shadow-[0_0_0_1px_rgba(245,158,11,0.7)]",
-  Low: "bg-emerald-600/50 shadow-[0_0_0_1px_rgba(16,185,129,0.7)]",
-};
+import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
 
 type ViewMode = "table" | "grid";
 type SortField = "dueDate" | "priority" | "status" | "createdAt" | "title";
@@ -63,7 +49,9 @@ function AllTasksPage() {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.assignedTo.name.toLowerCase().includes(searchQuery.toLowerCase());
+      task.assignedTo
+        .map((assignee) => assignee.name.toLowerCase())
+        .includes(searchQuery.toLowerCase());
     const matchesStatus =
       selectedStatus === "all" || task.status === selectedStatus;
     const matchesPriority =
@@ -93,7 +81,8 @@ function AllTasksPage() {
         break;
       case "createdAt":
         comparison =
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          new Date(a.createdAt ?? 0).getTime() -
+          new Date(b.createdAt ?? 0).getTime();
         break;
       case "title":
         comparison = a.title.localeCompare(b.title);
@@ -109,19 +98,6 @@ function AllTasksPage() {
     } else {
       setSortField(field);
       setSortOrder("asc");
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return <CheckCircle2 size={16} />;
-      case "In Progress":
-        return <Clock size={16} />;
-      case "Pending Review":
-        return <AlertCircle size={16} />;
-      default:
-        return <Clock size={16} />;
     }
   };
 
@@ -208,7 +184,7 @@ function AllTasksPage() {
                   className={`${colors.bgSidebar} border-b ${colors.border}`}
                 >
                   <tr>
-                    <th className="px-3 py-3 sm:py-4 text-left">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
                       <button
                         onClick={() => handleSort("title")}
                         className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
@@ -217,10 +193,10 @@ function AllTasksPage() {
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
                       </button>
                     </th>
-                    <th className="px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
                       Assigned To
                     </th>
-                    <th className="px-3 py-3 sm:py-4 text-left">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
                       <button
                         onClick={() => handleSort("dueDate")}
                         className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
@@ -229,7 +205,7 @@ function AllTasksPage() {
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
                       </button>
                     </th>
-                    <th className="px-3 py-3 sm:py-4 text-left">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
                       <button
                         onClick={() => handleSort("priority")}
                         className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
@@ -238,7 +214,7 @@ function AllTasksPage() {
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
                       </button>
                     </th>
-                    <th className="px-3 py-3 sm:py-4 text-left">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
                       <button
                         onClick={() => handleSort("status")}
                         className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
@@ -247,21 +223,21 @@ function AllTasksPage() {
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
                       </button>
                     </th>
-                    <th className="px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
                       Progress
                     </th>
-                    <th className="px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
+                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedTasks.map((task) => (
+                  {sortedTasks.map((task, index) => (
                     <tr
-                      key={task.id}
+                      key={index}
                       className={`border-b ${colors.border} ${colors.tableHover}`}
                     >
-                      <td className="px-3 py-3 sm:py-4">
+                      <td className="px-2 sm:px-3 py-3 sm:py-4 w-full">
                         <div className="">
                           <div className="font-medium text-xs sm:text-sm">
                             {task.title}
@@ -271,17 +247,19 @@ function AllTasksPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 py-3 sm:py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
-                            {task.assignedTo.avatar}
+                      <td className="px-2 sm:px-3 py-3 sm:py-4 space-y-1">
+                        {task.assignedTo.map((assignee, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
+                              {assignee.avatar}
+                            </div>
+                            <span className="text-xs truncate sm:inline">
+                              {assignee.name}
+                            </span>
                           </div>
-                          <span className="text-xs sm:text-sm hidden truncate sm:inline">
-                            {task.assignedTo.name}
-                          </span>
-                        </div>
+                        ))}
                       </td>
-                      <td className="px-3 py-3 sm:py-4">
+                      <td className="px-2 sm:px-3 py-3 sm:py-4">
                         <div className="flex items-center gap-1 sm:gap-2">
                           <Calendar
                             size={14}
@@ -299,7 +277,7 @@ function AllTasksPage() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-3 py-3 sm:py-4">
+                      <td className="px-2 sm:px-3 py-3 sm:py-4">
                         <span
                           className={`px-2 sm:px-3 py-1 rounded-full text-xs ${
                             task.priority === "High"
@@ -313,18 +291,16 @@ function AllTasksPage() {
                         </span>
                       </td>
 
-                      <td className="px-3 py-3 sm:py-4">
+                      <td className="px-2 sm:px-3 py-3 sm:py-4">
                         <span
                           className={`inline-flex truncate items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 rounded-full text-xs border ${statusColors[task.status]}`}
                         >
                           {getStatusIcon(task.status)}
-                          <span className="hidden sm:inline">
-                            {task.status}
-                          </span>
+                          <span className="">{task.status}</span>
                         </span>
                       </td>
 
-                      <td className="px-3 py-3 sm:py-4">
+                      <td className="px-2 sm:px-3 py-3 sm:py-4">
                         <div className="flex items-center gap-3">
                           <div className="flex-1 min-w-10">
                             <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
@@ -341,8 +317,8 @@ function AllTasksPage() {
                         </div>
                       </td>
 
-                      <td className="px-3 py-3 sm:py-4">
-                        <div className="flex items-center gap-1 sm:gap-2">
+                      <td className="px-2 sm:px-3 py-3 sm:py-4">
+                        <div className="flex items-center">
                           <button
                             className={`p-1.5 sm:p-2 ${colors.hover} rounded-lg`}
                             title="View Details"
@@ -382,9 +358,9 @@ function AllTasksPage() {
         {/* Grid View */}
         {viewMode === "grid" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {sortedTasks.map((task) => (
+            {sortedTasks.map((task, index) => (
               <div
-                key={task.id}
+                key={index}
                 className={`${colors.bgCard} rounded-xl p-4 sm:p-5 hover:shadow-lg transition-shadow duration-200 flex flex-col justify-between`}
                 style={{ boxShadow: colors.cardShadow }}
               >
@@ -417,9 +393,9 @@ function AllTasksPage() {
                 {/* Tags */}
                 {task.tags && task.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-3">
-                    {task.tags?.slice(0, 2).map((tag) => (
+                    {task.tags?.slice(0, 2).map((tag, index) => (
                       <span
-                        key={tag}
+                        key={index}
                         className={`px-2 py-0.5 ${colors.bgSidebar} rounded text-xs`}
                       >
                         {tag}
@@ -437,13 +413,17 @@ function AllTasksPage() {
 
                 {/* Metadata */}
                 <div className="flex flex-wrap sm:flex-nowrap items-center justify-between mb-3 gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold">
-                      {task.assignedTo.avatar}
-                    </div>
-                    <span className="text-xs sm:text-sm truncate">
-                      {task.assignedTo.name}
-                    </span>
+                  <div className="space-y-1">
+                    {task.assignedTo.map((assignee, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold">
+                          {assignee.avatar}
+                        </div>
+                        <span className="text-xs sm:text-sm truncate">
+                          {assignee.name}
+                        </span>
+                      </div>
+                    ))}
                   </div>
 
                   <div className="flex items-center gap-2 text-xs sm:text-sm">

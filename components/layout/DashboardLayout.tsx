@@ -31,7 +31,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   return (
-    <div className={`min-h-screen ${colors.bg} ${colors.text} flex `}>
+    <div className={`min-h-screen ${colors.bg} ${colors.text} flex`}>
       {/* bg-[#181818] */}
       {/* Mobile Hamburger Button */}
       <Button
@@ -97,7 +97,7 @@ export default function DashboardLayout({
       )}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-auto pb-6">{children}</main>
     </div>
   );
 }

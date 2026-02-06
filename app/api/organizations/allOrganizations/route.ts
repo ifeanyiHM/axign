@@ -3,6 +3,7 @@ import Organization from "@/lib/modals/organization";
 import User from "@/lib/modals/users";
 import { NextResponse } from "next/server";
 
+//GET ALL ORGANIZATION
 export const GET = async () => {
   try {
     await connectToDatabase();

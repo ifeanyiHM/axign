@@ -1,29 +1,3 @@
-// import jwt from "jsonwebtoken";
-// import { cookies } from "next/headers";
-// import connectToDatabase from "@/lib/db";
-// import User from "@/lib/modals/users";
-
-// interface JWTPayload {
-//   userId: string;
-//   iat?: number;
-//   exp?: number;
-// }
-
-// export async function GET() {
-//   const token = (await cookies()).get("auth_token")?.value;
-//   if (!token) return new Response(null, { status: 401 });
-
-//   const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
-
-//   await connectToDatabase();
-//   const user = await User.findById(decoded.userId)
-//     .select("-password")
-//     .populate("organization");
-
-//   return Response.json(user);
-// }
-
-// app/api/auth/me/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 import User from "@/lib/modals/users";

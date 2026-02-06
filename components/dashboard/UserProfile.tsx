@@ -1,57 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
-import { useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   User,
   Lock,
   Camera,
   Save,
   X,
-  CheckCircle2,
-  AlertCircle,
   Building2,
   Shield,
   Eye,
   EyeOff,
 } from "lucide-react";
 
-import Image from "next/image";
 import Header from "./Header";
-
-// Profile Schema
-const profileSchema = z.object({
-  username: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  location: z.string().optional(),
-  position: z.string().optional(),
-  bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
-});
-
-type ProfileFormData = z.infer<typeof profileSchema>;
-
-// Password Schema
-const passwordSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type PasswordFormData = z.infer<typeof passwordSchema>;
+import { useUser } from "@/context/UserContext";
+import { ProfileFormData, profileSchema } from "@/schemas/profileSchema";
+import InputField from "../primitives/form/InputField";
+import { Button } from "../ui/button";
+import { PasswordFormData, passwordSchema } from "@/schemas/passwordSchema";
+import { Alert } from "../ui/alert";
+import SelectField from "../primitives/form/SelectField";
 
 export function UserProfile() {
   const { user } = useAuth();
+  const { updateProfile, changePassword, profile } = useUser();
   const { theme } = useTheme();
   const colors = themes[theme];
 
@@ -60,42 +38,35 @@ export function UserProfile() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Mock user data (replace with real data from API)
-  const [userData] = useState({
-    username: user?.username || "John Doe",
-    email: user?.email || "john.doe@company.com",
-    phone: "+234 801 234 5678",
-    location: "Lagos, Nigeria",
-    position: "Chief Executive Officer",
-    department: "Executive",
-    joinDate: "2021-06-15",
-    employeeId: "EMP-001",
-    organizationName: "Axign Consulting Ltd.",
-    bio: "Experienced professional with expertise in quality management and organizational leadership. Passionate about driving excellence and building high-performing teams.",
-    avatar: user?.username?.substring(0, 2).toUpperCase() || "JD",
-  });
+  console.log("THIS IS NOW:", profile);
 
   // Profile Form
   const {
     register: registerProfile,
     handleSubmit: handleSubmitProfile,
     formState: { errors: profileErrors, isSubmitting: isSubmittingProfile },
-    reset: resetProfile,
+    reset,
+    control,
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      username: userData.username,
-      email: userData.email,
-      phone: userData.phone,
-      location: userData.location,
-      position: userData.position,
-      bio: userData.bio,
+      username: "",
+      email: "",
+      phone: "",
+      location: "",
+      position: "",
+      department: "",
+      bio: "",
+      avatar: "",
+      userActiveStatus: "active",
     },
   });
+
+  const avatar = useWatch({ control, name: "avatar" });
+  const userActiveStatus = useWatch({ control, name: "userActiveStatus" });
 
   // Password Form
   const {
@@ -107,13 +78,28 @@ export function UserProfile() {
     resolver: zodResolver(passwordSchema),
   });
 
+  useEffect(() => {
+    if (profile) {
+      reset({
+        username: profile.username || "",
+        email: profile.email || "",
+        phone: profile.phone || "",
+        location: profile.location || "",
+        position: profile.position || "",
+        department: profile.department || "",
+        bio: profile.bio || "",
+        avatar: profile.avatar || "",
+        userActiveStatus: profile.userActiveStatus || "",
+      });
+    }
+  }, [profile, reset]);
+
   const onProfileSubmit = async (data: ProfileFormData) => {
     try {
       setErrorMessage("");
       setSuccessMessage("");
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await updateProfile(data);
 
       console.log("Profile updated:", data);
 
@@ -132,8 +118,10 @@ export function UserProfile() {
       setErrorMessage("");
       setSuccessMessage("");
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
 
       console.log("Password updated:", data);
 
@@ -150,18 +138,21 @@ export function UserProfile() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const imageData = reader.result as string;
+      reset((prev) => ({
+        ...prev,
+        avatar: imageData,
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
-    resetProfile();
     setErrorMessage("");
   };
 
@@ -173,24 +164,20 @@ export function UserProfile() {
         subtitle="Manage your account information and preferences"
         className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
       />
-      <div
-        className={`min-h-screen ${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}
-      >
+      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Success/Error Messages */}
-        {successMessage && (
-          <div className="mb-4 sm:mb-6 bg-emerald-900/30 border border-emerald-800/50 rounded-lg p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
-            <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
-            <p className="text-emerald-400 text-sm sm:text-base">
-              {successMessage}
-            </p>
-          </div>
-        )}
-
-        {errorMessage && (
-          <div className="mb-4 sm:mb-6 bg-red-900/30 border border-red-800/50 rounded-lg p-3 sm:p-4 flex items-center gap-2 sm:gap-3">
-            <AlertCircle size={20} className="text-red-400 shrink-0" />
-            <p className="text-red-400 text-sm sm:text-base">{errorMessage}</p>
-          </div>
+        {(errorMessage || successMessage) && (
+          <Alert
+            variant={errorMessage ? "danger" : "success"}
+            title={errorMessage ? "Error" : "Success"}
+            description={errorMessage || successMessage}
+            dismissible={true}
+            onClose={() => {
+              setErrorMessage("");
+              setSuccessMessage("");
+            }}
+            className="w-fit fixed top-0 right-4 mt-6 mr-10 z-50"
+          />
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -202,15 +189,16 @@ export function UserProfile() {
             >
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
-                  {profileImage ? (
-                    <Image
-                      src={profileImage}
+                  {avatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={avatar}
                       alt="Profile"
-                      className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-blue-500"
+                      className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border border-slate-600"
                     />
                   ) : (
-                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-3xl sm:text-4xl font-bold text-white border-4 border-blue-500 shadow-lg">
-                      {userData.avatar}
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-slate-600 flex items-center justify-center text-3xl sm:text-4xl font-bold text-white border-4 border-slate-500 shadow-lg">
+                      {profile?.username?.substring(0, 2).toUpperCase()}
                     </div>
                   )}
                   <label
@@ -229,15 +217,17 @@ export function UserProfile() {
                 </div>
 
                 <h2 className="text-lg sm:text-xl font-bold text-center mb-1">
-                  {userData.username}
+                  {profile?.username}
                 </h2>
                 <p
                   className={`${colors.textMuted} text-xs sm:text-sm text-center mb-1`}
                 >
-                  {userData.position}
+                  {profile?.position}
                 </p>
                 <p className={`${colors.textMuted} text-xs text-center`}>
-                  {userData.employeeId}
+                  {profile?.userStatus === "employee"
+                    ? `EMP-${(profile?._id).slice(0, 4)}`
+                    : `CEO-${(profile?._id).slice(0, 4)}`}
                 </p>
 
                 <div
@@ -245,17 +235,43 @@ export function UserProfile() {
                 >
                   <div className="flex items-center justify-between text-xs sm:text-sm">
                     <span className={colors.textMuted}>Status</span>
-                    <span className="px-2 sm:px-3 py-1 bg-emerald-900/30 border border-emerald-800/50 text-emerald-400 rounded-full text-xs font-medium">
-                      Active
-                    </span>
+                    {isEditing ? (
+                      <Controller
+                        name="userActiveStatus"
+                        control={control}
+                        render={({ field }) => (
+                          <SelectField
+                            error={profileErrors?.userActiveStatus?.message}
+                            options={[
+                              { label: "Active", value: "active" },
+                              { label: "Onleave", value: "onleave" },
+                              { label: "Inactive", value: "inactive" },
+                            ]}
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            selectClassName="w-fit inline-flex items-center px-3 py-1 rounded-md text-xs font-medium"
+                          />
+                        )}
+                      />
+                    ) : (
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${userActiveStatus === "active" ? "bg-emerald-600 text-white" : userActiveStatus === "inactive" ? "bg-red-600 text-white" : "bg-transparent border"}`}
+                      >
+                        {userActiveStatus}
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center justify-between text-xs sm:text-sm">
+
+                  <div className="flex items-center justify-between text-xs">
                     <span className={colors.textMuted}>Member since</span>
                     <span className="font-medium">
-                      {new Date(userData.joinDate).toLocaleDateString("en-US", {
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      {new Date(profile?.createdAt || "").toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          year: "numeric",
+                        },
+                      )}
                     </span>
                   </div>
                 </div>
@@ -276,7 +292,9 @@ export function UserProfile() {
                   <p className={`text-xs ${colors.textMuted} mb-1`}>
                     Tasks Completed
                   </p>
-                  <p className="text-xl sm:text-2xl font-bold">156</p>
+                  <p className="text-xl sm:text-2xl font-bold">
+                    {profile?.tasksCompleted}
+                  </p>
                 </div>
                 <div
                   className={`p-3 ${colors.bgSidebar} rounded-lg border ${colors.border}`}
@@ -284,15 +302,28 @@ export function UserProfile() {
                   <p className={`text-xs ${colors.textMuted} mb-1`}>
                     Active Projects
                   </p>
-                  <p className="text-xl sm:text-2xl font-bold">8</p>
+                  <p className="text-xl sm:text-2xl font-bold">
+                    {(profile.tasksAssigned ?? 0) -
+                      (profile?.tasksCompleted ?? 0)}
+                  </p>
                 </div>
                 <div
                   className={`p-3 ${colors.bgSidebar} rounded-lg border ${colors.border}`}
                 >
                   <p className={`text-xs ${colors.textMuted} mb-1`}>
-                    Team Members
+                    Total Tasks
                   </p>
-                  <p className="text-xl sm:text-2xl font-bold">12</p>
+                  <p className="text-xl sm:text-2xl font-bold">
+                    {profile?.tasksAssigned}
+                  </p>
+                </div>
+                <div
+                  className={`p-3 ${colors.bgSidebar} rounded-lg border ${colors.border}`}
+                >
+                  <p className={`text-xs ${colors.textMuted} mb-1`}>Rating</p>
+                  <p className="text-xl sm:text-2xl font-bold">
+                    {profile?.performanceRating}
+                  </p>
                 </div>
               </div>
             </div>
@@ -306,114 +337,83 @@ export function UserProfile() {
             >
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <div className="flex items-center gap-2">
-                  <User size={20} className="text-blue-400 sm:w-6 sm:h-6" />
-                  <h3 className="text-base sm:text-lg font-semibold">
+                  <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100">
+                    <User size={20} className="" />
+                  </div>
+
+                  <h3 className="text-base font-semibold">
                     Personal Information
                   </h3>
                 </div>
                 {!isEditing && (
-                  <button
+                  <Button
+                    variant={"outline"}
                     onClick={() => setIsEditing(true)}
                     className={`px-3 sm:px-4 py-2 rounded-lg text-sm`}
                   >
                     Edit Profile
-                  </button>
+                  </Button>
                 )}
               </div>
 
               <form onSubmit={handleSubmitProfile(onProfileSubmit)}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Full Name */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Full Name <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      {...registerProfile("username")}
-                      disabled={!isEditing}
-                      className={`w-full px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-                        profileErrors.username ? "ring-2 ring-red-500" : ""
-                      }`}
-                    />
-                    {profileErrors.username && (
-                      <p className="text-red-400 text-xs mt-1">
-                        {profileErrors.username.message}
-                      </p>
-                    )}
-                  </div>
+
+                  <InputField
+                    type="text"
+                    label="Full Name *"
+                    {...registerProfile("username")}
+                    disabled={!isEditing}
+                    error={profileErrors?.username?.message}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                  />
 
                   {/* Email */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Email Address <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      {...registerProfile("email")}
-                      disabled={!isEditing}
-                      className={`w-full px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed ${
-                        profileErrors.email ? "ring-2 ring-red-500" : ""
-                      }`}
-                    />
-                    {profileErrors.email && (
-                      <p className="text-red-400 text-xs mt-1">
-                        {profileErrors.email.message}
-                      </p>
-                    )}
-                  </div>
+                  <InputField
+                    type="email"
+                    label="Email Address *"
+                    {...registerProfile("email")}
+                    disabled={!isEditing}
+                    error={profileErrors?.email?.message}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                  />
 
                   {/* Phone */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      {...registerProfile("phone")}
-                      disabled={!isEditing}
-                      className={`w-full px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed`}
-                    />
-                  </div>
+                  <InputField
+                    label="Phone Number"
+                    type="tel"
+                    {...registerProfile("phone")}
+                    disabled={!isEditing}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                  />
 
                   {/* Location */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      {...registerProfile("location")}
-                      disabled={!isEditing}
-                      className={`w-full px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed`}
-                    />
-                  </div>
+                  <InputField
+                    type="text"
+                    label="Location"
+                    {...registerProfile("location")}
+                    disabled={!isEditing}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                  />
 
                   {/* Position */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Position
-                    </label>
-                    <input
-                      type="text"
-                      {...registerProfile("position")}
-                      disabled={!isEditing}
-                      className={`w-full px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed`}
-                    />
-                  </div>
+                  <InputField
+                    type="text"
+                    label="Position"
+                    {...registerProfile("position")}
+                    disabled={!isEditing}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                  />
 
                   {/* Department (read-only) */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Department
-                    </label>
-                    <input
-                      type="text"
-                      value={userData.department}
-                      disabled
-                      className={`w-full px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg opacity-50 cursor-not-allowed`}
-                    />
-                  </div>
+                  <InputField
+                    type="text"
+                    label="Department"
+                    {...registerProfile("department")}
+                    disabled={!isEditing}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                  />
                 </div>
 
                 {/* Bio */}
@@ -425,7 +425,7 @@ export function UserProfile() {
                     {...registerProfile("bio")}
                     disabled={!isEditing}
                     rows={4}
-                    className={`w-full px-3 sm:px-4 py-2 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
                       profileErrors.bio ? "ring-2 ring-red-500" : ""
                     }`}
                   />
@@ -439,10 +439,10 @@ export function UserProfile() {
                 {/* Action Buttons */}
                 {isEditing && (
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4 sm:mt-6">
-                    <button
+                    <Button
                       type="submit"
                       disabled={isSubmittingProfile}
-                      className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 ${colors.button} rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                      className={`px-4 sm:px-6 py-2.5 ${colors.button}`}
                     >
                       {isSubmittingProfile ? (
                         <>
@@ -455,16 +455,17 @@ export function UserProfile() {
                           Save Changes
                         </>
                       )}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant={"secondary"}
                       type="button"
                       onClick={handleCancelEdit}
                       disabled={isSubmittingProfile}
-                      className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 bg-gray-100 rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                      className={`bg-gray-100 text-gray-900`}
                     >
                       <X size={18} />
                       Cancel
-                    </button>
+                    </Button>
                   </div>
                 )}
               </form>
@@ -475,10 +476,10 @@ export function UserProfile() {
               className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-6`}
             >
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                <Building2 size={20} className="text-blue-400 sm:w-6 sm:h-6" />
-                <h3 className="text-base sm:text-lg font-semibold">
-                  Organization
-                </h3>
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100">
+                  <Building2 size={18} className="" />
+                </div>
+                <h3 className="text-base font-semibold">Organization</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -488,18 +489,18 @@ export function UserProfile() {
                   >
                     Organization Name
                   </label>
-                  <p className="font-medium text-sm sm:text-base">
-                    {userData.organizationName}
-                  </p>
+                  <p className="font-medium text-sm">{profile?.companyName}</p>
                 </div>
                 <div>
                   <label
                     className={`block text-xs sm:text-sm ${colors.textMuted} mb-1`}
                   >
-                    Employee ID
+                    {profile?.userStatus === "employee" ? "Employee ID" : "ID"}
                   </label>
-                  <p className="font-medium text-sm sm:text-base">
-                    {userData.employeeId}
+                  <p className="font-medium text-sm">
+                    {profile?.userStatus === "employee"
+                      ? `EMP-${(profile?._id).slice(0, 4)}`
+                      : `CEO-${(profile?._id).slice(0, 4)}`}
                   </p>
                 </div>
                 <div>
@@ -508,12 +509,15 @@ export function UserProfile() {
                   >
                     Join Date
                   </label>
-                  <p className="font-medium text-sm sm:text-base">
-                    {new Date(userData.joinDate).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                  <p className="font-medium text-sm">
+                    {new Date(profile?.createdAt || "").toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      },
+                    )}
                   </p>
                 </div>
                 <div>
@@ -522,8 +526,8 @@ export function UserProfile() {
                   >
                     Role
                   </label>
-                  <p className="font-medium text-sm sm:text-base capitalize">
-                    {user?.userStatus || "CEO"}
+                  <p className="font-medium text-sm capitalize">
+                    {user?.userStatus}
                   </p>
                 </div>
               </div>
@@ -534,8 +538,11 @@ export function UserProfile() {
               className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-6`}
             >
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                <Shield size={20} className="text-blue-400 sm:w-6 sm:h-6" />
-                <h3 className="text-base sm:text-lg font-semibold">Security</h3>
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100">
+                  <Shield size={20} className="" />
+                </div>
+
+                <h3 className="text-base font-semibold">Security</h3>
               </div>
 
               {!showPasswordForm ? (

@@ -3,9 +3,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { CheckCircle, Info, AlertTriangle, X, Ban } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/* ─────────────────────────────────────────────
-   Variant styles
-───────────────────────────────────────────── */
+/* 
+  Variant styles
+ */
 
 const alertVariants = cva(
   //  "fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-[21.813rem] rounded-lg border p-4 text-sm",
@@ -25,31 +25,6 @@ const alertVariants = cva(
     },
   },
 );
-
-// const alertVariants = cva(
-//   "relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
-//   {
-//     variants: {
-//       variant: {
-//         default: "bg-card text-card-foreground",
-//         danger:
-//           "border-red-200 bg-red-50 text-red-800 [&>svg]:text-red-600 *:data-[slot=alert-description]:text-red-700",
-//         success:
-//           "bg-green-50 border border-green-200 text-green-700 [&>svg]:text-green-600 *:data-[slot=alert-description]:text-green-700",
-//         warning:
-//           "border-yellow-200 bg-yellow-50 text-yellow-800 [&>svg]:text-yellow-600 *:data-[slot=alert-description]:text-yellow-700",
-//         info: "border-blue-200 bg-blue-50 text-blue-800 [&>svg]:text-blue-600 *:data-[slot=alert-description]:text-blue-700",
-//       },
-//     },
-//     defaultVariants: {
-//       variant: "default",
-//     },
-//   },
-// );
-
-/* ─────────────────────────────────────────────
-   Variant → Icon mapping
-───────────────────────────────────────────── */
 
 const variantIcons = {
   success: CheckCircle,

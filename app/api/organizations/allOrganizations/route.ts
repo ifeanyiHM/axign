@@ -6,11 +6,11 @@ import { NextResponse } from "next/server";
 export const GET = async () => {
   try {
     await connectToDatabase();
-    const users = await User.find();
-    return new NextResponse(JSON.stringify(users), { status: 200 });
+    const organizations = await Organization.find();
+    return new NextResponse(JSON.stringify(organizations), { status: 200 });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return new NextResponse("Error fetching users" + error.message, {
+    return new NextResponse("Error fetching organizations" + error.message, {
       status: 500,
     });
   }

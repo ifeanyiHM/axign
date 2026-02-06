@@ -19,14 +19,23 @@ interface SignupData {
   organizationId?: string;
 }
 
+interface MessageObject {
+  error?: string;
+  details?: string;
+  success?: string;
+  message?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data?: any;
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (data: SignupData) => Promise<void>;
   logout: () => void;
-  message: string;
-  setMessage: (message: string) => void;
+  message: MessageObject | null;
+  setMessage: (message: MessageObject | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return null;
   });
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<MessageObject | null>(null);
 
   const router = useRouter();
 
@@ -103,21 +112,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const data = await res.json();
+      console.log("LKSJSLKFLKL", data);
 
       if (!res.ok) {
         throw new Error(data.error || "Signup failed");
       }
 
       console.log("Signup response:", data);
-      setMessage(data.message);
+      setMessage(data);
       setUser(data.user);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      setMessage(
-        error.message.includes("E11000")
+      setMessage({
+        error: error.message.includes("E11000")
           ? "User already exists. Please use a different email or username."
           : error.message,
-      );
+      });
       console.error("Signup error:", error);
       throw error;
     }

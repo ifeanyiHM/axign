@@ -21,15 +21,16 @@ import {
   ArrowUpDown,
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { allEmployees, links } from "../data";
+import { links } from "../data";
 import StatusCard from "@/components/dashboard/StatusCard";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import Header from "@/components/dashboard/Header";
+import { useUser } from "@/context/UserContext";
 
 const statusColors: Record<string, string> = {
-  Active: "bg-emerald-600",
-  Inactive: "bg-rose-600",
-  "On Leave": "bg-slate-500",
+  active: "bg-emerald-600",
+  inactive: "bg-rose-600",
+  onleave: "bg-slate-500",
 };
 
 type ViewMode = "table" | "grid";
@@ -37,8 +38,11 @@ type SortField = "name" | "position" | "department" | "joinDate" | "status";
 type SortOrder = "asc" | "desc";
 
 function EmployeesPage() {
+  const { organizationStaffs, loadingOrgStaffs } = useUser();
   const { theme } = useTheme();
   const colors = themes[theme];
+
+  console.log(loadingOrgStaffs);
 
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,14 +54,14 @@ function EmployeesPage() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Filter and sort employees
-  const filteredEmployees = allEmployees.filter((employee) => {
+  const filteredEmployees = organizationStaffs.filter((employee) => {
     const matchesSearch =
-      employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
       employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      employee.position.toLowerCase().includes(searchQuery.toLowerCase());
+      employee._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee?.position?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus =
-      selectedStatus === "all" || employee.status === selectedStatus;
+      selectedStatus === "all" || employee.userActiveStatus === selectedStatus;
     const matchesDepartment =
       selectedDepartment === "all" ||
       employee.department === selectedDepartment;
@@ -70,20 +74,25 @@ function EmployeesPage() {
 
     switch (sortField) {
       case "name":
-        comparison = a.name.localeCompare(b.name);
+        comparison = (a.username || "").localeCompare(b.username || "");
         break;
       case "position":
-        comparison = a.position.localeCompare(b.position);
+        comparison = (a.position || "").localeCompare(b.position || "");
         break;
       case "department":
-        comparison = a.department.localeCompare(b.department);
+        comparison = (a.department || "").localeCompare(b.department || "");
         break;
       case "joinDate":
-        comparison =
-          new Date(a.joinDate).getTime() - new Date(b.joinDate).getTime();
+        {
+          if (!a.createdAt || !b.createdAt) {
+            throw new Error("Missing createdAt for sorting");
+          }
+          comparison =
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        }
         break;
       case "status":
-        comparison = a.status.localeCompare(b.status);
+        comparison = a.userActiveStatus.localeCompare(b.userActiveStatus);
         break;
     }
 
@@ -107,13 +116,13 @@ function EmployeesPage() {
   const hasActiveFilters =
     selectedStatus !== "all" || selectedDepartment !== "all";
 
-  const employeeStats = allEmployees.reduce(
+  const employeeStats = organizationStaffs.reduce(
     (acc, employee) => {
       acc.total += 1;
 
-      if (employee.status === "Active") acc.active += 1;
-      if (employee.status === "On Leave") acc.onLeave += 1;
-      if (employee.status === "Inactive") acc.inactive += 1;
+      if (employee.userActiveStatus === "active") acc.active += 1;
+      if (employee.userActiveStatus === "onleave") acc.onLeave += 1;
+      if (employee.userActiveStatus === "inactive") acc.inactive += 1;
 
       return acc;
     },
@@ -180,7 +189,8 @@ function EmployeesPage() {
           clearFilters={clearFilters}
           label="active"
         >
-          Showing {sortedEmployees.length} of {allEmployees.length} employees
+          Showing {sortedEmployees.length} of {organizationStaffs.length}{" "}
+          employees
         </FiltersandActions>
 
         {/* Table View */}
@@ -201,7 +211,7 @@ function EmployeesPage() {
                         onClick={() => handleSort("name")}
                         className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
                       >
-                        Employee
+                        Staffs
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
                       </button>
                     </th>
@@ -246,22 +256,35 @@ function EmployeesPage() {
                 <tbody>
                   {sortedEmployees.map((employee) => (
                     <tr
-                      key={employee.id}
+                      key={employee._id}
                       className={`border-b ${colors.border} ${colors.tableHover}`}
                     >
                       <td className="px-3 py-3 sm:py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-600 flex items-center justify-center text-sm font-semibold text-white shadow-md shrink-0">
-                            {employee.avatar}
-                          </div>
+                          {employee.avatar ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={employee.avatar}
+                              alt="Profile"
+                              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border border-slate-600"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-600 flex items-center justify-center text-sm font-semibold text-white shadow-md shrink-0">
+                              {employee?.username
+                                ?.substring(0, 2)
+                                .toUpperCase()}
+                            </div>
+                          )}
                           <div className="min-w-0">
                             <div className="font-medium text-xs sm:text-sm">
-                              {employee.name}
+                              {employee.username}
                             </div>
                             <div
                               className={`text-xs ${colors.textMuted} truncate`}
                             >
-                              {employee.id}
+                              {employee?.userStatus === "employee"
+                                ? `EMP-${(employee?._id).slice(0, 4)}`
+                                : `CEO-${(employee?._id).slice(0, 4)}`}
                             </div>
                           </div>
                         </div>
@@ -310,9 +333,9 @@ function EmployeesPage() {
                       </td>
                       <td className="px-3 py-3 sm:py-4">
                         <span
-                          className={`inline-block truncate text-white px-3 py-1 rounded-full text-xs font-medium ${statusColors[employee.status]}`}
+                          className={`inline-block truncate text-white px-3 py-1 rounded-full text-xs font-medium ${statusColors[employee.userActiveStatus]}`}
                         >
-                          {employee.status}
+                          {employee.userActiveStatus}
                         </span>
                       </td>
                       <td className="px-3 py-3 sm:py-4">
@@ -350,25 +373,34 @@ function EmployeesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {sortedEmployees.map((employee) => (
               <div
-                key={employee.id}
+                key={employee._id}
                 className={`${colors.bgCard} rounded-xl p-4 sm:p-5 border ${colors.border} transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group`}
                 style={{ boxShadow: colors.cardShadow }}
               >
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full  bg-slate-600 flex items-center justify-center text-sm sm:text-base font-semibold text-white ring-2 ring-white/10`}
-                    >
-                      {employee.avatar}
-                    </div>
+                    {employee.avatar ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={employee.avatar}
+                        alt="Profile"
+                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border border-slate-600"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full  bg-slate-600 flex items-center justify-center text-sm sm:text-base font-semibold text-white ring-2 ring-white/10">
+                        {employee?.username?.substring(0, 2).toUpperCase()}
+                      </div>
+                    )}
 
                     <div>
                       <h3 className="font-semibold text-sm sm:text-base leading-tight">
-                        {employee.name}
+                        {employee.username}
                       </h3>
                       <p className={`text-xs ${colors.textMuted}`}>
-                        {employee.id}
+                        {employee?.userStatus === "employee"
+                          ? `EMP-${(employee?._id).slice(0, 4)}`
+                          : `CEO-${(employee?._id).slice(0, 4)}`}
                       </p>
                     </div>
                   </div>
@@ -442,18 +474,23 @@ function EmployeesPage() {
                   <div>
                     <p className={`text-xs ${colors.textMuted}`}>Joined</p>
                     <p className="text-xs sm:text-sm font-medium">
-                      {new Date(employee.joinDate).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      {employee.createdAt
+                        ? new Date(employee.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            },
+                          )
+                        : "N/A"}
                     </p>
                   </div>
 
                   <span
-                    className={` px-3 py-1 rounded-full text-white text-xs font-medium border ${statusColors[employee.status]}`}
+                    className={` px-3 py-1 rounded-full text-white text-xs font-medium border ${statusColors[employee.userActiveStatus]}`}
                   >
-                    {employee.status}
+                    {employee.userActiveStatus}
                   </span>
                 </div>
               </div>

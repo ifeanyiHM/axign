@@ -28,20 +28,7 @@ import InputField from "@/components/primitives/form/InputField";
 import Header from "@/components/dashboard/Header";
 import SelectField from "@/components/primitives/form/SelectField";
 import { useAuth } from "@/context/AuthContext";
-
-// Mock data - Replace with real API calls
-const employees = [
-  { id: "1", name: "Aisha Bello", email: "aisha@example.com", avatar: "AB" },
-  {
-    id: "2",
-    name: "Michael Okoro",
-    email: "michael@example.com",
-    avatar: "MO",
-  },
-  { id: "3", name: "Fatima Yusuf", email: "fatima@example.com", avatar: "FY" },
-  { id: "4", name: "David Adebayo", email: "david@example.com", avatar: "DA" },
-  { id: "5", name: "Sarah Johnson", email: "sarah@example.com", avatar: "SJ" },
-];
+import { useUser } from "@/context/UserContext";
 
 const categories = [
   "Audit",
@@ -106,6 +93,8 @@ function CreateTaskPage() {
       recurringFrequency: "",
     },
   });
+  const { organizationStaffs, loadingOrgStaffs } = useUser();
+  console.log(loadingOrgStaffs);
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [customTag, setCustomTag] = useState("");
@@ -423,31 +412,43 @@ function CreateTaskPage() {
                               </button>
                             </div>
 
-                            {employees.map((employee) => (
+                            {organizationStaffs.map((employee) => (
                               <label
-                                key={employee.id}
+                                key={employee._id}
                                 className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 ${colors.hover} cursor-pointer`}
                               >
                                 <input
                                   type="checkbox"
                                   checked={assignedTo?.some(
-                                    (a) => a.id === employee.id,
+                                    (a) => a.id === employee._id,
                                   )}
                                   onChange={() =>
                                     handleAssigneeToggle({
-                                      id: employee.id,
-                                      name: employee.name,
-                                      avatar: employee.avatar,
+                                      id: employee._id,
+                                      name: employee.username,
+                                      avatar: employee.avatar || "",
                                     })
                                   }
                                   className="w-4 h-4 rounded border-gray-600 focus:ring-slate-600 text-white shrink-0"
                                 />
-                                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
-                                  {employee.avatar}
-                                </div>
+
+                                {employee.avatar ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={employee.avatar}
+                                    alt="Profile"
+                                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-slate-600"
+                                  />
+                                ) : (
+                                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
+                                    {employee?.username
+                                      ?.substring(0, 2)
+                                      .toUpperCase()}
+                                  </div>
+                                )}
                                 <div className="flex-1 min-w-0">
                                   <div className="font-medium text-sm sm:text-base truncate">
-                                    {employee.name}
+                                    {employee.username}
                                   </div>
                                   <div
                                     className={`text-xs ${colors.textMuted} truncate`}

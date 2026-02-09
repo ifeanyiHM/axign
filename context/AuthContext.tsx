@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { createContext, useContext, useState, ReactNode } from "react";
 
 export interface User {
+  id?: string;
   email: string;
   username: string;
   userStatus: "ceo" | "employee";
@@ -83,6 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("Login response:", data);
 
       setUser(data.user);
+      // console.log("LOGIN USER:", data.user);
       setToken(data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);

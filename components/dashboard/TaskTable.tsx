@@ -1,7 +1,8 @@
 import { useAuth } from "@/context/AuthContext";
+import { Task } from "@/context/TaskContext";
 import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
-import { Filter, Search } from "lucide-react";
+import { Calendar, Filter, Search } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   "Not Started": "bg-slate-700/40 border border-slate-600/50",
@@ -10,32 +11,8 @@ const statusColors: Record<string, string> = {
   "Pending Review": "bg-purple-700/40 border border-purple-600/50",
 };
 
-export type TaskTableItem = {
-  id: string;
-  title: string;
-  description: string;
-  assignedTo: {
-    id: string;
-    name: string;
-    avatar: string;
-  }[];
-  assignedBy: string;
-  dueDate: string;
-  priority: "High" | "Medium" | "Low";
-  status: "Not Started" | "In Progress" | "Pending Review" | "Completed";
-  category?: string;
-  progress: number;
-  createdAt?: string;
-  tags?: string[];
-  estimatedHours?: number;
-  hoursLogged?: number;
-  startDate: string;
-  recurringFrequency?: "daily" | "weekly" | "monthly";
-  attachments?: File[];
-};
-
 interface taskTableProps {
-  taskList?: TaskTableItem[];
+  taskList?: Task[];
   title: string;
 }
 
@@ -89,20 +66,38 @@ export default function TaskTable({ taskList, title }: taskTableProps) {
                 key={index}
                 className={`border-b ${colors.border} ${colors.tableHover}`}
               >
-                <td className="pl-6 pr-2 sm:pl-7 py-3 truncate">{task.id}</td>
+                <td className="pl-6 pr-2 sm:pl-7 py-3 truncate">{`T-${task.id.slice(0, 4)}`}</td>
                 <td className="py-3 px-2 font-medium">
-                  <div className="lg:min-w-40 xl:min-w-0">{task.title}</div>
+                  <div className="lg:min-w-40 xl:min-w-0" title={task.title}>
+                    {task.title.length > 40
+                      ? `${task.title.slice(0, 40)}...`
+                      : task.title}
+                  </div>
                 </td>
                 <td className="py-3 px-2 truncate max-w-35 sm:max-w-none">
                   {user?.userStatus === "ceo"
                     ? task.assignedTo.map((assignee, index) => (
                         <div className="space-y-1" key={index}>
-                          <span>{assignee.name}</span>
+                          • <span>{assignee.name}</span>
                         </div>
                       ))
                     : task.category}
                 </td>
-                <td className="py-3 px-2 truncate">{task.dueDate}</td>
+                <td className="py-3 px-2 truncate">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <Calendar
+                      size={14}
+                      className={`${colors.textMuted} shrink-0 sm:w-4 sm:h-4`}
+                    />
+                    <span className="text-xs sm:text-sm whitespace-nowrap">
+                      {new Date(task.dueDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </td>
                 <td className="py-3 px-2">
                   <span
                     className={`px-2 py-0.5 rounded-full text-xs ${

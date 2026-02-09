@@ -27,12 +27,17 @@ import TaskTable from "@/components/dashboard/TaskTable";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Header from "@/components/dashboard/Header";
 import PieChartComponent from "@/components/dashboard/PieChartComponent";
-import { links, myTaskStats, pieData, recentTasks } from "./data";
+import { links, pieData } from "./data";
+import { useTaskStats } from "@/hooks/useTaskStats";
+import { useTask } from "@/context/TaskContext";
 
 function CeoDashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
   const colors = themes[theme];
+
+  const { allTasks } = useTask();
+  const myTaskStats = useTaskStats();
 
   const statsConfig = [
     {
@@ -125,7 +130,7 @@ function CeoDashboard() {
             </section>
 
             {/* Recent Tasks – horizontal scroll on mobile */}
-            <TaskTable taskList={recentTasks} title="Recent Tasks" />
+            <TaskTable taskList={allTasks} title="Recent Tasks" />
           </div>
 
           {/* Charts – stack vertically on mobile */}

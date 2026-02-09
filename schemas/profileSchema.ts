@@ -10,7 +10,7 @@ export const profileSchema = z.object({
   department: z.string().optional(),
   userActiveStatus: z.enum(["active", "inactive", "onleave"]),
   bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
-  avatar: z.string().url("Invalid image URL").optional(),
+  avatar: z.string().url("Invalid image URL").optional().or(z.literal("")),
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;

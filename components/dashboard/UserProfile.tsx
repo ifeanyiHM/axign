@@ -26,6 +26,7 @@ import { Button } from "../ui/button";
 import { PasswordFormData, passwordSchema } from "@/schemas/passwordSchema";
 import { Alert } from "../ui/alert";
 import SelectField from "../primitives/form/SelectField";
+import Avatar from "./Avatar";
 
 export function UserProfile() {
   const { user } = useAuth();
@@ -64,6 +65,7 @@ export function UserProfile() {
       userActiveStatus: "active",
     },
   });
+  console.log("PROFILE ERRORS:", profileErrors);
 
   const avatar = useWatch({ control, name: "avatar" });
   const userActiveStatus = useWatch({ control, name: "userActiveStatus" });
@@ -189,18 +191,11 @@ export function UserProfile() {
             >
               <div className="flex flex-col items-center">
                 <div className="relative mb-4">
-                  {avatar ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={avatar}
-                      alt="Profile"
-                      className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border border-slate-600"
-                    />
-                  ) : (
-                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-slate-600 flex items-center justify-center text-3xl sm:text-4xl font-bold text-white border-4 border-slate-500 shadow-lg">
-                      {profile?.username?.substring(0, 2).toUpperCase()}
-                    </div>
-                  )}
+                  <Avatar
+                    avatar={avatar}
+                    name={profile?.username}
+                    className="w-24 h-24 sm:w-32 sm:h-32"
+                  />
                   <label
                     htmlFor="profile-image"
                     className={`absolute bottom-0 right-0 p-2 rounded-full cursor-pointer shadow-lg hover:scale-110 transition-transform`}

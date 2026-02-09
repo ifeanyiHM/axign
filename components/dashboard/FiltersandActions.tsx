@@ -5,7 +5,8 @@ import React, { ReactNode } from "react";
 import InputField from "../primitives/form/InputField";
 import { Button } from "../ui/button";
 import SelectField from "../primitives/form/SelectField";
-import { allEmployees } from "@/app/dashboard/ceo/data";
+import { useUser } from "@/context/UserContext";
+// import { allEmployees } from "@/app/dashboard/ceo/data";
 
 export type ViewMode = "table" | "grid";
 
@@ -68,9 +69,17 @@ export default function FiltersandActions({
   const { theme } = useTheme();
   const colors = themes[theme];
 
+  const { organizationStaffs, loadingOrgStaffs } = useUser();
+
+  console.log(loadingOrgStaffs);
+
   // Get unique departments
   const departments = Array.from(
-    new Set(allEmployees.map((emp) => emp.department)),
+    new Set(
+      organizationStaffs
+        .map((emp) => emp?.department)
+        .filter((dept): dept is string => Boolean(dept)),
+    ),
   ).sort();
 
   return (
@@ -177,9 +186,9 @@ export default function FiltersandActions({
                       ]
                     : [
                         { label: "All Statues", value: "all" },
-                        { label: "Active", value: "Active" },
-                        { label: "On Leave", value: "On Leave" },
-                        { label: "In Active", value: "In Active" },
+                        { label: "Active", value: "active" },
+                        { label: "On Leave", value: "onleave" },
+                        { label: "Inactive", value: "inactive" },
                       ]
                 }
               />

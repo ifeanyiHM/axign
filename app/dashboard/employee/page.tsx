@@ -7,11 +7,15 @@ import TaskTable from "@/components/dashboard/TaskTable";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Header from "@/components/dashboard/Header";
 import PieChartComponent from "@/components/dashboard/PieChartComponent";
-import { myTasksData, myTaskStats, navItems, pieData } from "./data";
+import { navItems, pieData } from "./data";
 import { CircleCheckBig, ClipboardList, Clock, Loader2 } from "lucide-react";
+import { useTask } from "@/context/TaskContext";
+import { useTaskStats } from "@/hooks/useTaskStats";
 
 function EmployeeDashboard() {
   const { user } = useAuth();
+  const { myTasks } = useTask();
+  const myTaskStats = useTaskStats();
 
   const statsConfig = [
     {
@@ -58,7 +62,7 @@ function EmployeeDashboard() {
               </section>
 
               {/* My Tasks Table */}
-              <TaskTable taskList={myTasksData} title="My Tasks" />
+              <TaskTable taskList={myTasks} title="My Tasks" />
             </div>
           </div>
         </div>

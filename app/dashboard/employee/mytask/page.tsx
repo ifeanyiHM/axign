@@ -14,12 +14,14 @@ import {
   ListTodo,
   CircleCheckBig,
 } from "lucide-react";
-import { myTasksData, myTaskStats, navItems } from "../data";
+import { navItems } from "../data";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import StatusCard from "@/components/dashboard/StatusCard";
 import Header from "@/components/dashboard/Header";
 import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
+import { useTask } from "@/context/TaskContext";
+import { useTaskStats } from "@/hooks/useTaskStats";
 
 type ViewMode = "table" | "grid";
 type SortField = "dueDate" | "priority" | "status" | "progress";
@@ -28,6 +30,9 @@ type SortOrder = "asc" | "desc";
 function MyTasksPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
+
+  const { myTasks } = useTask();
+  const myTaskStats = useTaskStats();
 
   const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,7 +44,7 @@ function MyTasksPage() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Filter and sort tasks
-  const filteredTasks = myTasksData.filter((task) => {
+  const filteredTasks = myTasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -156,7 +161,7 @@ function MyTasksPage() {
           clearFilters={clearFilters}
           label="not started"
         >
-          Showing {sortedTasks.length} of {myTasksData.length} tasks
+          Showing {sortedTasks.length} of {myTasks.length} tasks
         </FiltersandActions>
 
         {/* grid View */}
@@ -429,12 +434,12 @@ function MyTasksPage() {
                         {/* Task */}
                         <td className="px-2 sm:px-3 py-4">
                           <div className="flex items-start gap-3">
-                            <div className="flex-1 min-w-0">
+                            <div className="flex-1 min-w-0" title={task.title}>
                               <div className="flex items-center gap-2 mb-1">
                                 <span
                                   className={`text-xs font-medium ${colors.textMuted}`}
                                 >
-                                  {task.id}
+                                  {`T-${task.id.slice(0, 4)}`}
                                 </span>
                                 {isOverdue && (
                                   <span className="rounded-md border border-red-500/30 px-2 py-0.5 text-xs font-medium text-red-600">
@@ -449,7 +454,9 @@ function MyTasksPage() {
                                 )}
                               </div>
                               <p className="font-medium text-xs sm:text-sm transition-colors">
-                                {task.title}
+                                {task.title.length > 30
+                                  ? `${task.title.slice(0, 30)}...`
+                                  : task.title}
                               </p>
                               {/* <p
                                 className={`text-xs ${colors.textMuted} line-clamp-1`}

@@ -19,12 +19,15 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { links, myTaskStats, recentTasks } from "../data";
+import { links } from "../data";
 import StatusCard from "@/components/dashboard/StatusCard";
 import { Button } from "@/components/ui/button";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import Header from "@/components/dashboard/Header";
 import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
+import { useTask } from "@/context/TaskContext";
+import Avatar from "@/components/dashboard/Avatar";
+import { useTaskStats } from "@/hooks/useTaskStats";
 
 type ViewMode = "table" | "grid";
 type SortField = "dueDate" | "priority" | "status" | "createdAt" | "title";
@@ -33,6 +36,9 @@ type SortOrder = "asc" | "desc";
 function AllTasksPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
+
+  const { allTasks } = useTask();
+  const myTaskStats = useTaskStats();
 
   const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,7 +51,7 @@ function AllTasksPage() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Filter and sort tasks
-  const filteredTasks = recentTasks.filter((task) => {
+  const filteredTasks = allTasks.filter((task) => {
     const matchesSearch =
       task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -169,7 +175,7 @@ function AllTasksPage() {
           clearFilters={clearFilters}
           label="not started"
         >
-          Showing {sortedTasks.length} of {recentTasks.length} tasks
+          Showing {sortedTasks.length} of {allTasks.length} tasks
         </FiltersandActions>
 
         {/* Table View */}
@@ -184,7 +190,7 @@ function AllTasksPage() {
                   className={`${colors.bgSidebar} border-b ${colors.border}`}
                 >
                   <tr>
-                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
+                    <th className="px-2 sm:pl-3 sm:pr-0 py-3 sm:py-4 text-left">
                       <button
                         onClick={() => handleSort("title")}
                         className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
@@ -237,22 +243,26 @@ function AllTasksPage() {
                       key={index}
                       className={`border-b ${colors.border} ${colors.tableHover}`}
                     >
-                      <td className="px-2 sm:px-3 py-3 sm:py-4 w-full">
-                        <div className="">
+                      <td className="px-2 sm:pl-3 sm:pr-0 py-3 sm:py-4">
+                        <div title={task.title}>
                           <div className="font-medium text-xs sm:text-sm">
-                            {task.title}
+                            {task.title.length > 30
+                              ? `${task.title.slice(0, 30)}...`
+                              : task.title}
                           </div>
                           <div className={`text-xs ${colors.textMuted}`}>
-                            {task.id} • {task.category}
+                            {`T-${task.id.slice(0, 4)}`} • {task.category}
                           </div>
                         </div>
                       </td>
                       <td className="px-2 sm:px-3 py-3 sm:py-4 space-y-1">
                         {task.assignedTo.map((assignee, index) => (
                           <div key={index} className="flex items-center gap-2">
-                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
-                              {assignee.avatar}
-                            </div>
+                            <Avatar
+                              avatar={assignee.avatar}
+                              name={assignee.name}
+                              className="w-6 h-6 sm:w-8 sm:h-8"
+                            />
                             <span className="text-xs truncate sm:inline">
                               {assignee.name}
                             </span>
@@ -416,9 +426,11 @@ function AllTasksPage() {
                   <div className="space-y-1">
                     {task.assignedTo.map((assignee, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold">
-                          {assignee.avatar}
-                        </div>
+                        <Avatar
+                          avatar={assignee.avatar}
+                          name={assignee.name}
+                          className="w-6 h-6 sm:w-8 sm:h-8"
+                        />
                         <span className="text-xs sm:text-sm truncate">
                           {assignee.name}
                         </span>

@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProvider } from "@/context/UserContext";
+import { TaskProvider } from "@/context/TaskContext";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -25,7 +26,9 @@ export default function RootLayout({
       <body className={`${dmSans.variable} antialiased`}>
         <AuthProvider>
           <UserProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <TaskProvider>{children}</TaskProvider>
+            </ThemeProvider>
           </UserProvider>
         </AuthProvider>
       </body>

@@ -26,6 +26,8 @@ import StatusCard from "@/components/dashboard/StatusCard";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import Header from "@/components/dashboard/Header";
 import { useUser } from "@/context/UserContext";
+import { capitalize } from "@/utils/format";
+import Avatar from "@/components/dashboard/Avatar";
 
 const statusColors: Record<string, string> = {
   active: "bg-emerald-600",
@@ -261,20 +263,11 @@ function EmployeesPage() {
                     >
                       <td className="px-3 py-3 sm:py-4">
                         <div className="flex items-center gap-3">
-                          {employee.avatar ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={employee.avatar}
-                              alt="Profile"
-                              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border border-slate-600"
-                            />
-                          ) : (
-                            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-600 flex items-center justify-center text-sm font-semibold text-white shadow-md shrink-0">
-                              {employee?.username
-                                ?.substring(0, 2)
-                                .toUpperCase()}
-                            </div>
-                          )}
+                          <Avatar
+                            avatar={employee.avatar}
+                            name={employee?.username}
+                            className="w-9 h-9 sm:w-10 sm:h-10"
+                          />
                           <div className="min-w-0">
                             <div className="font-medium text-xs sm:text-sm">
                               {employee.username}
@@ -335,7 +328,11 @@ function EmployeesPage() {
                         <span
                           className={`inline-block truncate text-white px-3 py-1 rounded-full text-xs font-medium ${statusColors[employee.userActiveStatus]}`}
                         >
-                          {employee.userActiveStatus}
+                          {capitalize(
+                            employee.userActiveStatus === "onleave"
+                              ? "on leave"
+                              : employee.userActiveStatus,
+                          )}
                         </span>
                       </td>
                       <td className="px-3 py-3 sm:py-4">
@@ -380,18 +377,11 @@ function EmployeesPage() {
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    {employee.avatar ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={employee.avatar}
-                        alt="Profile"
-                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border border-slate-600"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full  bg-slate-600 flex items-center justify-center text-sm sm:text-base font-semibold text-white ring-2 ring-white/10">
-                        {employee?.username?.substring(0, 2).toUpperCase()}
-                      </div>
-                    )}
+                    <Avatar
+                      avatar={employee.avatar}
+                      name={employee?.username}
+                      className="w-12 h-12 sm:w-14 sm:h-14"
+                    />
 
                     <div>
                       <h3 className="font-semibold text-sm sm:text-base leading-tight">
@@ -490,7 +480,11 @@ function EmployeesPage() {
                   <span
                     className={` px-3 py-1 rounded-full text-white text-xs font-medium border ${statusColors[employee.userActiveStatus]}`}
                   >
-                    {employee.userActiveStatus}
+                    {capitalize(
+                      employee.userActiveStatus === "onleave"
+                        ? "on leave"
+                        : employee.userActiveStatus,
+                    )}
                   </span>
                 </div>
               </div>

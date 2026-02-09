@@ -89,6 +89,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     fetchOrganizationUsers();
   }, [organizationId]);
 
+  //GET USERS PROFILE
   useEffect(() => {
     const getProfile = async () => {
       try {

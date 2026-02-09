@@ -29,6 +29,9 @@ import Header from "@/components/dashboard/Header";
 import SelectField from "@/components/primitives/form/SelectField";
 import { useAuth } from "@/context/AuthContext";
 import { useUser } from "@/context/UserContext";
+import { useTask } from "@/context/TaskContext";
+import { Alert } from "@/components/ui/alert";
+import Avatar from "@/components/dashboard/Avatar";
 
 const categories = [
   "Audit",
@@ -61,6 +64,8 @@ function CreateTaskPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
   const router = useRouter();
+
+  const { createTask } = useTask();
 
   // React Hook Form
   const {
@@ -170,16 +175,55 @@ function CreateTaskPage() {
     );
   };
 
+  // const onSubmit = async (data: TaskFormData) => {
+  //   try {
+  //     setSubmitError("");
+
+  //     // Simulate API call
+  //     await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  //     console.log("Task created:", { ...data, attachments });
+
+  //     const payload = {
+  //       title: data.title,
+  //       description: data.description,
+  //       assignedBy: data.assignedBy,
+  //       assignedTo: data.assignedTo,
+  //       startDate: data.startDate,
+  //       dueDate: data.dueDate,
+  //       priority: data.priority,
+  //       status: data.status,
+  //       category: data.category,
+  //       progress: data.progress,
+  //       tags: data.tags,
+  //       estimatedHours: data.estimatedHours,
+  //       attachments: data.attachments,
+  //       recurringFrequency: data.recurringFrequency,
+  //     };
+
+  //     console.log("PAYLOAD:", payload);
+
+  //     setShowSuccessMessage(true);
+
+  //     // Reset form
+  //     reset();
+
+  //     setTimeout(() => {
+  //       setShowSuccessMessage(false);
+  //       router.push("/dashboard/ceo/tasks");
+  //     }, 3000);
+  //   } catch (error) {
+  //     console.error("Error creating task:", error);
+  //     setSubmitError("Failed to create task. Please try again.");
+  //   }
+  // };
+
   const onSubmit = async (data: TaskFormData) => {
     try {
       setSubmitError("");
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("Task created:", { ...data, attachments });
-
-      const payload = {
+      // Prepare task data (no need to include attachments in API if they're files)
+      const taskData = {
         title: data.title,
         description: data.description,
         assignedBy: data.assignedBy,
@@ -192,24 +236,34 @@ function CreateTaskPage() {
         progress: data.progress,
         tags: data.tags,
         estimatedHours: data.estimatedHours,
-        attachments: data.attachments,
+        notifyAssignees: data.notifyAssignees,
+        recurring: data.recurring,
         recurringFrequency: data.recurringFrequency,
+        // Note: Handle file uploads separately if needed
+        attachments: [], // Or upload files first and get URLs
       };
 
-      console.log("PAYLOAD:", payload);
+      // Create task using context
+      await createTask(taskData);
 
+      // Show success message
       setShowSuccessMessage(true);
 
       // Reset form
       reset();
 
+      // Redirect after 2 seconds
       setTimeout(() => {
         setShowSuccessMessage(false);
         router.push("/dashboard/ceo/tasks");
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error("Error creating task:", error);
-      setSubmitError("Failed to create task. Please try again.");
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Failed to create task. Please try again.",
+      );
     }
   };
 
@@ -431,21 +485,11 @@ function CreateTaskPage() {
                                   }
                                   className="w-4 h-4 rounded border-gray-600 focus:ring-slate-600 text-white shrink-0"
                                 />
-
-                                {employee.avatar ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
-                                    src={employee.avatar}
-                                    alt="Profile"
-                                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-slate-600"
-                                  />
-                                ) : (
-                                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold shrink-0">
-                                    {employee?.username
-                                      ?.substring(0, 2)
-                                      .toUpperCase()}
-                                  </div>
-                                )}
+                                <Avatar
+                                  avatar={employee.avatar}
+                                  name={employee?.username}
+                                  className="w-7 h-7 sm:w-8 sm:h-8"
+                                />
                                 <div className="flex-1 min-w-0">
                                   <div className="font-medium text-sm sm:text-base truncate">
                                     {employee.username}
@@ -477,9 +521,11 @@ function CreateTaskPage() {
                             key={employee.id}
                             className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 ${colors.bgSidebar} border ${colors.border} rounded-full`}
                           >
-                            <div className="w-5 h-5 sm:w-6 sm:h-6 p-1 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold">
-                              {employee.avatar}
-                            </div>
+                            <Avatar
+                              avatar={employee.avatar}
+                              name={employee?.name}
+                              className="w-5 h-5 sm:w-6 sm:h-6 p-1"
+                            />
 
                             <span className="text-xs sm:text-sm truncate max-w-24 sm:max-w-none">
                               {employee.name}
@@ -913,18 +959,12 @@ function CreateTaskPage() {
 
               {/* Error Message */}
               {submitError && (
-                <div className="bg-red-900/30 border border-red-800/50 rounded-lg p-4 flex items-start gap-3">
-                  <AlertCircle
-                    size={20}
-                    className="text-red-400 shrink-0 mt-0.5"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-red-400 text-sm">
-                      Error
-                    </h3>
-                    <p className="text-sm text-red-300">{submitError}</p>
-                  </div>
-                </div>
+                <Alert
+                  variant="danger"
+                  title="Something went wrong"
+                  description="We couldn’t complete your request right now. Please try again in a moment."
+                  dismissible={false}
+                />
               )}
             </div>
           </div>

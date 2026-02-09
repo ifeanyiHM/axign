@@ -2,13 +2,33 @@ import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT || "587"),
-  secure: false,
+  port: parseInt(process.env.EMAIL_PORT || "587"), //465
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
   },
+  tls: {
+    rejectUnauthorized: false,
+    minVersion: "TLSv1.2",
+  },
 });
+
+type TaskAssignmentRecipient = {
+  email: string;
+  username: string;
+};
+
+type AssignedTask = {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string | Date;
+  priority: string;
+  category: string;
+  assignedBy: string;
+  organizationName?: string;
+};
 
 export async function sendVerificationEmail(
   email: string,
@@ -185,4 +205,77 @@ export async function sendPasswordResetEmail(
   };
 
   await transporter.sendMail(mailOptions);
+}
+
+export async function sendTaskAssignmentEmails(
+  assignees: TaskAssignmentRecipient[],
+  task: AssignedTask,
+) {
+  const taskUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/tasks/${task.id}`;
+
+  await Promise.all(
+    assignees.map((assignee) => {
+      const mailOptions = {
+        from: process.env.EMAIL_FROM,
+        to: assignee.email,
+        subject: `New Task Assigned: ${task.title}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #111827;">
+            
+            <h2 style="color: #111827;">Hi ${assignee.username}, 👋</h2>
+
+            <p>
+              You’ve been assigned a new task${
+                task.organizationName
+                  ? ` in <strong>${task.organizationName}</strong>`
+                  : ""
+              }.
+            </p>
+
+            <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>📌 Title:</strong> ${task.title}</p>
+              <p><strong>🗂 Category:</strong> ${task.category}</p>
+              <p><strong>⚡ Priority:</strong> ${task.priority}</p>
+              <p><strong>📅 Due Date:</strong> ${new Date(
+                task.dueDate,
+              ).toLocaleDateString()}</p>
+            </div>
+
+            <p style="margin-bottom: 20px;">
+              <strong>Description:</strong><br />
+              ${task.description}
+            </p>
+
+            <div style="margin: 30px 0;">
+              <a
+                href="${taskUrl}"
+                style="
+                  background-color: #4F46E5;
+                  color: #ffffff;
+                  padding: 12px 24px;
+                  text-decoration: none;
+                  border-radius: 6px;
+                  display: inline-block;
+                "
+              >
+                View Task
+              </a>
+            </div>
+
+            <p style="color: #6b7280; font-size: 14px;">
+              Please review the task and begin work as required.
+            </p>
+
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+            <p style="color: #9ca3af; font-size: 12px;">
+              This is an automated notification. If you have questions, please contact your organization administrator.
+            </p>
+          </div>
+        `,
+      };
+
+      return transporter.sendMail(mailOptions);
+    }),
+  );
 }

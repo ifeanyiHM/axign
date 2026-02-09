@@ -70,6 +70,7 @@ export default function SignupForm() {
             password: data.password,
             userStatus: "ceo" as const,
             organizationName: data.organizationName!,
+            avatar: "",
             companyName: data.organizationName,
             tasksAssigned: 0,
             tasksCompleted: 0,
@@ -81,6 +82,7 @@ export default function SignupForm() {
             password: data.password,
             userStatus: "employee" as const,
             organizationId: data.organizationId!,
+            avatar: "",
             companyName: organizations.find(
               (org) => org._id === data.organizationId,
             )?.name,

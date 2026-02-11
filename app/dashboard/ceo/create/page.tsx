@@ -175,54 +175,22 @@ function CreateTaskPage() {
     );
   };
 
-  // const onSubmit = async (data: TaskFormData) => {
-  //   try {
-  //     setSubmitError("");
-
-  //     // Simulate API call
-  //     await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  //     console.log("Task created:", { ...data, attachments });
-
-  //     const payload = {
-  //       title: data.title,
-  //       description: data.description,
-  //       assignedBy: data.assignedBy,
-  //       assignedTo: data.assignedTo,
-  //       startDate: data.startDate,
-  //       dueDate: data.dueDate,
-  //       priority: data.priority,
-  //       status: data.status,
-  //       category: data.category,
-  //       progress: data.progress,
-  //       tags: data.tags,
-  //       estimatedHours: data.estimatedHours,
-  //       attachments: data.attachments,
-  //       recurringFrequency: data.recurringFrequency,
-  //     };
-
-  //     console.log("PAYLOAD:", payload);
-
-  //     setShowSuccessMessage(true);
-
-  //     // Reset form
-  //     reset();
-
-  //     setTimeout(() => {
-  //       setShowSuccessMessage(false);
-  //       router.push("/dashboard/ceo/tasks");
-  //     }, 3000);
-  //   } catch (error) {
-  //     console.error("Error creating task:", error);
-  //     setSubmitError("Failed to create task. Please try again.");
-  //   }
-  // };
-
   const onSubmit = async (data: TaskFormData) => {
     try {
       setSubmitError("");
 
-      // Prepare task data (no need to include attachments in API if they're files)
+      // Convert files to base64 strings
+      const attachmentPromises = (data.attachments || []).map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const attachmentBase64Strings = await Promise.all(attachmentPromises);
+
       const taskData = {
         title: data.title,
         description: data.description,
@@ -239,17 +207,14 @@ function CreateTaskPage() {
         notifyAssignees: data.notifyAssignees,
         recurring: data.recurring,
         recurringFrequency: data.recurringFrequency,
-        // Note: Handle file uploads separately if needed
-        attachments: [], // Or upload files first and get URLs
+        attachments: attachmentBase64Strings,
       };
 
       // Create task using context
       await createTask(taskData);
 
-      // Show success message
       setShowSuccessMessage(true);
 
-      // Reset form
       reset();
 
       // Redirect after 2 seconds
@@ -554,40 +519,40 @@ function CreateTaskPage() {
                       className={`w-full text-sm border-0 ${colors.input}`}
                       containerClassName="sm:gap-2"
                     />
-
-                    {/* Priority */}
-                    <Controller
-                      name="priority"
-                      control={control}
-                      render={({ field }) => (
-                        <SelectField
-                          label="Priority *"
-                          containerClassName="sm:gap-2"
-                          placeholder="Select priority"
-                          selectClassName={`w-full border-0 text-sm ${colors.input}`}
-                          options={[
-                            // { label: "Select Priority", value: "Not set" },
-                            { label: "Low", value: "Low" },
-                            { label: "Medium", value: "Medium" },
-                            { label: "High", value: "High" },
-                          ]}
-                          error={errors.priority?.message}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        />
-                      )}
-                    />
+                    {/* Due Date */}
+                    <InputField
+                      label="Due Date *"
+                      type="date"
+                      {...register("dueDate")}
+                      error={errors.dueDate?.message}
+                      className={`w-full text-sm border-0 ${colors.input}`}
+                      containerClassName="sm:gap-2"
+                    />{" "}
                   </div>
 
-                  {/* Due Date */}
-                  <InputField
-                    label="Due Date *"
-                    type="date"
-                    {...register("dueDate")}
-                    error={errors.dueDate?.message}
-                    className={`w-full text-sm border-0 ${colors.input}`}
-                    containerClassName="sm:gap-2"
+                  {/* Priority */}
+                  <Controller
+                    name="priority"
+                    control={control}
+                    render={({ field }) => (
+                      <SelectField
+                        label="Priority *"
+                        containerClassName="sm:gap-2"
+                        placeholder="Select priority"
+                        selectClassName={`w-full border-0 text-sm ${colors.input}`}
+                        options={[
+                          // { label: "Select Priority", value: "Not set" },
+                          { label: "Low", value: "Low" },
+                          { label: "Medium", value: "Medium" },
+                          { label: "High", value: "High" },
+                        ]}
+                        error={errors.priority?.message}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      />
+                    )}
                   />
+
                   {/* Estimated Hours */}
                   {/* <div>
                     <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">

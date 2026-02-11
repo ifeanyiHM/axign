@@ -22,6 +22,7 @@ import Header from "@/components/dashboard/Header";
 import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
 import { useTask } from "@/context/TaskContext";
 import { useTaskStats } from "@/hooks/useTaskStats";
+import { useRouter } from "next/navigation";
 
 type ViewMode = "table" | "grid";
 type SortField = "dueDate" | "priority" | "status" | "progress";
@@ -42,6 +43,8 @@ function MyTasksPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [showFilters, setShowFilters] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  const router = useRouter();
 
   // Filter and sort tasks
   const filteredTasks = myTasks.filter((task) => {
@@ -420,7 +423,7 @@ function MyTasksPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700/50">
-                  {sortedTasks.map((task, index) => {
+                  {sortedTasks.map((task) => {
                     const daysUntilDue = getDaysUntilDue(task.dueDate);
                     const isOverdue =
                       daysUntilDue < 0 && task.status !== "Completed";
@@ -428,8 +431,11 @@ function MyTasksPage() {
 
                     return (
                       <tr
-                        key={index}
-                        className={`border-b ${colors.border} ${colors.tableHover}`}
+                        key={task.id}
+                        className={`border-b cursor-pointer ${colors.border} ${colors.tableHover}`}
+                        onClick={() =>
+                          router.push(`/dashboard/employee/mytask/${task.id}`)
+                        }
                       >
                         {/* Task */}
                         <td className="px-2 sm:px-3 py-4">
@@ -439,7 +445,7 @@ function MyTasksPage() {
                                 <span
                                   className={`text-xs font-medium ${colors.textMuted}`}
                                 >
-                                  {`T-${task.id.slice(0, 4)}`}
+                                  {`T-${task.id.slice(0, 7)}`}
                                 </span>
                                 {isOverdue && (
                                   <span className="rounded-md border border-red-500/30 px-2 py-0.5 text-xs font-medium text-red-600">

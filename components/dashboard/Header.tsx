@@ -24,7 +24,6 @@ export default function Header({
 
   return (
     <header
-      // className={` ${!user ? "py-2 sm:py-2" : "border-b py-4 sm:py-5"} ${colors.border} flex justify-between items-center mb-4 sm:mb-6`}
       className={`${className} ${colors.border} flex justify-between items-center mb-4 sm:mb-6`}
     >
       <div>

@@ -1,3 +1,4 @@
+import { useAuth } from "@/context/AuthContext";
 import { useTask } from "@/context/TaskContext";
 import { useMemo } from "react";
 
@@ -11,10 +12,13 @@ export interface TaskStats {
 }
 
 export function useTaskStats(): TaskStats {
-  const { allTasks } = useTask();
+  const { allTasks, myTasks } = useTask();
+  const { user } = useAuth();
+
+  const tasks = user?.userStatus === "ceo" ? allTasks : myTasks;
 
   const stats = useMemo(() => {
-    return allTasks.reduce(
+    return tasks.reduce(
       (acc, task) => {
         acc.total += 1;
         if (task.status === "In Progress") acc.inProgress += 1;
@@ -40,7 +44,7 @@ export function useTaskStats(): TaskStats {
         pending: 0,
       } as TaskStats,
     );
-  }, [allTasks]);
+  }, [tasks]);
 
   return stats;
 }

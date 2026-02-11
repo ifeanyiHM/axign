@@ -9,10 +9,11 @@ import {
 } from "lucide-react";
 
 export const pieData: PieDataItem[] = [
-  { name: "Completed", value: 9, color: "#059669" }, // Emerald-600 (success)
-  { name: "In Progress", value: 7, color: "#1e40af" }, // Blue-800 (active)
-  { name: "Pending", value: 8, color: "#64748b" }, // Slate-500 (neutral / waiting)
-  { name: "Overdue", value: 4, color: "#b91c1c" }, // Red-700 (serious, muted alert)
+  { name: "Completed", value: 9, color: "#059669" }, // green
+  { name: "In Progress", value: 7, color: "#1e40af" }, // blue
+  { name: "Pending Review", value: 8, color: "#64748b" }, // slate
+  { name: "Overdue", value: 4, color: "#b91c1c" }, // red
+  { name: "Not Started", value: 3, color: "#38bdf8" }, // 👈 soft gray-slate
 ];
 
 export const navItems: LinkItem[] = [

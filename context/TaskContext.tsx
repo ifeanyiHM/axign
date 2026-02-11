@@ -8,6 +8,7 @@ import {
   ReactNode,
 } from "react";
 import { useAuth } from "./AuthContext";
+import { useUser } from "./UserContext";
 
 // Types
 interface Assignee {
@@ -25,7 +26,12 @@ export interface Task {
   startDate: string;
   dueDate: string;
   priority: "Low" | "Medium" | "High";
-  status: "Not Started" | "In Progress" | "Pending Review" | "Completed";
+  status:
+    | "Not Started"
+    | "In Progress"
+    | "Pending Review"
+    | "Overdue"
+    | "Completed";
   category: string;
   progress: number;
   estimatedHours?: number;
@@ -66,7 +72,6 @@ interface TaskContextType {
   loading: boolean;
   error: string | null;
   createTask: (taskData: CreateTaskData) => Promise<Task | null>;
-  //   fetchTasks: () => Promise<void>;
   updateTask: (taskId: string, updates: Partial<Task>) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
 }
@@ -75,10 +80,18 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
+  const { getProfile, fetchOrganizationUsers, calculateTaskCounts } = useUser();
+
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [myTasks, setMyTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (allTasks.length > 0) {
+      calculateTaskCounts(allTasks);
+    }
+  }, [allTasks]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -187,6 +200,15 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       setAllTasks((prev) =>
         prev.map((task) => (task.id === taskId ? updatedTask : task)),
       );
+
+      // If status changed to "Completed", refresh profiles
+      if (updates.status === "Completed") {
+        await getProfile();
+        if (user?.organizationId) {
+          await fetchOrganizationUsers();
+        }
+        console.log("✅ User profiles refreshed after task completion");
+      }
     } catch (err) {
       console.error("Error updating task:", err);
       setError(err instanceof Error ? err.message : "Failed to update task");
@@ -211,6 +233,12 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
       // Remove task from state
       setAllTasks((prev) => prev.filter((task) => task.id !== taskId));
+
+      // Refresh profiles after deletion
+      await getProfile();
+      if (user?.organizationId) {
+        await fetchOrganizationUsers();
+      }
     } catch (err) {
       console.error("Error deleting task:", err);
       setError(err instanceof Error ? err.message : "Failed to delete task");
@@ -225,11 +253,9 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       value={{
         allTasks,
         myTasks,
-        // tasks,
         loading,
         error,
         createTask,
-        // fetchTasks,
         updateTask,
         deleteTask,
       }}

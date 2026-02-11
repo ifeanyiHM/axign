@@ -220,9 +220,11 @@ export function UserProfile() {
                   {profile?.position}
                 </p>
                 <p className={`${colors.textMuted} text-xs text-center`}>
-                  {profile?.userStatus === "employee"
-                    ? `EMP-${(profile?._id).slice(0, 4)}`
-                    : `CEO-${(profile?._id).slice(0, 4)}`}
+                  {profile?._id
+                    ? profile.userStatus === "employee"
+                      ? `EMP-${profile._id.slice(0, 4)}`
+                      : `CEO-${profile._id.slice(0, 4)}`
+                    : ""}
                 </p>
 
                 <div
@@ -493,9 +495,11 @@ export function UserProfile() {
                     {profile?.userStatus === "employee" ? "Employee ID" : "ID"}
                   </label>
                   <p className="font-medium text-sm">
-                    {profile?.userStatus === "employee"
-                      ? `EMP-${(profile?._id).slice(0, 4)}`
-                      : `CEO-${(profile?._id).slice(0, 4)}`}
+                    {profile?._id
+                      ? profile.userStatus === "employee"
+                        ? `EMP-${profile._id.slice(0, 4)}`
+                        : `CEO-${profile._id.slice(0, 4)}`
+                      : "Loading..."}
                   </p>
                 </div>
                 <div>

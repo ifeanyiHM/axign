@@ -6,7 +6,6 @@ import InputField from "../primitives/form/InputField";
 import { Button } from "../ui/button";
 import SelectField from "../primitives/form/SelectField";
 import { useUser } from "@/context/UserContext";
-// import { allEmployees } from "@/app/dashboard/ceo/data";
 
 export type ViewMode = "table" | "grid";
 
@@ -182,6 +181,7 @@ export default function FiltersandActions({
                         { label: "Not Started", value: "Not Started" },
                         { label: "In Progress", value: "In Progress" },
                         { label: "Pending Review", value: "Pending Review" },
+                        { label: "Overdue", value: "Overdue" },
                         { label: "Completed", value: "Completed" },
                       ]
                     : [

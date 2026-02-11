@@ -147,18 +147,6 @@ export async function POST(request: NextRequest) {
       organizationName: organization.name,
     });
 
-    // ✨ UPDATE TASKS ASSIGNED COUNT FOR EACH ASSIGNEE
-    const assigneeIds = assignedTo.map(
-      (assignee: { id: string }) => assignee.id,
-    );
-
-    await User.updateMany(
-      { _id: { $in: assigneeIds } },
-      { $inc: { tasksAssigned: 1 } }, // Increment tasksAssigned by 1
-    );
-
-    console.log(`✅ Updated tasksAssigned for ${assigneeIds.length} users`);
-
     // Format response
     const formattedTask = {
       id: task._id.toString(),
@@ -185,6 +173,11 @@ export async function POST(request: NextRequest) {
       updatedAt: task.updatedAt,
     };
 
+    // ✅ Fetch assignee id
+    const assigneeIds = assignedTo.map(
+      (assignee: { id: string }) => assignee.id,
+    );
+
     // ✅ Fetch assignee emails
     const assignees = await User.find(
       { _id: { $in: assigneeIds } },
@@ -200,15 +193,6 @@ export async function POST(request: NextRequest) {
     if (notifyAssignees) {
       await sendTaskAssignmentEmails(assigneeEmails, formattedTask);
     }
-
-    // TODO: Send notifications to assignees if notifyAssignees is true
-    // if (notifyAssignees) {
-    //   await sendTaskAssignmentEmails(assignedTo, formattedTask);
-    //   // await sendEmployeeRejectionNotification(
-    //   //   employee.email,
-    //   //   employee.username,
-    //   // );
-    // }
 
     return NextResponse.json(
       {

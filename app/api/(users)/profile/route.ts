@@ -53,6 +53,8 @@ export const PATCH = async (req: NextRequest) => {
       bio,
       avatar,
       userActiveStatus,
+      tasksAssigned,
+      tasksCompleted,
     } = body;
 
     // 4️⃣ Update user
@@ -68,6 +70,8 @@ export const PATCH = async (req: NextRequest) => {
         bio,
         avatar,
         userActiveStatus,
+        ...(tasksAssigned !== undefined && { tasksAssigned }),
+        ...(tasksCompleted !== undefined && { tasksCompleted }),
       },
       { new: true, runValidators: true },
     ).select("-password");

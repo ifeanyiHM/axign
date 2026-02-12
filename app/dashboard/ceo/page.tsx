@@ -26,8 +26,10 @@ import StatusCard from "@/components/dashboard/StatusCard";
 import TaskTable from "@/components/dashboard/TaskTable";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Header from "@/components/dashboard/Header";
-import PieChartComponent from "@/components/dashboard/PieChartComponent";
-import { links, pieData } from "./data";
+import PieChartComponent, {
+  PieDataItem,
+} from "@/components/dashboard/PieChartComponent";
+import { links } from "./data";
 import { useTaskStats } from "@/hooks/useTaskStats";
 import { useTask } from "@/context/TaskContext";
 
@@ -61,6 +63,62 @@ function CeoDashboard() {
       icon: CircleCheckBig,
     },
   ];
+
+  const pieData: PieDataItem[] = [
+    { name: "Completed", value: myTaskStats.completed, color: "#059669" },
+    { name: "In Progress", value: myTaskStats.inProgress, color: "#1e40af" },
+    { name: "Pending Review", value: myTaskStats.pending, color: "#64748b" },
+    { name: "Overdue", value: myTaskStats.overdue, color: "#b91c1c" },
+    { name: "Not Started", value: myTaskStats.notStarted, color: "#38bdf8" },
+  ];
+
+  //  Calculate weekly bar chart data from allTasks API
+  const getWeeklyBarChartData = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    // Get first day of current month
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+
+    // Calculate week ranges for current month
+    const weeks = [];
+    for (let i = 0; i < 4; i++) {
+      const weekStart = new Date(firstDayOfMonth);
+      weekStart.setDate(1 + i * 7);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+
+      weeks.push({
+        name: `Week ${i + 1}`,
+        start: weekStart,
+        end: weekEnd,
+      });
+    }
+
+    // Count tasks for each week based on createdAt date
+    return weeks.map((week) => {
+      const weekTasks = allTasks.filter((task) => {
+        const taskDate = new Date(task.createdAt);
+        return taskDate >= week.start && taskDate <= week.end;
+      });
+
+      const completed = weekTasks.filter(
+        (t) => t.status === "Completed",
+      ).length;
+      const pending = weekTasks.filter(
+        (t) => t.status === "Pending Review",
+      ).length;
+
+      return {
+        name: week.name,
+        Completed: completed,
+        Pending: pending,
+      };
+    });
+  };
+
+  const barChartData = getWeeklyBarChartData();
 
   return (
     <DashboardLayout links={links}>
@@ -144,14 +202,7 @@ function CeoDashboard() {
               <h3 className="text-base font-semibold mb-4">Tasks This Month</h3>
               <div className="h-64 sm:h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={[
-                      { name: "Week 1", Completed: 45, Pending: 12 },
-                      { name: "Week 2", Completed: 52, Pending: 8 },
-                      { name: "Week 3", Completed: 48, Pending: 15 },
-                      { name: "Week 4", Completed: 39, Pending: 8 },
-                    ]}
-                  >
+                  <BarChart data={barChartData}>
                     <XAxis
                       dataKey="name"
                       stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
@@ -173,6 +224,11 @@ function CeoDashboard() {
                     <Bar
                       dataKey="Completed"
                       fill="#3b82f6"
+                      radius={[4, 4, 0, 0]}
+                    />
+                    <Bar
+                      dataKey="Pending"
+                      fill="#64748b"
                       radius={[4, 4, 0, 0]}
                     />
                   </BarChart>

@@ -1,4 +1,4 @@
-import { SelectHTMLAttributes } from "react";
+import { ReactNode, SelectHTMLAttributes } from "react";
 import clsx from "clsx";
 import {
   Select,
@@ -26,6 +26,7 @@ interface SelectFieldProps extends Omit<
   labelClassName?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
+  icon?: ReactNode | undefined;
 }
 
 const SelectField = ({
@@ -39,6 +40,7 @@ const SelectField = ({
   value,
   onValueChange,
   placeholder,
+  icon,
 }: SelectFieldProps) => {
   return (
     <div className={clsx("flex flex-col gap-1", containerClassName)}>
@@ -53,10 +55,11 @@ const SelectField = ({
 
       <Select value={value as string} onValueChange={onValueChange}>
         <SelectTrigger
-          className={clsx("w-full", selectClassName)}
+          className={clsx("w-full flex items-center gap-2", selectClassName)}
           id={id}
           aria-invalid={!!error}
         >
+          {icon && <span className="shrink-0">{icon}</span>}
           <SelectValue placeholder={placeholder || "Select an option"} />
         </SelectTrigger>
 

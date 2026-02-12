@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { withAuth } from "@/utils/withAuth";
 import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
+import { useTask } from "@/context/TaskContext";
+import { useUser } from "@/context/UserContext";
 import {
   Download,
   Calendar,
@@ -16,7 +18,6 @@ import {
   Users,
   CheckCircle2,
   Clock,
-  ChevronDown,
   ArrowUpRight,
   ArrowDownRight,
 } from "lucide-react";
@@ -38,96 +39,304 @@ import {
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { links } from "../data";
 import Header from "@/components/dashboard/Header";
+import { Button } from "@/components/ui/button";
+import SelectField from "@/components/primitives/form/SelectField";
 
-// Mock data
-const monthlyPerformance = [
-  { month: "Jan", completed: 45, inProgress: 12, notStarted: 8 },
-  { month: "Feb", completed: 52, inProgress: 15, notStarted: 6 },
-  { month: "Mar", completed: 48, inProgress: 18, notStarted: 10 },
-  { month: "Apr", completed: 61, inProgress: 14, notStarted: 5 },
-  { month: "May", completed: 55, inProgress: 20, notStarted: 8 },
-  { month: "Jun", completed: 67, inProgress: 16, notStarted: 7 },
-  { month: "Jul", completed: 72, inProgress: 22, notStarted: 6 },
-  { month: "Aug", completed: 68, inProgress: 19, notStarted: 9 },
-  { month: "Sep", completed: 75, inProgress: 17, notStarted: 8 },
-  { month: "Oct", completed: 82, inProgress: 21, notStarted: 7 },
-  { month: "Nov", completed: 78, inProgress: 24, notStarted: 8 },
-  { month: "Dec", completed: 85, inProgress: 18, notStarted: 7 },
-];
+// ─── Helper Functions ────────────────────────────────────────────────────────
 
-const tasksByCategory = [
-  { name: "Audit", value: 45, color: "#3b82f6" },
-  { name: "Documentation", value: 32, color: "#10b981" },
-  { name: "Training", value: 28, color: "#f59e0b" },
-  { name: "Reporting", value: 38, color: "#8b5cf6" },
-  { name: "Maintenance", value: 22, color: "#ef4444" },
-  { name: "Assessment", value: 35, color: "#06b6d4" },
-];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const calculateMonthlyPerformance = (tasks: any[]) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const currentYear = new Date().getFullYear();
 
-const tasksByStatus = [
-  { name: "Completed", value: 184, color: "#10b981" },
-  { name: "In Progress", value: 43, color: "#3b82f6" },
-  { name: "Not Started", value: 20, color: "#6b7280" },
-  { name: "Pending Review", value: 15, color: "#8b5cf6" },
-];
+  return months.map((month, index) => {
+    const monthStart = new Date(currentYear, index, 1);
+    const monthEnd = new Date(currentYear, index + 1, 0);
 
-const employeePerformance = [
-  { name: "Aisha Bello", completed: 28, assigned: 32, rating: 4.5 },
-  { name: "Michael Okoro", completed: 25, assigned: 30, rating: 4.2 },
-  { name: "Fatima Yusuf", completed: 32, assigned: 35, rating: 4.8 },
-  { name: "David Adebayo", completed: 22, assigned: 28, rating: 4.3 },
-  { name: "Sarah Johnson", completed: 30, assigned: 30, rating: 5.0 },
-];
+    const monthTasks = tasks.filter((task) => {
+      const createdDate = new Date(task.createdAt);
+      return createdDate >= monthStart && createdDate <= monthEnd;
+    });
 
-const weeklyProgress = [
-  { day: "Mon", tasks: 12, hours: 8.5 },
-  { day: "Tue", tasks: 15, hours: 9.2 },
-  { day: "Wed", tasks: 18, hours: 10.1 },
-  { day: "Thu", tasks: 14, hours: 8.8 },
-  { day: "Fri", tasks: 20, hours: 11.3 },
-  { day: "Sat", tasks: 8, hours: 5.5 },
-  { day: "Sun", tasks: 5, hours: 3.2 },
-];
+    return {
+      month,
+      completed: monthTasks.filter((t) => t.status === "Completed").length,
+      inProgress: monthTasks.filter((t) => t.status === "In Progress").length,
+      notStarted: monthTasks.filter((t) => t.status === "Not Started").length,
+    };
+  });
+};
 
-const departmentStats = [
-  { department: "Quality Assurance", tasks: 45, completion: 87 },
-  { department: "Environmental", tasks: 38, completion: 82 },
-  { department: "Health & Safety", tasks: 52, completion: 91 },
-  { department: "Compliance", tasks: 40, completion: 78 },
-  { department: "Documentation", tasks: 35, completion: 94 },
-  { department: "Risk Management", tasks: 28, completion: 85 },
-];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const calculateTasksByCategory = (tasks: any[]) => {
+  const categoryColors: Record<string, string> = {
+    Audit: "#3b82f6",
+    Documentation: "#10b981",
+    Training: "#f59e0b",
+    Reporting: "#8b5cf6",
+    Maintenance: "#ef4444",
+    Assessment: "#06b6d4",
+    default: "#64748b",
+  };
+
+  const categoryCounts: Record<string, number> = {};
+
+  tasks.forEach((task) => {
+    const category = task.category || "Other";
+    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+  });
+
+  return Object.entries(categoryCounts).map(([name, value]) => ({
+    name,
+    value,
+    color: categoryColors[name] || categoryColors.default,
+  }));
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const calculateTasksByStatus = (tasks: any[]) => {
+  const statusColors = {
+    Completed: "#10b981",
+    "In Progress": "#3b82f6",
+    "Not Started": "#6b7280",
+    "Pending Review": "#8b5cf6",
+  };
+
+  const statusCounts: Record<string, number> = {
+    Completed: 0,
+    "In Progress": 0,
+    "Not Started": 0,
+    "Pending Review": 0,
+  };
+
+  tasks.forEach((task) => {
+    const status = task.status;
+    if (statusCounts.hasOwnProperty(status)) {
+      statusCounts[status]++;
+    }
+  });
+
+  return (
+    Object.entries(statusCounts)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .filter(([_, value]) => value > 0)
+      .map(([name, value]) => ({
+        name,
+        value,
+        color: statusColors[name as keyof typeof statusColors],
+      }))
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+const calculateEmployeePerformance = (tasks: any[], users: any[]) => {
+  const employeeStats: Record<
+    string,
+    { completed: number; assigned: number; name: string }
+  > = {};
+
+  tasks.forEach((task) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    task.assignedTo.forEach((assignee: any) => {
+      if (!employeeStats[assignee.id]) {
+        employeeStats[assignee.id] = {
+          name: assignee.name,
+          completed: 0,
+          assigned: 0,
+        };
+      }
+
+      employeeStats[assignee.id].assigned++;
+      if (task.status === "Completed") {
+        employeeStats[assignee.id].completed++;
+      }
+    });
+  });
+
+  return Object.values(employeeStats)
+    .map((emp) => ({
+      ...emp,
+      rating:
+        emp.assigned > 0
+          ? Number((4 + emp.completed / emp.assigned).toFixed(1))
+          : 4.0,
+    }))
+    .sort((a, b) => b.completed / b.assigned - a.completed / a.assigned)
+    .slice(0, 5);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const calculateWeeklyProgress = (tasks: any[]) => {
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const today = new Date();
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() - today.getDay());
+
+  const weeklyData = daysOfWeek.map((day, index) => {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + index);
+
+    const dayTasks = tasks.filter((task) => {
+      const updatedDate = new Date(task.updatedAt);
+      return (
+        updatedDate.toDateString() === date.toDateString() &&
+        task.status === "Completed"
+      );
+    });
+
+    return {
+      day,
+      tasks: dayTasks.length,
+      hours: dayTasks.reduce((sum, t) => sum + (t.hoursLogged || 0), 0),
+    };
+  });
+
+  return weeklyData;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const calculateDepartmentStats = (tasks: any[]) => {
+  const categories = [
+    "Quality Assurance",
+    "Environmental",
+    "Health & Safety",
+    "Compliance",
+    "Documentation",
+    "Risk Management",
+  ];
+
+  return categories
+    .map((department) => {
+      const deptTasks = tasks.filter((task) =>
+        task.category
+          ?.toLowerCase()
+          .includes(department.toLowerCase().split(" ")[0]),
+      );
+
+      const completed = deptTasks.filter(
+        (t) => t.status === "Completed",
+      ).length;
+      const completion =
+        deptTasks.length > 0
+          ? Math.round((completed / deptTasks.length) * 100)
+          : 0;
+
+      return {
+        department,
+        tasks: deptTasks.length,
+        completion,
+      };
+    })
+    .filter((dept) => dept.tasks > 0);
+};
 
 type ReportPeriod = "week" | "month" | "quarter" | "year";
 
 function ReportsPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
+  const { allTasks } = useTask();
+  const { organizationStaffs } = useUser();
 
   const [selectedPeriod, setSelectedPeriod] = useState<ReportPeriod>("month");
-  const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
 
-  // Calculate stats
-  const totalTasks = tasksByStatus.reduce((sum, item) => sum + item.value, 0);
-  const completionRate = Math.round(
-    (tasksByStatus.find((s) => s.name === "Completed")?.value ||
-      0 / totalTasks) * 100,
+  // ✨ Calculate dynamic data from allTasks
+  const monthlyPerformance = useMemo(
+    () => calculateMonthlyPerformance(allTasks),
+    [allTasks],
   );
-  const avgTasksPerEmployee = Math.round(
-    totalTasks / employeePerformance.length,
+  const tasksByCategory = useMemo(
+    () => calculateTasksByCategory(allTasks),
+    [allTasks],
+  );
+  const tasksByStatus = useMemo(
+    () => calculateTasksByStatus(allTasks),
+    [allTasks],
+  );
+  const employeePerformance = useMemo(
+    () => calculateEmployeePerformance(allTasks, organizationStaffs),
+    [allTasks, organizationStaffs],
+  );
+  const weeklyProgress = useMemo(
+    () => calculateWeeklyProgress(allTasks),
+    [allTasks],
+  );
+  const departmentStats = useMemo(
+    () => calculateDepartmentStats(allTasks),
+    [allTasks],
   );
 
-  // Calculate trends (mock)
-  const completionTrend = 12.5; // +12.5% from last period
-  const productivityTrend = -3.2; // -3.2% from last period
-  const onTimeDelivery = 89.5; // 89.5% on-time delivery
+  // Calculate stats from real data
+  const totalTasks = allTasks.length;
+  const completedTasks = allTasks.filter(
+    (t) => t.status === "Completed",
+  ).length;
+  const completionRate =
+    totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const avgTasksPerEmployee =
+    organizationStaffs.length > 0
+      ? Math.round(totalTasks / organizationStaffs.length)
+      : 0;
 
-  const periodLabels: Record<ReportPeriod, string> = {
-    week: "This Week",
-    month: "This Month",
-    quarter: "This Quarter",
-    year: "This Year",
+  // Calculate on-time delivery
+  const tasksWithDeadlines = allTasks.filter((t) => t.status === "Completed");
+  const onTimeTasks = tasksWithDeadlines.filter((t) => {
+    const completed = new Date(t.updatedAt);
+    const deadline = new Date(t.dueDate);
+    return completed <= deadline;
+  });
+  const onTimeDelivery =
+    tasksWithDeadlines.length > 0
+      ? Math.round((onTimeTasks.length / tasksWithDeadlines.length) * 100)
+      : 0;
+
+  // Calculate trends (comparing to last month)
+  const currentMonth = new Date().getMonth();
+  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const currentMonthTasks = monthlyPerformance[currentMonth]?.completed || 0;
+  const lastMonthTasks = monthlyPerformance[lastMonth]?.completed || 1;
+  const completionTrend =
+    lastMonthTasks > 0
+      ? Number(
+          (
+            ((currentMonthTasks - lastMonthTasks) / lastMonthTasks) *
+            100
+          ).toFixed(1),
+        )
+      : 0;
+
+  const productivityTrend = -3.2; // Could calculate from hoursLogged if available
+
+  const periodOptions = [
+    { label: "This Week", value: "week" },
+    { label: "This Month", value: "month" },
+    { label: "This Quarter", value: "quarter" },
+    { label: "This Year", value: "year" },
+  ];
+
+  // Chart tooltip style
+  const tooltipStyle = {
+    backgroundColor:
+      theme === "light" ? "#ffffff" : theme === "blue" ? "#1e3a8a" : "#1f2937",
+    border: `1px solid ${theme === "light" ? "#e5e7eb" : theme === "blue" ? "#1e40af" : "#374151"}`,
+    borderRadius: "8px",
+    color: theme === "light" ? "#111827" : "#f3f4f6",
   };
+
+  const axisStroke = theme === "light" ? "#6b7280" : "#9ca3af";
 
   return (
     <DashboardLayout links={links}>
@@ -141,55 +350,23 @@ function ReportsPage() {
 
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           {/* Period Selector */}
-          <div className="relative">
-            <button
-              onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
-              className={`w-full sm:w-auto flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg text-sm`}
-            >
-              <Calendar size={16} />
-              <span>{periodLabels[selectedPeriod]}</span>
-              <ChevronDown size={16} />
-            </button>
-
-            {showPeriodDropdown && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setShowPeriodDropdown(false)}
-                />
-                <div
-                  className={`absolute right-0 mt-2 w-48 ${colors.bgCard} border ${colors.border} rounded-lg shadow-lg z-20 overflow-hidden`}
-                >
-                  {(["week", "month", "quarter", "year"] as ReportPeriod[]).map(
-                    (period) => (
-                      <button
-                        key={period}
-                        onClick={() => {
-                          setSelectedPeriod(period);
-                          setShowPeriodDropdown(false);
-                        }}
-                        className={`w-full text-left px-4 py-2.5 text-sm ${colors.hover} ${
-                          selectedPeriod === period
-                            ? "bg-blue-600/20 text-blue-400"
-                            : ""
-                        }`}
-                      >
-                        {periodLabels[period]}
-                      </button>
-                    ),
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+          <SelectField
+            value={selectedPeriod}
+            onValueChange={(val) => setSelectedPeriod(val as ReportPeriod)}
+            options={periodOptions}
+            placeholder="Choose period"
+            icon={<Calendar size={16} />}
+            selectClassName="w-full sm:w-auto flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg text-sm"
+          />
 
           {/* Export Button */}
-          <button
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm`}
+          <Button
+            variant="secondary"
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 ${colors.button} rounded-lg text-sm`}
           >
             <Download size={16} />
             Export Report
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -207,9 +384,18 @@ function ReportsPage() {
               <div className={`p-2.5 sm:p-3 rounded-lg ${colors.stats.blue}`}>
                 <FileText size={20} className="sm:w-6 sm:h-6" />
               </div>
-              <div className="flex items-center gap-1 text-emerald-400 text-xs sm:text-sm">
-                <TrendingUp size={14} />
-                <span>+{completionTrend}%</span>
+              <div
+                className={`flex items-center gap-1 text-xs sm:text-sm ${completionTrend >= 0 ? "text-emerald-400" : "text-red-400"}`}
+              >
+                {completionTrend >= 0 ? (
+                  <TrendingUp size={14} />
+                ) : (
+                  <TrendingDown size={14} />
+                )}
+                <span>
+                  {completionTrend >= 0 ? "+" : ""}
+                  {completionTrend}%
+                </span>
               </div>
             </div>
             <h3 className="text-2xl sm:text-3xl font-bold mb-1">
@@ -249,9 +435,18 @@ function ReportsPage() {
               <div className={`p-2.5 sm:p-3 rounded-lg ${colors.stats.yellow}`}>
                 <Users size={20} className="sm:w-6 sm:h-6" />
               </div>
-              <div className="flex items-center gap-1 text-red-400 text-xs sm:text-sm">
-                <TrendingDown size={14} />
-                <span>{Math.abs(productivityTrend)}%</span>
+              <div
+                className={`flex items-center gap-1 text-xs sm:text-sm ${productivityTrend >= 0 ? "text-emerald-400" : "text-red-400"}`}
+              >
+                {productivityTrend >= 0 ? (
+                  <TrendingUp size={14} />
+                ) : (
+                  <TrendingDown size={14} />
+                )}
+                <span>
+                  {productivityTrend >= 0 ? "+" : ""}
+                  {productivityTrend}%
+                </span>
               </div>
             </div>
             <h3 className="text-2xl sm:text-3xl font-bold mb-1">
@@ -310,32 +505,11 @@ function ReportsPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis
                     dataKey="month"
-                    stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
+                    stroke={axisStroke}
                     style={{ fontSize: "12px" }}
                   />
-                  <YAxis
-                    stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
-                    style={{ fontSize: "12px" }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor:
-                        theme === "light"
-                          ? "#ffffff"
-                          : theme === "blue"
-                            ? "#1e3a8a"
-                            : "#1f2937",
-                      border: `1px solid ${
-                        theme === "light"
-                          ? "#e5e7eb"
-                          : theme === "blue"
-                            ? "#1e40af"
-                            : "#374151"
-                      }`,
-                      borderRadius: "8px",
-                      color: theme === "light" ? "#111827" : "#f3f4f6",
-                    }}
-                  />
+                  <YAxis stroke={axisStroke} style={{ fontSize: "12px" }} />
+                  <Tooltip contentStyle={tooltipStyle} />
                   <Legend />
                   <Bar
                     dataKey="completed"
@@ -378,46 +552,35 @@ function ReportsPage() {
                 className={`${colors.textMuted} sm:w-6 sm:h-6`}
               />
             </div>
-            <div className="h-64 sm:h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={tasksByStatus}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name} ${(percent ?? 0 * 100).toFixed(0)}%`
-                    }
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {tasksByStatus.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor:
-                        theme === "light"
-                          ? "#ffffff"
-                          : theme === "blue"
-                            ? "#1e3a8a"
-                            : "#1f2937",
-                      border: `1px solid ${
-                        theme === "light"
-                          ? "#e5e7eb"
-                          : theme === "blue"
-                            ? "#1e40af"
-                            : "#374151"
-                      }`,
-                      borderRadius: "8px",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            {tasksByStatus.length > 0 ? (
+              <div className="h-64 sm:h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={tasksByStatus}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {tasksByStatus.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={tooltipStyle} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-64 sm:h-80 flex items-center justify-center">
+                <p className={colors.textMuted}>No tasks yet</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -457,31 +620,11 @@ function ReportsPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                   <XAxis
                     dataKey="day"
-                    stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
+                    stroke={axisStroke}
                     style={{ fontSize: "12px" }}
                   />
-                  <YAxis
-                    stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
-                    style={{ fontSize: "12px" }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor:
-                        theme === "light"
-                          ? "#ffffff"
-                          : theme === "blue"
-                            ? "#1e3a8a"
-                            : "#1f2937",
-                      border: `1px solid ${
-                        theme === "light"
-                          ? "#e5e7eb"
-                          : theme === "blue"
-                            ? "#1e40af"
-                            : "#374151"
-                      }`,
-                      borderRadius: "8px",
-                    }}
-                  />
+                  <YAxis stroke={axisStroke} style={{ fontSize: "12px" }} />
+                  <Tooltip contentStyle={tooltipStyle} />
                   <Legend />
                   <Area
                     type="monotone"
@@ -516,37 +659,43 @@ function ReportsPage() {
                 Distribution across departments
               </p>
             </div>
-            <div className="space-y-3 sm:space-y-4">
-              {tasksByCategory.map((category) => {
-                const total = tasksByCategory.reduce(
-                  (sum, c) => sum + c.value,
-                  0,
-                );
-                const percentage = Math.round((category.value / total) * 100);
+            {tasksByCategory.length > 0 ? (
+              <div className="space-y-3 sm:space-y-4">
+                {tasksByCategory.map((category) => {
+                  const total = tasksByCategory.reduce(
+                    (sum, c) => sum + c.value,
+                    0,
+                  );
+                  const percentage = Math.round((category.value / total) * 100);
 
-                return (
-                  <div key={category.name}>
-                    <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                      <span className="text-xs sm:text-sm font-medium">
-                        {category.name}
-                      </span>
-                      <span className="text-xs sm:text-sm font-semibold">
-                        {category.value}
-                      </span>
+                  return (
+                    <div key={category.name}>
+                      <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                        <span className="text-xs sm:text-sm font-medium">
+                          {category.name}
+                        </span>
+                        <span className="text-xs sm:text-sm font-semibold">
+                          {category.value}
+                        </span>
+                      </div>
+                      <div className="relative h-2 bg-gray-700/50 rounded-full overflow-hidden">
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
+                          style={{
+                            width: `${percentage}%`,
+                            backgroundColor: category.color,
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="relative h-2 bg-gray-700/50 rounded-full overflow-hidden">
-                      <div
-                        className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${percentage}%`,
-                          backgroundColor: category.color,
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="h-52 flex items-center justify-center">
+                <p className={colors.textMuted}>No tasks yet</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -564,61 +713,70 @@ function ReportsPage() {
                 Top performers this {selectedPeriod}
               </p>
             </div>
-            <div className="space-y-3">
-              {employeePerformance.map((employee, index) => {
-                const completionRate = Math.round(
-                  (employee.completed / employee.assigned) * 100,
-                );
+            {employeePerformance.length > 0 ? (
+              <div className="space-y-3">
+                {employeePerformance.map((employee, index) => {
+                  const completionRate =
+                    employee.assigned > 0
+                      ? Math.round(
+                          (employee.completed / employee.assigned) * 100,
+                        )
+                      : 0;
 
-                return (
-                  <div
-                    key={employee.name}
-                    className={`flex items-center justify-between p-3 sm:p-4 ${colors.bgSidebar} border ${colors.border} rounded-lg`}
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-blue-600 text-white font-semibold text-sm">
-                        {index + 1}
+                  return (
+                    <div
+                      key={employee.name}
+                      className={`flex items-center justify-between p-3 sm:p-4 ${colors.bgSidebar} border ${colors.border} rounded-lg`}
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-blue-600 text-white font-semibold text-sm">
+                          {index + 1}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm sm:text-base truncate">
+                            {employee.name}
+                          </p>
+                          <p className={`text-xs ${colors.textMuted}`}>
+                            {employee.completed}/{employee.assigned} completed
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm sm:text-base truncate">
-                          {employee.name}
-                        </p>
-                        <p className={`text-xs ${colors.textMuted}`}>
-                          {employee.completed}/{employee.assigned} completed
-                        </p>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <div className="text-right">
+                          <p className="text-sm sm:text-base font-bold">
+                            {completionRate}%
+                          </p>
+                          <p className={`text-xs ${colors.textMuted}`}>
+                            ⭐ {employee.rating}
+                          </p>
+                        </div>
+                        <div
+                          className={`flex items-center gap-1 px-2 py-1 rounded ${
+                            completionRate >= 90
+                              ? "bg-emerald-900/30 text-emerald-400"
+                              : completionRate >= 75
+                                ? "bg-blue-900/30 text-blue-400"
+                                : "bg-amber-900/30 text-amber-400"
+                          }`}
+                        >
+                          {completionRate >= 90 ? (
+                            <ArrowUpRight size={14} />
+                          ) : completionRate >= 75 ? (
+                            <TrendingUp size={14} />
+                          ) : (
+                            <ArrowDownRight size={14} />
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <div className="text-right">
-                        <p className="text-sm sm:text-base font-bold">
-                          {completionRate}%
-                        </p>
-                        <p className={`text-xs ${colors.textMuted}`}>
-                          ⭐ {employee.rating}
-                        </p>
-                      </div>
-                      <div
-                        className={`flex items-center gap-1 px-2 py-1 rounded ${
-                          completionRate >= 90
-                            ? "bg-emerald-900/30 text-emerald-400"
-                            : completionRate >= 75
-                              ? "bg-blue-900/30 text-blue-400"
-                              : "bg-amber-900/30 text-amber-400"
-                        }`}
-                      >
-                        {completionRate >= 90 ? (
-                          <ArrowUpRight size={14} />
-                        ) : completionRate >= 75 ? (
-                          <TrendingUp size={14} />
-                        ) : (
-                          <ArrowDownRight size={14} />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="h-52 flex items-center justify-center">
+                <p className={colors.textMuted}>No employee data yet</p>
+              </div>
+            )}
           </div>
 
           {/* Department Statistics */}
@@ -633,40 +791,46 @@ function ReportsPage() {
                 Performance by department
               </p>
             </div>
-            <div className="space-y-3">
-              {departmentStats.map((dept) => (
-                <div
-                  key={dept.department}
-                  className={`p-3 sm:p-4 ${colors.bgSidebar} border ${colors.border} rounded-lg`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-sm sm:text-base">
-                      {dept.department}
-                    </span>
-                    <span className="text-xs sm:text-sm font-semibold">
-                      {dept.tasks} tasks
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 relative h-2 bg-gray-700/50 rounded-full overflow-hidden">
-                      <div
-                        className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${
-                          dept.completion >= 90
-                            ? "bg-emerald-500"
-                            : dept.completion >= 80
-                              ? "bg-blue-500"
-                              : "bg-amber-500"
-                        }`}
-                        style={{ width: `${dept.completion}%` }}
-                      />
+            {departmentStats.length > 0 ? (
+              <div className="space-y-3">
+                {departmentStats.map((dept) => (
+                  <div
+                    key={dept.department}
+                    className={`p-3 sm:p-4 ${colors.bgSidebar} border ${colors.border} rounded-lg`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-sm sm:text-base">
+                        {dept.department}
+                      </span>
+                      <span className="text-xs sm:text-sm font-semibold">
+                        {dept.tasks} tasks
+                      </span>
                     </div>
-                    <span className="text-sm font-semibold shrink-0">
-                      {dept.completion}%
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 relative h-2 bg-gray-700/50 rounded-full overflow-hidden">
+                        <div
+                          className={`absolute inset-y-0 left-0 rounded-full transition-all duration-500 ${
+                            dept.completion >= 90
+                              ? "bg-emerald-500"
+                              : dept.completion >= 80
+                                ? "bg-blue-500"
+                                : "bg-amber-500"
+                          }`}
+                          style={{ width: `${dept.completion}%` }}
+                        />
+                      </div>
+                      <span className="text-sm font-semibold shrink-0">
+                        {dept.completion}%
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-52 flex items-center justify-center">
+                <p className={colors.textMuted}>No department data yet</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -7,7 +7,6 @@ import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
 import { useTask } from "@/context/TaskContext";
 import {
-  ArrowLeft,
   Calendar,
   Clock,
   Users,
@@ -26,6 +25,7 @@ import {
   File as FileIconLucide,
   ClosedCaptionIcon,
   Save,
+  MoveLeft,
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { navItems } from "../../data";
@@ -46,9 +46,7 @@ function TaskDetailsPage() {
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
-  const [activeTab, setActiveTab] = useState<"overview" | "activity" | "files">(
-    "overview",
-  );
+  const [activeTab, setActiveTab] = useState<"overview" | "files">("overview");
 
   // Edit states
   const [isEditingProgress, setIsEditingProgress] = useState(false);
@@ -109,12 +107,12 @@ function TaskDetailsPage() {
               The task you&apos;re looking for doesn&apos;t exist or has been
               deleted.
             </p>
-            <button
+            <Button
               onClick={() => router.back()}
               className={`px-6 py-3 ${colors.button} rounded-lg font-medium`}
             >
               Go Back
-            </button>
+            </Button>
           </div>
         </div>
       </DashboardLayout>
@@ -185,42 +183,6 @@ function TaskDetailsPage() {
       (1000 * 60 * 60 * 24),
   );
 
-  // // Mock activity timeline
-  // const activities = [
-  //   {
-  //     id: 1,
-  //     type: "status_change",
-  //     user: task.assignedBy,
-  //     action: "changed status to",
-  //     value: "In Progress",
-  //     timestamp: "2 hours ago",
-  //   },
-  //   {
-  //     id: 2,
-  //     type: "comment",
-  //     user: "Sarah Johnson",
-  //     action: "added a comment",
-  //     value: "Great progress on this! Let me know if you need any help.",
-  //     timestamp: "5 hours ago",
-  //   },
-  //   {
-  //     id: 3,
-  //     type: "file",
-  //     user: task.assignedBy,
-  //     action: "uploaded",
-  //     value: "requirements_v2.pdf",
-  //     timestamp: "1 day ago",
-  //   },
-  //   {
-  //     id: 4,
-  //     type: "created",
-  //     user: task.assignedBy,
-  //     action: "created this task",
-  //     value: "",
-  //     timestamp: new Date(task.createdAt).toLocaleDateString(),
-  //   },
-  // ];
-
   return (
     <DashboardLayout links={navItems}>
       <div className={` ${colors.bg} ${colors.text}`}>
@@ -230,13 +192,15 @@ function TaskDetailsPage() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
             <div className={`flex items-center justify-between gap-4`}>
+              {/* Title */}
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <button
+                <Button
+                  variant={"ghost"}
                   onClick={() => router.back()}
                   className={`p-2 ${colors.hover} rounded-lg shrink-0`}
                 >
-                  <ArrowLeft size={20} />
-                </button>
+                  <MoveLeft size={20} />
+                </Button>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
@@ -255,7 +219,8 @@ function TaskDetailsPage() {
 
               {/* Status Dropdown */}
               <div className="relative shrink-0">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() =>
                     canChangeStatus && setShowStatusMenu(!showStatusMenu)
                   }
@@ -308,7 +273,7 @@ function TaskDetailsPage() {
                       />
                     </svg>
                   )}
-                </button>
+                </Button>
 
                 {/* Dropdown */}
                 {showStatusMenu && canChangeStatus && (
@@ -336,11 +301,12 @@ function TaskDetailsPage() {
                           const isActive = task.status === status;
 
                           return (
-                            <button
+                            <Button
+                              variant={"ghost"}
                               key={status}
                               onClick={() => handleStatusChange(status)}
                               className={`
-                              w-full flex items-center gap-3 px-4 py-3 rounded-xl
+                              w-full flex justify-start items-center gap-3 px-4 py-3 rounded-xl
                               transition-all duration-150
                               ${isActive ? "bg-white/5" : "hover:bg-white/5"}
                             `}
@@ -356,7 +322,7 @@ function TaskDetailsPage() {
                                   className="ml-auto opacity-80"
                                 />
                               )}
-                            </button>
+                            </Button>
                           );
                         },
                       )}
@@ -375,11 +341,10 @@ function TaskDetailsPage() {
             // { id: "activity", label: "Activity" },
             { id: "files", label: "Files" },
           ].map((tab) => (
-            <button
+            <Button
+              variant={"ghost"}
               key={tab.id}
-              onClick={() =>
-                setActiveTab(tab.id as "overview" | "activity" | "files")
-              }
+              onClick={() => setActiveTab(tab.id as "overview" | "files")}
               className={`
         relative px-4 py-2 text-sm font-medium transition-colors
         rounded-t-lg
@@ -394,7 +359,7 @@ function TaskDetailsPage() {
               {activeTab === tab.id && (
                 <span className="absolute -bottom-px left-0 right-0 h-1 bg-slate-500 rounded-t-full" />
               )}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -549,90 +514,6 @@ function TaskDetailsPage() {
                   </div>
                 </>
               )}
-
-              {/* {activeTab === "activity" && (
-                <div
-                  className={`${colors.bgCard} rounded-xl border ${colors.border} p-6`}
-                >
-                  <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                    <MessageSquare size={20} className="text-blue-400" />
-                    Activity Timeline
-                  </h2>
-
-                  <div className="space-y-6">
-                    {activities.map((activity, index) => (
-                      <div key={activity.id} className="flex gap-4">
-                        <div className="flex flex-col items-center">
-                          <div
-                            className={`w-10 h-10 rounded-full ${colors.bgSidebar} border-2 ${colors.border} flex items-center justify-center shrink-0`}
-                          >
-                            {activity.type === "status_change" && (
-                              <PlayCircle size={16} className="text-blue-400" />
-                            )}
-                            {activity.type === "comment" && (
-                              <MessageSquare
-                                size={16}
-                                className="text-purple-400"
-                              />
-                            )}
-                            {activity.type === "file" && (
-                              <Paperclip
-                                size={16}
-                                className="text-emerald-400"
-                              />
-                            )}
-                            {activity.type === "created" && (
-                              <CheckCircle2
-                                size={16}
-                                className="text-yellow-400"
-                              />
-                            )}
-                          </div>
-                          {index < activities.length - 1 && (
-                            <div
-                              className={`w-0.5 flex-1 ${colors.border} mt-2`}
-                            />
-                          )}
-                        </div>
-
-                        <div className="flex-1 pb-6">
-                          <p className={colors.text}>
-                            <span className="font-semibold">
-                              {activity.user}
-                            </span>{" "}
-                            <span className={colors.textMuted}>
-                              {activity.action}
-                            </span>
-                            {activity.value && (
-                              <span className="font-semibold">
-                                {" "}
-                                {activity.value}
-                              </span>
-                            )}
-                          </p>
-                          <p className={`text-sm ${colors.textMuted} mt-1`}>
-                            {activity.timestamp}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                 
-                  <div className="mt-6 pt-6 border-t border-gray-700">
-                    <textarea
-                      placeholder="Add a comment..."
-                      rows={3}
-                      className={`w-full px-4 py-3 ${colors.input} rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                    />
-                    <button
-                      className={`mt-3 px-6 py-2.5 ${colors.button} rounded-lg font-medium`}
-                    >
-                      Post Comment
-                    </button>
-                  </div>
-                </div>
-              )} */}
 
               {activeTab === "files" && (
                 <div

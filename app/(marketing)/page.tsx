@@ -1,5 +1,9 @@
-import React from "react";
+"use client";
 
 export default function LandingPage() {
-  return <div>LandingPage</div>;
+  return (
+    <div className="">
+      <h1>Landing PAGE</h1>
+    </div>
+  );
 }

@@ -1,4 +1,3 @@
-import { PieDataItem } from "@/components/dashboard/PieChartComponent";
 import { LinkItem } from "@/components/layout/DashboardLayout";
 import {
   LayoutDashboard,
@@ -30,12 +29,6 @@ export type TaskProps = {
   //createdAt: string;
   tags: string[];
 };
-
-export const pieData: PieDataItem[] = [
-  { name: "Completed", value: 184, color: "#059669" },
-  { name: "In Progress", value: 43, color: "#1e40af" },
-  { name: "Not Started", value: 20, color: "#64748b" },
-];
 
 export const links: LinkItem[] = [
   { href: "/dashboard/ceo", label: "Dashboard", icon: LayoutDashboard },

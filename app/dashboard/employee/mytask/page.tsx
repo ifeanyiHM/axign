@@ -470,20 +470,20 @@ function MyTasksPage() {
                                 {task.description}
                               </p> */}
                               {/* <div className="flex items-center gap-3 mt-2">
-                                <div className="flex items-center gap-1 text-xs">
+                                 <div className="flex items-center gap-1 text-xs">
                                   <MessageSquare
                                     size={12}
                                     className={colors.textMuted}
                                   />
                                   <span>{task.comments}</span>
                                 </div>
-                                <div className="flex items-center gap-1 text-xs">
+                                {task.attachments && <div className="flex items-center gap-1 text-xs">
                                   <Paperclip
                                     size={12}
                                     className={colors.textMuted}
                                   />
                                   <span>{task.attachments}</span>
-                                </div>
+                                </div>}
                               </div> */}
                             </div>
                           </div>

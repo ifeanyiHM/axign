@@ -32,6 +32,8 @@ import { useUser } from "@/context/UserContext";
 import { useTask } from "@/context/TaskContext";
 import { Alert } from "@/components/ui/alert";
 import Avatar from "@/components/dashboard/Avatar";
+import { CheckboxField } from "@/components/primitives/form/CheckboxField";
+import TextareaField from "@/components/primitives/form/TextareaField";
 
 const categories = [
   "Audit",
@@ -282,10 +284,11 @@ function CreateTaskPage() {
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               {/* Basic Information */}
               <div
-                className={`${colors.bgCard} rounded-lg border ${colors.border} p-4 sm:p-6`}
+                className={`${colors.bgCard} rounded-lg p-4 sm:p-6`}
+                style={{ boxShadow: colors.cardShadow }}
               >
                 <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
-                  <FileText size={18} className="text-blue-400 sm:w-5 sm:h-5" />
+                  <FileText size={18} className="sm:w-5 sm:h-5" />
                   Basic Information
                 </h2>
 
@@ -300,25 +303,14 @@ function CreateTaskPage() {
                     className={`w-full text-sm border-0 ${colors.input}`}
                   />
                   {/* Description */}
-                  <div>
-                    <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                      Description <span className="text-red-400">*</span>
-                    </label>
-                    <textarea
-                      {...register("description")}
-                      placeholder="Provide a detailed description of the task"
-                      rows={4}
-                      className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
-                        errors.description ? "ring-2 ring-red-500" : ""
-                      }`}
-                    />
-                    {errors.description && (
-                      <p className="text-red-400 text-xs flex items-center gap-1">
-                        <AlertCircle size={12} className="sm:w-3 sm:h-3" />
-                        {errors.description.message}
-                      </p>
-                    )}
-                  </div>
+                  <TextareaField
+                    label="Description *"
+                    placeholder="Provide a detailed description of the task"
+                    {...register("description")}
+                    error={errors.description?.message}
+                    rows={4}
+                    className={`w-full border-0 text-sm resize-none ${colors.input}`}
+                  />
                   {/* Category */}
                   <Controller
                     name="categoryMode"
@@ -378,10 +370,11 @@ function CreateTaskPage() {
 
               {/* Assignment & Timeline */}
               <div
-                className={`${colors.bgCard} rounded-lg border ${colors.border} p-4 sm:p-6`}
+                className={`${colors.bgCard} rounded-lg p-4 sm:p-6`}
+                style={{ boxShadow: colors.cardShadow }}
               >
                 <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
-                  <Users size={18} className="text-blue-400 sm:w-5 sm:h-5" />
+                  <Users size={18} className="sm:w-5 sm:h-5" />
                   Assignment & Timeline
                 </h2>
 
@@ -423,46 +416,51 @@ function CreateTaskPage() {
                               <h3 className="font-semibold">
                                 Select Employees
                               </h3>
-                              <button
+                              <Button
+                                size={"icon-xs"}
+                                variant={"ghost"}
                                 onClick={() => setShowEmployeeDropdown(false)}
                                 className="p-1"
                               >
                                 <X size={20} />
-                              </button>
+                              </Button>
                             </div>
 
                             {organizationStaffs.map((employee) => (
                               <label
                                 key={employee._id}
-                                className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 ${colors.hover} cursor-pointer`}
+                                className={`flex items-center px-3 sm:px-4 py-2.5 sm:py-3 ${colors.hover} cursor-pointer`}
                               >
-                                <input
-                                  type="checkbox"
+                                <CheckboxField
+                                  id={employee._id}
                                   checked={assignedTo?.some(
                                     (a) => a.id === employee._id,
                                   )}
-                                  onChange={() =>
+                                  onCheckedChange={() =>
                                     handleAssigneeToggle({
                                       id: employee._id,
                                       name: employee.username,
                                       avatar: employee.avatar || "",
                                     })
                                   }
-                                  className="w-4 h-4 rounded border-gray-600 focus:ring-slate-600 text-white shrink-0"
                                 />
-                                <Avatar
-                                  avatar={employee.avatar}
-                                  name={employee?.username}
-                                  className="w-7 h-7 sm:w-8 sm:h-8"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  <div className="font-medium text-sm sm:text-base truncate">
-                                    {employee.username}
-                                  </div>
-                                  <div
-                                    className={`text-xs ${colors.textMuted} truncate`}
-                                  >
-                                    {employee.email}
+
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                  <Avatar
+                                    avatar={employee.avatar}
+                                    name={employee?.username}
+                                    className="w-7 h-7 sm:w-8 sm:h-8"
+                                  />
+
+                                  <div className="flex-1 min-w-0">
+                                    <div className="font-medium text-sm truncate">
+                                      {employee.username}
+                                    </div>
+                                    <div
+                                      className={`text-xs ${colors.textMuted} truncate`}
+                                    >
+                                      {employee.email}
+                                    </div>
                                   </div>
                                 </div>
                               </label>
@@ -484,7 +482,8 @@ function CreateTaskPage() {
                         {assignedTo.map((employee) => (
                           <div
                             key={employee.id}
-                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 ${colors.bgSidebar} border ${colors.border} rounded-full`}
+                            className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 ${colors.bgSidebar} rounded-full`}
+                            style={{ boxShadow: colors.cardShadow }}
                           >
                             <Avatar
                               avatar={employee.avatar}
@@ -496,13 +495,15 @@ function CreateTaskPage() {
                               {employee.name}
                             </span>
 
-                            <button
+                            <Button
+                              size="icon-xs"
+                              variant={"ghost"}
                               type="button"
                               onClick={() => handleAssigneeToggle(employee)}
-                              className="text-gray-400 hover:text-red-400 shrink-0"
+                              className="text-gray-400 shrink-0"
                             >
                               <X size={12} className="sm:w-3.5 sm:h-3.5" />
-                            </button>
+                            </Button>
                           </div>
                         ))}
                       </div>
@@ -578,10 +579,11 @@ function CreateTaskPage() {
 
               {/* Tags & Attachments */}
               <div
-                className={`${colors.bgCard} rounded-lg border ${colors.border} p-4 sm:p-6`}
+                className={`${colors.bgCard} rounded-lg p-4 sm:p-6`}
+                style={{ boxShadow: colors.cardShadow }}
               >
                 <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 flex items-center gap-2">
-                  <Tag size={18} className="text-blue-400 sm:w-5 sm:h-5" />
+                  <Tag size={18} className="sm:w-5 sm:h-5" />
                   Tags & Attachments
                 </h2>
 
@@ -781,42 +783,41 @@ function CreateTaskPage() {
             <div className="hidden lg:block space-y-6 sticky top-6 self-start">
               {/* Additional Options */}
               <div
-                className={`${colors.bgCard} rounded-lg border ${colors.border} p-6`}
+                className={`${colors.bgCard} rounded-lg p-6`}
+                style={{ boxShadow: colors.cardShadow }}
               >
                 <h2 className="text-lg font-semibold mb-4">Options</h2>
 
                 <div className="space-y-4">
                   {/* Notify Assignees */}
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      {...register("notifyAssignees")}
-                      className="w-4 h-4 mt-0.5 rounded border-gray-600 text-blue-600 focus:ring-blue-500 shrink-0"
-                    />
-                    <div>
-                      <div className="font-medium text-sm">
-                        Notify Assignees
-                      </div>
-                      <div className={`text-xs ${colors.textMuted}`}>
-                        Send email notification to assigned employees
-                      </div>
-                    </div>
-                  </label>
+                  <Controller
+                    name="notifyAssignees"
+                    control={control}
+                    render={({ field }) => (
+                      <CheckboxField
+                        id="notifyAssignees"
+                        label="Notify Assignees"
+                        subLabel="Send email notification to assigned employees"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
 
                   {/* Recurring Task */}
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      {...register("recurring")}
-                      className="w-4 h-4 mt-0.5 rounded border-gray-600 text-blue-600 focus:ring-blue-500 shrink-0"
-                    />
-                    <div>
-                      <div className="font-medium text-sm">Recurring Task</div>
-                      <div className={`text-xs ${colors.textMuted}`}>
-                        Repeat this task automatically
-                      </div>
-                    </div>
-                  </label>
+                  <Controller
+                    name="recurring"
+                    control={control}
+                    render={({ field }) => (
+                      <CheckboxField
+                        id="recurring"
+                        label="Recurring Task"
+                        subLabel="Repeat this task automatically"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
 
                   {/* Recurring Frequency */}
                   {recurring && (
@@ -846,7 +847,8 @@ function CreateTaskPage() {
 
               {/* Preview Summary */}
               <div
-                className={`${colors.bgCard} rounded-lg border ${colors.border} p-6`}
+                className={`${colors.bgCard} rounded-lg p-6`}
+                style={{ boxShadow: colors.cardShadow }}
               >
                 <h2 className="text-lg font-semibold mb-4">Summary</h2>
                 <div className="space-y-3 text-sm">

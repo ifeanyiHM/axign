@@ -6,8 +6,10 @@ import StatusCard from "@/components/dashboard/StatusCard";
 import TaskTable from "@/components/dashboard/TaskTable";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import Header from "@/components/dashboard/Header";
-import PieChartComponent from "@/components/dashboard/PieChartComponent";
-import { navItems, pieData } from "./data";
+import PieChartComponent, {
+  PieDataItem,
+} from "@/components/dashboard/PieChartComponent";
+import { navItems } from "./data";
 import { CircleCheckBig, ClipboardList, Clock, Loader2 } from "lucide-react";
 import { useTask } from "@/context/TaskContext";
 import { useTaskStats } from "@/hooks/useTaskStats";
@@ -38,6 +40,14 @@ function EmployeeDashboard() {
       value: myTaskStats.completed,
       icon: CircleCheckBig,
     },
+  ];
+
+  const pieData: PieDataItem[] = [
+    { name: "Completed", value: myTaskStats.completed, color: "#059669" }, // green
+    { name: "In Progress", value: myTaskStats.inProgress, color: "#1e40af" }, // blue
+    { name: "Pending Review", value: myTaskStats.pending, color: "#64748b" }, // slate
+    { name: "Overdue", value: myTaskStats.overdue, color: "#b91c1c" }, // red
+    { name: "Not Started", value: myTaskStats.notStarted, color: "#38bdf8" }, // 👈 soft gray-slate
   ];
 
   return (

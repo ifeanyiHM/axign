@@ -2,6 +2,7 @@ import { User } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
 import { LucideIcon, Plus } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface HeaderProps {
   user?: User | null;
@@ -10,6 +11,7 @@ interface HeaderProps {
   buttonTitle?: string;
   icon?: LucideIcon;
   className?: string;
+  onClick?: () => void;
 }
 
 export default function Header({
@@ -18,6 +20,7 @@ export default function Header({
   subtitle,
   buttonTitle,
   className,
+  onClick,
 }: HeaderProps) {
   const { theme } = useTheme();
   const colors = themes[theme];
@@ -33,11 +36,12 @@ export default function Header({
         </p>
       </div>
       {buttonTitle && (
-        <button
-          className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg font-medium flex items-center gap-2 text-sm ${colors.button}`}
+        <Button
+          onClick={onClick}
+          className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg font-medium flex items-center gap-2 text-sm cursor-pointer ${colors.button}`}
         >
           <Plus size={18} /> {buttonTitle}
-        </button>
+        </Button>
       )}
     </header>
   );

@@ -7,10 +7,6 @@ import { themes } from "@/lib/themes";
 import {
   Search,
   Calendar,
-  MoreVertical,
-  Eye,
-  Edit,
-  Trash2,
   Clock,
   ArrowUpDown,
   Plus,
@@ -28,6 +24,8 @@ import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
 import { useTask } from "@/context/TaskContext";
 import Avatar from "@/components/dashboard/Avatar";
 import { useTaskStats } from "@/hooks/useTaskStats";
+import TaskActionMenu from "@/components/dashboard/TaskActionMenu";
+import { useRouter } from "next/navigation";
 
 type ViewMode = "table" | "grid";
 type SortField = "dueDate" | "priority" | "status" | "createdAt" | "title";
@@ -37,7 +35,7 @@ function AllTasksPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
 
-  const { allTasks } = useTask();
+  const { allTasks, deleteTask } = useTask();
   const myTaskStats = useTaskStats();
 
   const [viewMode, setViewMode] = useState<ViewMode>("table");
@@ -141,6 +139,8 @@ function AllTasksPage() {
     },
   ];
 
+  const router = useRouter();
+
   return (
     <DashboardLayout links={links}>
       {/* Header */}
@@ -150,6 +150,7 @@ function AllTasksPage() {
         buttonTitle="Create Task"
         icon={Plus}
         className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+        onClick={() => router.push("/dashboard/ceo/create")}
       />
       <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Stats Overview */}
@@ -191,45 +192,49 @@ function AllTasksPage() {
                 >
                   <tr>
                     <th className="px-2 sm:pl-3 sm:pr-0 py-3 sm:py-4 text-left">
-                      <button
+                      <Button
+                        variant={"ghost"}
                         onClick={() => handleSort("title")}
-                        className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
+                        className="flex py-0 px-0 hover:bg-0 items-center gap-2 font-semibold text-xs sm:text-sm"
                       >
                         Task
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
-                      </button>
+                      </Button>
                     </th>
                     <th className="px-2 sm:px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
                       Assigned To
                     </th>
                     <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
-                      <button
+                      <Button
+                        variant={"ghost"}
                         onClick={() => handleSort("dueDate")}
-                        className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
+                        className="flex py-0 px-0 hover:bg-0  items-center gap-2 font-semibold text-xs sm:text-sm"
                       >
                         Due Date
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
-                      </button>
+                      </Button>
                     </th>
                     <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
-                      <button
+                      <Button
+                        variant={"ghost"}
                         onClick={() => handleSort("priority")}
-                        className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
+                        className="flex py-0 px-0 hover:bg-0  items-center gap-2 font-semibold text-xs sm:text-sm"
                       >
                         Priority
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
-                      </button>
+                      </Button>
                     </th>
                     <th className="px-2 sm:px-3 py-3 sm:py-4 text-left">
-                      <button
+                      <Button
+                        variant={"ghost"}
                         onClick={() => handleSort("status")}
-                        className="flex items-center gap-2 font-semibold text-xs sm:text-sm"
+                        className="flex py-0 px-0 hover:bg-0 items-center gap-2 font-semibold text-xs sm:text-sm"
                       >
                         Status
                         <ArrowUpDown size={14} className="sm:w-4 sm:h-4" />
-                      </button>
+                      </Button>
                     </th>
-                    <th className="px-2 sm:px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
+                    <th className="px-2 sm:pl-0 sm:pr-7 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
                       Progress
                     </th>
                     <th className="px-2 sm:px-3 py-3 sm:py-4 text-left font-semibold text-xs sm:text-sm">
@@ -241,7 +246,7 @@ function AllTasksPage() {
                   {sortedTasks.map((task, index) => (
                     <tr
                       key={index}
-                      className={`border-b ${colors.border} ${colors.tableHover}`}
+                      className={`border-b cursor-pointer ${colors.border} ${colors.tableHover}`}
                     >
                       <td className="px-2 sm:pl-3 sm:pr-0 py-3 sm:py-4">
                         <div title={task.title}>
@@ -310,9 +315,9 @@ function AllTasksPage() {
                         </span>
                       </td>
 
-                      <td className="px-2 sm:px-3 py-3 sm:py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1 min-w-10">
+                      <td className="px-2 sm:pl-0 sm:pr-7 py-3 sm:py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 min-w-10 md:min-w-20">
                             <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                               <div
                                 className="h-full rounded-full bg-slate-500 transition-all"
@@ -321,41 +326,21 @@ function AllTasksPage() {
                             </div>
                           </div>
 
-                          <span className="text-xs sm:text-sm font-medium tabular-nums">
+                          <span className="text-xs font-medium tabular-nums">
                             {task.progress}%
                           </span>
                         </div>
                       </td>
 
-                      <td className="px-2 sm:px-3 py-3 sm:py-4">
-                        <div className="flex items-center">
-                          <button
-                            className={`p-1.5 sm:p-2 ${colors.hover} rounded-lg`}
-                            title="View Details"
-                          >
-                            <Eye size={14} className="sm:w-4 sm:h-4" />
-                          </button>
-
-                          <button
-                            className={`p-1.5 sm:p-2 ${colors.hover} rounded-lg hidden sm:block`}
-                            title="Edit Task"
-                          >
-                            <Edit size={14} className="sm:w-4 sm:h-4" />
-                          </button>
-
-                          <button
-                            className="p-1.5 sm:p-2 hover:bg-red-900/30 rounded-lg text-red-400 hidden sm:block"
-                            title="Delete Task"
-                          >
-                            <Trash2 size={14} className="sm:w-4 sm:h-4" />
-                          </button>
-
-                          <button
-                            className={`p-1.5 sm:p-2 ${colors.hover} rounded-lg sm:hidden`}
-                          >
-                            <MoreVertical size={14} />
-                          </button>
-                        </div>
+                      <td className="px-3 py-4 relative">
+                        <TaskActionMenu
+                          taskId={task.id}
+                          editUrl={`/dashboard/ceo/tasks/${task.id}`}
+                          onDelete={deleteTask}
+                          colors={colors}
+                          index={index}
+                          taskLength={sortedTasks.length}
+                        />
                       </td>
                     </tr>
                   ))}
@@ -381,16 +366,17 @@ function AllTasksPage() {
                       {task.title}
                     </h3>
                     <p className={`text-xs ${colors.textMuted} truncate`}>
-                      {task.id} • {task.category}
+                      {`T-${task.id.slice(0, 7)}`} • {task.category}
                     </p>
                   </div>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className={`p-1 ${colors.hover} rounded shrink-0 ml-2`}
-                  >
-                    <MoreVertical size={16} />
-                  </Button>
+                  <TaskActionMenu
+                    taskId={task.id}
+                    editUrl={`/dashboard/ceo/tasks/${task.id}`}
+                    onDelete={deleteTask}
+                    colors={colors}
+                    index={index}
+                    taskLength={sortedTasks.length}
+                  />
                 </div>
 
                 {/* Description */}

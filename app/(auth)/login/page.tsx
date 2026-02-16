@@ -3,7 +3,7 @@ import AuthSplitLayout from "@/components/layout/AuthSplitLayout";
 import Image from "next/image";
 
 const heroImage = "/loginn.jpg";
-const logoSrc = "/axign_logoo.png";
+const logoSrc = "/new_axign_logo.png";
 
 export default function RegisterPage() {
   return (

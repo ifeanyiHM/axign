@@ -50,6 +50,7 @@ interface UserContextType {
   profile: FullProfile;
   organizationStaffs: FullProfile[];
   loadingOrgStaffs: boolean;
+  loadingProfileDetails: boolean;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -58,8 +59,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
 
   const [organizationStaffs, setOrganizationStaffs] = useState([]);
-  const [loadingOrgStaffs, setLoadingOrgStaffs] = useState(false);
+  const [loadingOrgStaffs, setLoadingOrgStaffs] = useState(true);
   const [profile, setProfile] = useState<FullProfile>(profilePayload);
+  const [loadingProfileDetails, setLoadingProfileDetials] =
+    useState<boolean>(false);
 
   //GET USERS BY ORGANIZATION
   const organizationId = user?.organizationId;
@@ -93,6 +96,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   //GET USERS PROFILE
   const getProfile = async () => {
+    setLoadingProfileDetials(true);
     try {
       const res = await fetch("/api/profile");
 
@@ -110,6 +114,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error("Error fetching profile:", error);
       // optional: set error state here
+    } finally {
+      setLoadingProfileDetials(false);
     }
   };
   useEffect(() => {
@@ -214,6 +220,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         organizationStaffs,
         loadingOrgStaffs,
         calculateTaskCounts,
+        loadingProfileDetails,
       }}
     >
       {children}

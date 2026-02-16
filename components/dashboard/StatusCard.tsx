@@ -28,7 +28,7 @@ export default function StatusCard({ status }: StatusCardProps) {
         return (
           <div
             key={i}
-            className={`flex justify-between ${stat.title ? "items-start  sm:py-4" : "items-center  sm:py-5"} p-4 sm:px-6 rounded-md ${colors.bgCard} text-center sm:text-left`}
+            className={`flex justify-between ${stat.title ? "items-start  sm:py-4" : "items-center  sm:py-5"} p-4 sm:px-6 rounded-md ${colors.bgCard}`}
             style={{ boxShadow: colors.cardShadow }}
           >
             <div className="flex flex-col h-full">

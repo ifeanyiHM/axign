@@ -8,7 +8,6 @@ import { themes } from "@/lib/themes";
 import { useTask } from "@/context/TaskContext";
 import { useUser } from "@/context/UserContext";
 import {
-  ArrowLeft,
   Calendar,
   Clock,
   Users,
@@ -36,6 +35,7 @@ import { priorityColors } from "@/utils/constant";
 import InputField from "@/components/primitives/form/InputField";
 import SelectField from "@/components/primitives/form/SelectField";
 import { InfoRow } from "@/components/dashboard/taskId/InfoRow";
+import TaskDetailsSkeleton from "@/components/skeletons/TaskDetailsSkeleton";
 
 const categories = [
   "Audit",
@@ -68,7 +68,7 @@ function CEOTaskDetailsPage() {
   const router = useRouter();
   const { theme } = useTheme();
   const colors = themes[theme];
-  const { allTasks, updateTask } = useTask();
+  const { allTasks, updateTask, loading } = useTask();
   const { organizationStaffs } = useUser();
 
   const taskId = params.taskId as string;
@@ -279,6 +279,10 @@ function CEOTaskDetailsPage() {
       setEditedAssignees([...editedAssignees, employee]);
     }
   };
+
+  if (loading) {
+    return <TaskDetailsSkeleton />;
+  }
 
   if (!task) {
     return (

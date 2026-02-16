@@ -28,6 +28,10 @@ import Header from "@/components/dashboard/Header";
 import { useUser } from "@/context/UserContext";
 import { capitalize } from "@/utils/format";
 import Avatar from "@/components/dashboard/Avatar";
+import HeaderSkeleton from "@/components/skeletons/HeaderSkeleton";
+import StatusCardSkeleton from "@/components/skeletons/StatusCardSkeleton";
+import FiltersAndActionsSkeleton from "@/components/skeletons/FiltersAndActionSkeleton";
+import EmployeeCardSkeleton from "@/components/skeletons/EmployeeCardSkeleton";
 
 const statusColors: Record<string, string> = {
   active: "bg-emerald-600",
@@ -162,38 +166,50 @@ function EmployeesPage() {
   return (
     <DashboardLayout links={links}>
       {/* Header */}
-      <Header
-        title="Employees"
-        subtitle="Manage your team members and their information"
-        buttonTitle="Add Employee"
-        icon={UserPlus}
-        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
-      />
+      {loadingOrgStaffs ? (
+        <HeaderSkeleton className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6" />
+      ) : (
+        <Header
+          title="Employees"
+          subtitle="Manage your team members and their information"
+          buttonTitle="Add Employee"
+          icon={UserPlus}
+          className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+        />
+      )}
       <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Stats Overview */}
-        <StatusCard status={statsConfig} />
+        {loadingOrgStaffs ? (
+          <StatusCardSkeleton />
+        ) : (
+          <StatusCard status={statsConfig} />
+        )}
 
         {/* Filters and Actions */}
-        <FiltersandActions
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-          showMobileFilters={showMobileFilters}
-          setShowMobileFilters={setShowMobileFilters}
-          hasActiveFilters={hasActiveFilters}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={setSelectedStatus}
-          selectedDepartment={selectedDepartment}
-          setSelectedDepartment={setSelectedDepartment}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          clearFilters={clearFilters}
-          label="active"
-        >
-          Showing {sortedEmployees.length} of {organizationStaffs.length}{" "}
-          employees
-        </FiltersandActions>
+        {loadingOrgStaffs ? (
+          <FiltersAndActionsSkeleton />
+        ) : (
+          <FiltersandActions
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+            showMobileFilters={showMobileFilters}
+            setShowMobileFilters={setShowMobileFilters}
+            hasActiveFilters={hasActiveFilters}
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+            selectedDepartment={selectedDepartment}
+            setSelectedDepartment={setSelectedDepartment}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            clearFilters={clearFilters}
+            label="active"
+          >
+            Showing {sortedEmployees.length} of {organizationStaffs.length}{" "}
+            employees
+          </FiltersandActions>
+        )}
 
         {/* Table View */}
         {viewMode === "table" && (
@@ -366,134 +382,142 @@ function EmployeesPage() {
         )}
 
         {/* Grid View */}
-        {viewMode === "grid" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {sortedEmployees.map((employee) => (
-              <div
-                key={employee._id}
-                className={`${colors.bgCard} rounded-xl p-4 sm:p-5 border ${colors.border} transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group`}
-                style={{ boxShadow: colors.cardShadow }}
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar
-                      avatar={employee.avatar}
-                      name={employee?.username}
-                      className="w-12 h-12 sm:w-14 sm:h-14"
-                    />
-
-                    <div>
-                      <h3 className="font-semibold text-sm sm:text-base leading-tight">
-                        {employee.username}
-                      </h3>
-                      <p className={`text-xs ${colors.textMuted}`}>
-                        {employee?.userStatus === "employee"
-                          ? `EMP-${(employee?._id).slice(0, 4)}`
-                          : `CEO-${(employee?._id).slice(0, 4)}`}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    className={`p-2 rounded-lg ${colors.hover} opacity-0 group-hover:opacity-100 transition-opacity`}
-                  >
-                    <MoreVertical size={16} />
-                  </button>
-                </div>
-
-                {/* Role */}
-                <div className={`pb-4 mb-4 border-b ${colors.border}`}>
-                  <div className="flex items-start gap-2 mb-2">
-                    <Briefcase
-                      size={14}
-                      className={`${colors.textMuted} mt-0.5`}
-                    />
-                    <div>
-                      <p className="text-sm font-medium">{employee.position}</p>
-                      <p className={`text-xs ${colors.textMuted}`}>
-                        {employee.department}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 mt-2">
-                    <MapPin size={14} className={`${colors.textMuted}`} />
-                    <p className="text-xs sm:text-sm">{employee.location}</p>
-                  </div>
-                </div>
-
-                {/* Contact */}
+        {loadingOrgStaffs ? (
+          <EmployeeCardSkeleton />
+        ) : (
+          viewMode === "grid" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+              {sortedEmployees.map((employee) => (
                 <div
-                  className={`pb-4 mb-4 border-b ${colors.border} space-y-2`}
+                  key={employee._id}
+                  className={`${colors.bgCard} rounded-xl p-4 sm:p-5 border ${colors.border} transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md group`}
+                  style={{ boxShadow: colors.cardShadow }}
                 >
-                  <div className="flex items-center gap-2">
-                    <Mail size={14} className={`${colors.textMuted}`} />
-                    <p className="text-xs sm:text-sm truncate">
-                      {employee.email}
-                    </p>
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar
+                        avatar={employee.avatar}
+                        name={employee?.username}
+                        className="w-12 h-12 sm:w-14 sm:h-14"
+                      />
+
+                      <div>
+                        <h3 className="font-semibold text-sm sm:text-base leading-tight">
+                          {employee.username}
+                        </h3>
+                        <p className={`text-xs ${colors.textMuted}`}>
+                          {employee?.userStatus === "employee"
+                            ? `EMP-${(employee?._id).slice(0, 4)}`
+                            : `CEO-${(employee?._id).slice(0, 4)}`}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      className={`p-2 rounded-lg ${colors.hover} opacity-0 group-hover:opacity-100 transition-opacity`}
+                    >
+                      <MoreVertical size={16} />
+                    </button>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <Phone size={14} className={`${colors.textMuted}`} />
-                    <p className="text-xs sm:text-sm">{employee.phone}</p>
-                  </div>
-                </div>
+                  {/* Role */}
+                  <div className={`pb-4 mb-4 border-b ${colors.border}`}>
+                    <div className="flex items-start gap-2 mb-2">
+                      <Briefcase
+                        size={14}
+                        className={`${colors.textMuted} mt-0.5`}
+                      />
+                      <div>
+                        <p className="text-sm font-medium">
+                          {employee.position}
+                        </p>
+                        <p className={`text-xs ${colors.textMuted}`}>
+                          {employee.department}
+                        </p>
+                      </div>
+                    </div>
 
-                {/* Metrics */}
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className={`rounded-lg p-3 border ${colors.border}`}>
-                    <p className={`text-xs ${colors.textMuted}`}>Tasks</p>
-                    <p className="text-lg font-semibold mt-1">
-                      {employee.tasksCompleted}/{employee.tasksAssigned}
-                    </p>
-                    <p className={`text-xs ${colors.textMuted}`}>Completed</p>
-                  </div>
-
-                  <div className={`rounded-lg p-3 border ${colors.border}`}>
-                    <p className={`text-xs ${colors.textMuted}`}>Rating</p>
-                    <p className="text-lg font-semibold mt-1">
-                      {employee.performanceRating}
-                    </p>
-                    <p className={`text-xs ${colors.textMuted}`}>Performance</p>
-                  </div>
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={`text-xs ${colors.textMuted}`}>Joined</p>
-                    <p className="text-xs sm:text-sm font-medium">
-                      {employee.createdAt
-                        ? new Date(employee.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            },
-                          )
-                        : "N/A"}
-                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <MapPin size={14} className={`${colors.textMuted}`} />
+                      <p className="text-xs sm:text-sm">{employee.location}</p>
+                    </div>
                   </div>
 
-                  <span
-                    className={` px-3 py-1 rounded-full text-white text-xs font-medium border ${statusColors[employee.userActiveStatus]}`}
+                  {/* Contact */}
+                  <div
+                    className={`pb-4 mb-4 border-b ${colors.border} space-y-2`}
                   >
-                    {capitalize(
-                      employee.userActiveStatus === "onleave"
-                        ? "on leave"
-                        : employee.userActiveStatus,
-                    )}
-                  </span>
+                    <div className="flex items-center gap-2">
+                      <Mail size={14} className={`${colors.textMuted}`} />
+                      <p className="text-xs sm:text-sm truncate">
+                        {employee.email}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Phone size={14} className={`${colors.textMuted}`} />
+                      <p className="text-xs sm:text-sm">{employee.phone}</p>
+                    </div>
+                  </div>
+
+                  {/* Metrics */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className={`rounded-lg p-3 border ${colors.border}`}>
+                      <p className={`text-xs ${colors.textMuted}`}>Tasks</p>
+                      <p className="text-lg font-semibold mt-1">
+                        {employee.tasksCompleted}/{employee.tasksAssigned}
+                      </p>
+                      <p className={`text-xs ${colors.textMuted}`}>Completed</p>
+                    </div>
+
+                    <div className={`rounded-lg p-3 border ${colors.border}`}>
+                      <p className={`text-xs ${colors.textMuted}`}>Rating</p>
+                      <p className="text-lg font-semibold mt-1">
+                        {employee.performanceRating}
+                      </p>
+                      <p className={`text-xs ${colors.textMuted}`}>
+                        Performance
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-xs ${colors.textMuted}`}>Joined</p>
+                      <p className="text-xs sm:text-sm font-medium">
+                        {employee.createdAt
+                          ? new Date(employee.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )
+                          : "N/A"}
+                      </p>
+                    </div>
+
+                    <span
+                      className={` px-3 py-1 rounded-full text-white text-xs font-medium border ${statusColors[employee.userActiveStatus]}`}
+                    >
+                      {capitalize(
+                        employee.userActiveStatus === "onleave"
+                          ? "on leave"
+                          : employee.userActiveStatus,
+                      )}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         )}
 
         {/* Empty State */}
-        {sortedEmployees.length === 0 && (
+        {!loadingOrgStaffs && sortedEmployees.length === 0 && (
           <div
             className={`${colors.bgCard} rounded-lg border ${colors.border} p-8 sm:p-12 text-center`}
           >

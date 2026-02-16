@@ -39,6 +39,7 @@ import { useTaskStats } from "@/hooks/useTaskStats";
 import { PieDataItem } from "@/components/dashboard/PieChartComponent";
 import { priorityColors } from "@/utils/constant";
 import { useMemo } from "react";
+import OverviewSkeleton from "@/components/skeletons/OverviewSkeleton";
 
 // ─── Helper Functions ────────────────────────────────────────────────────────
 
@@ -202,7 +203,7 @@ function OverviewPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
 
-  const { myTasks } = useTask();
+  const { myTasks, loading } = useTask();
   const myTaskStats = useTaskStats();
 
   // ✨ Calculate dynamic data from myTasks
@@ -289,6 +290,10 @@ function OverviewPage() {
     { name: "Overdue", value: myTaskStats.overdue, color: "#b91c1c" },
     { name: "Not Started", value: myTaskStats.notStarted, color: "#38bdf8" },
   ].filter((item) => item.value > 0); // Only show statuses with tasks
+
+  if (loading) {
+    return <OverviewSkeleton />;
+  }
 
   return (
     <DashboardLayout links={navItems}>

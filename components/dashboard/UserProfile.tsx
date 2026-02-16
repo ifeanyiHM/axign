@@ -27,10 +27,12 @@ import { PasswordFormData, passwordSchema } from "@/schemas/passwordSchema";
 import { Alert } from "../ui/alert";
 import SelectField from "../primitives/form/SelectField";
 import Avatar from "./Avatar";
+import { UserProfileSkeleton } from "../skeletons/UserProfileSkeleton";
 
 export function UserProfile() {
   const { user } = useAuth();
-  const { updateProfile, changePassword, profile } = useUser();
+  const { updateProfile, changePassword, profile, loadingProfileDetails } =
+    useUser();
   const { theme } = useTheme();
   const colors = themes[theme];
 
@@ -157,6 +159,10 @@ export function UserProfile() {
     setIsEditing(false);
     setErrorMessage("");
   };
+
+  if (loadingProfileDetails) {
+    return <UserProfileSkeleton />;
+  }
 
   return (
     <>

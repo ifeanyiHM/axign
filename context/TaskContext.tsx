@@ -84,7 +84,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [myTasks, setMyTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

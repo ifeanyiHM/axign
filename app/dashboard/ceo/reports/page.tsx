@@ -10,8 +10,6 @@ import {
   Download,
   Calendar,
   TrendingUp,
-  TrendingDown,
-  FileText,
   BarChart3,
   PieChart as PieChartIcon,
   Activity,
@@ -20,6 +18,7 @@ import {
   Clock,
   ArrowUpRight,
   ArrowDownRight,
+  ClipboardList,
 } from "lucide-react";
 import {
   BarChart,
@@ -41,6 +40,8 @@ import { links } from "../data";
 import Header from "@/components/dashboard/Header";
 import { Button } from "@/components/ui/button";
 import SelectField from "@/components/primitives/form/SelectField";
+import StatusCard from "@/components/dashboard/StatusCard";
+import ReportsPageSkeleton from "@/components/skeletons/ReportsPageSkeleton";
 
 // ─── Helper Functions ────────────────────────────────────────────────────────
 
@@ -248,7 +249,7 @@ type ReportPeriod = "week" | "month" | "quarter" | "year";
 function ReportsPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
-  const { allTasks } = useTask();
+  const { allTasks, loading } = useTask();
   const { organizationStaffs } = useUser();
 
   const [selectedPeriod, setSelectedPeriod] = useState<ReportPeriod>("month");
@@ -303,22 +304,35 @@ function ReportsPage() {
       ? Math.round((onTimeTasks.length / tasksWithDeadlines.length) * 100)
       : 0;
 
-  // Calculate trends (comparing to last month)
-  const currentMonth = new Date().getMonth();
-  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  const currentMonthTasks = monthlyPerformance[currentMonth]?.completed || 0;
-  const lastMonthTasks = monthlyPerformance[lastMonth]?.completed || 1;
-  const completionTrend =
-    lastMonthTasks > 0
-      ? Number(
-          (
-            ((currentMonthTasks - lastMonthTasks) / lastMonthTasks) *
-            100
-          ).toFixed(1),
-        )
-      : 0;
+  // // Calculate trends (comparing to last month)
+  // const currentMonth = new Date().getMonth();
+  // const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  // const currentMonthTasks = monthlyPerformance[currentMonth]?.completed || 0;
+  // const lastMonthTasks = monthlyPerformance[lastMonth]?.completed || 1;
+  // const completionTrend =
+  //   lastMonthTasks > 0
+  //     ? Number(
+  //         (
+  //           ((currentMonthTasks - lastMonthTasks) / lastMonthTasks) *
+  //           100
+  //         ).toFixed(1),
+  //       )
+  //     : 0;
 
-  const productivityTrend = -3.2; // Could calculate from hoursLogged if available
+  //     //sample usage
+  // <div
+  //   className={`flex items-center gap-1 text-xs sm:text-sm ${completionTrend >= 0 ? "text-emerald-400" : "text-red-400"}`}
+  // >
+  //   {completionTrend >= 0 ? (
+  //     <TrendingUp size={14} />
+  //   ) : (
+  //     <TrendingDown size={14} />
+  //   )}
+  //   <span>
+  //     {completionTrend >= 0 ? "+" : ""}
+  //     {completionTrend}%
+  //   </span>
+  // </div>;
 
   const periodOptions = [
     { label: "This Week", value: "week" },
@@ -337,6 +351,37 @@ function ReportsPage() {
   };
 
   const axisStroke = theme === "light" ? "#6b7280" : "#9ca3af";
+
+  const statsConfig = [
+    {
+      label: "Total Tasks",
+      value: totalTasks,
+      icon: ClipboardList,
+    },
+    {
+      label: "Completion Rate (%)",
+      value: completionRate,
+      icon: CheckCircle2,
+    },
+    {
+      label: "Tasks Per Employee",
+      value: avgTasksPerEmployee,
+      icon: Users,
+    },
+    {
+      label: "On-Time Delivery (%)",
+      value: onTimeDelivery,
+      icon: Clock,
+    },
+  ];
+
+  // if (loading) {
+  //   return <ReportsPageSkeleton />;
+  // }
+
+  if (loading) {
+    return <ReportsPageSkeleton />;
+  }
 
   return (
     <DashboardLayout links={links}>
@@ -371,113 +416,9 @@ function ReportsPage() {
       </div>
 
       {/* main */}
-      <div
-        className={`min-h-screen ${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}
-      >
+      <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          {/* Total Tasks */}
-          <div
-            className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-5`}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className={`p-2.5 sm:p-3 rounded-lg ${colors.stats.blue}`}>
-                <FileText size={20} className="sm:w-6 sm:h-6" />
-              </div>
-              <div
-                className={`flex items-center gap-1 text-xs sm:text-sm ${completionTrend >= 0 ? "text-emerald-400" : "text-red-400"}`}
-              >
-                {completionTrend >= 0 ? (
-                  <TrendingUp size={14} />
-                ) : (
-                  <TrendingDown size={14} />
-                )}
-                <span>
-                  {completionTrend >= 0 ? "+" : ""}
-                  {completionTrend}%
-                </span>
-              </div>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold mb-1">
-              {totalTasks}
-            </h3>
-            <p className={`text-xs sm:text-sm ${colors.textMuted}`}>
-              Total Tasks
-            </p>
-          </div>
-
-          {/* Completion Rate */}
-          <div
-            className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-5`}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className={`p-2.5 sm:p-3 rounded-lg ${colors.stats.green}`}>
-                <CheckCircle2 size={20} className="sm:w-6 sm:h-6" />
-              </div>
-              <div className="flex items-center gap-1 text-emerald-400 text-xs sm:text-sm">
-                <TrendingUp size={14} />
-                <span>+8.2%</span>
-              </div>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold mb-1">
-              {completionRate}%
-            </h3>
-            <p className={`text-xs sm:text-sm ${colors.textMuted}`}>
-              Completion Rate
-            </p>
-          </div>
-
-          {/* Avg Tasks/Employee */}
-          <div
-            className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-5`}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className={`p-2.5 sm:p-3 rounded-lg ${colors.stats.yellow}`}>
-                <Users size={20} className="sm:w-6 sm:h-6" />
-              </div>
-              <div
-                className={`flex items-center gap-1 text-xs sm:text-sm ${productivityTrend >= 0 ? "text-emerald-400" : "text-red-400"}`}
-              >
-                {productivityTrend >= 0 ? (
-                  <TrendingUp size={14} />
-                ) : (
-                  <TrendingDown size={14} />
-                )}
-                <span>
-                  {productivityTrend >= 0 ? "+" : ""}
-                  {productivityTrend}%
-                </span>
-              </div>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold mb-1">
-              {avgTasksPerEmployee}
-            </h3>
-            <p className={`text-xs sm:text-sm ${colors.textMuted}`}>
-              Tasks per Employee
-            </p>
-          </div>
-
-          {/* On-Time Delivery */}
-          <div
-            className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-5`}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className={`p-2.5 sm:p-3 rounded-lg ${colors.stats.green}`}>
-                <Clock size={20} className="sm:w-6 sm:h-6" />
-              </div>
-              <div className="flex items-center gap-1 text-emerald-400 text-xs sm:text-sm">
-                <TrendingUp size={14} />
-                <span>+5.1%</span>
-              </div>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-bold mb-1">
-              {onTimeDelivery}%
-            </h3>
-            <p className={`text-xs sm:text-sm ${colors.textMuted}`}>
-              On-Time Delivery
-            </p>
-          </div>
-        </div>
+        <StatusCard status={statsConfig} />
 
         {/* Charts Row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">

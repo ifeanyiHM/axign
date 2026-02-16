@@ -32,13 +32,17 @@ import PieChartComponent, {
 import { links } from "./data";
 import { useTaskStats } from "@/hooks/useTaskStats";
 import { useTask } from "@/context/TaskContext";
+import HeaderSkeleton from "@/components/skeletons/HeaderSkeleton";
+import StatusCardSkeleton from "@/components/skeletons/StatusCardSkeleton";
+import TableSkeleton from "@/components/skeletons/TableSkeleton";
+import ChartSkeleton from "@/components/skeletons/ChartSkeleton";
 
 function CeoDashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
   const colors = themes[theme];
 
-  const { allTasks } = useTask();
+  const { allTasks, loading } = useTask();
   const myTaskStats = useTaskStats();
 
   const statsConfig = [
@@ -122,17 +126,28 @@ function CeoDashboard() {
 
   return (
     <DashboardLayout links={links}>
-      <Header
-        user={user}
-        title="My Dashboard"
-        subtitle="Welcome back,"
-        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
-      />
+      {loading ? (
+        <HeaderSkeleton
+          className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+          hasButton={false}
+        />
+      ) : (
+        <Header
+          user={user}
+          title="My Dashboard"
+          subtitle="Welcome back,"
+          className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+        />
+      )}
       {/* Main Content */}
       <div className="p-4 sm:px-6 sm:py-0">
         <div>
           {/* Stats Cards – stack on very small screens */}
-          <StatusCard status={statsConfig} />
+          {loading ? (
+            <StatusCardSkeleton />
+          ) : (
+            <StatusCard status={statsConfig} />
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
             {/* Quick Create Task */}
@@ -188,53 +203,71 @@ function CeoDashboard() {
             </section>
 
             {/* Recent Tasks – horizontal scroll on mobile */}
-            <TaskTable taskList={allTasks} title="Recent Tasks" />
+
+            {loading ? (
+              <TableSkeleton />
+            ) : (
+              <TaskTable taskList={allTasks} title="Recent Tasks" />
+            )}
           </div>
 
           {/* Charts – stack vertically on mobile */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mt-6 sm:mt-8">
             {/* <PieChart pieData={pieData} /> */}
-            <PieChartComponent pieData={pieData} title="Task Satus" />
 
-            <div
-              className={`${colors.bgCard} p-5 sm:p-6 rounded-xl border ${colors.border}`}
-            >
-              <h3 className="text-base font-semibold mb-4">Tasks This Month</h3>
-              <div className="h-64 sm:h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barChartData}>
-                    <XAxis
-                      dataKey="name"
-                      stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
-                    />
-                    <YAxis stroke={theme === "light" ? "#6b7280" : "#9ca3af"} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor:
-                          theme === "light"
-                            ? "#ffffff"
-                            : theme === "blue"
-                              ? "#1e3a8a"
-                              : "#1f2937",
-                        border: `1px solid ${theme === "light" ? "#e5e7eb" : theme === "blue" ? "#1e40af" : "#374151"}`,
-                        borderRadius: "8px",
-                        color: theme === "light" ? "#111827" : "#f3f4f6",
-                      }}
-                    />
-                    <Bar
-                      dataKey="Completed"
-                      fill="#3b82f6"
-                      radius={[4, 4, 0, 0]}
-                    />
-                    <Bar
-                      dataKey="Pending"
-                      fill="#64748b"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
+            {loading ? (
+              <ChartSkeleton type="pie" />
+            ) : (
+              <PieChartComponent pieData={pieData} title="Task Satus" />
+            )}
+
+            {loading ? (
+              <ChartSkeleton type="bar" />
+            ) : (
+              <div
+                className={`${colors.bgCard} p-5 sm:p-6 rounded-xl border ${colors.border}`}
+              >
+                <h3 className="text-base font-semibold mb-4">
+                  Tasks This Month
+                </h3>
+                <div className="h-64 sm:h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={barChartData}>
+                      <XAxis
+                        dataKey="name"
+                        stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
+                      />
+                      <YAxis
+                        stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor:
+                            theme === "light"
+                              ? "#ffffff"
+                              : theme === "blue"
+                                ? "#1e3a8a"
+                                : "#1f2937",
+                          border: `1px solid ${theme === "light" ? "#e5e7eb" : theme === "blue" ? "#1e40af" : "#374151"}`,
+                          borderRadius: "8px",
+                          color: theme === "light" ? "#111827" : "#f3f4f6",
+                        }}
+                      />
+                      <Bar
+                        dataKey="Completed"
+                        fill="#3b82f6"
+                        radius={[4, 4, 0, 0]}
+                      />
+                      <Bar
+                        dataKey="Pending"
+                        fill="#64748b"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-            </div>
+            )}
           </section>
         </div>
       </div>

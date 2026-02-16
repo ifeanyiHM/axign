@@ -27,18 +27,18 @@ export default function Header({
 
   return (
     <header
-      className={`${className} ${colors.border} flex justify-between items-center mb-4 sm:mb-6`}
+      className={`${className} ${colors.border} md:flex justify-between items-center mb-4 sm:mb-6`}
     >
       <div>
         <h1 className="text-xl font-bold">{title}</h1>
-        <p className="text-gray-400 text-sm">
+        <p className={`text-gray-400 text-sm max-w-[90%] md:max-w-full`}>
           {subtitle} {user?.username}
         </p>
       </div>
       {buttonTitle && (
         <Button
           onClick={onClick}
-          className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-lg font-medium flex items-center gap-2 text-sm cursor-pointer ${colors.button}`}
+          className={`mt-2 md:mt-0 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-md md:rounded-lg font-medium flex items-center gap-2 text-xs md:text-sm cursor-pointer ${colors.button}`}
         >
           <Plus size={18} /> {buttonTitle}
         </Button>

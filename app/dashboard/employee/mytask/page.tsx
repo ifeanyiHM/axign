@@ -23,6 +23,11 @@ import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
 import { useTask } from "@/context/TaskContext";
 import { useTaskStats } from "@/hooks/useTaskStats";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import StatusCardSkeleton from "@/components/skeletons/StatusCardSkeleton";
+import FiltersAndActionsSkeleton from "@/components/skeletons/FiltersAndActionSkeleton";
+import TableSkeleton from "@/components/skeletons/TableSkeleton";
+import HeaderSkeleton from "@/components/skeletons/HeaderSkeleton";
 
 type ViewMode = "table" | "grid";
 type SortField = "dueDate" | "priority" | "status" | "progress";
@@ -32,7 +37,7 @@ function MyTasksPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
 
-  const { myTasks } = useTask();
+  const { myTasks, loading } = useTask();
   const myTaskStats = useTaskStats();
 
   const [viewMode, setViewMode] = useState<ViewMode>("table");
@@ -137,154 +142,170 @@ function MyTasksPage() {
   return (
     <DashboardLayout links={navItems}>
       {/* Header */}
-      <Header
-        title="  My Tasks"
-        subtitle="Manage and track your assigned tasks"
-        className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
-      />
+
+      {loading ? (
+        <HeaderSkeleton
+          className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+          hasButton={false}
+        />
+      ) : (
+        <Header
+          title="  My Tasks"
+          subtitle="Manage and track your assigned tasks"
+          className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+        />
+      )}
       <div className={`${colors.bg} ${colors.text} p-3 sm:p-4 md:px-6 md:py-0`}>
         {/* Stats Overview */}
-        <StatusCard status={statsConfig} />
+        {loading ? <StatusCardSkeleton /> : <StatusCard status={statsConfig} />}
 
         {/* Filters and Actions */}
-        <FiltersandActions
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-          showMobileFilters={showMobileFilters}
-          setShowMobileFilters={setShowMobileFilters}
-          hasActiveFilters={hasActiveFilters}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={setSelectedStatus}
-          selectedPriority={selectedPriority}
-          setSelectedPriority={setSelectedPriority}
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-          clearFilters={clearFilters}
-          label="not started"
-        >
-          Showing {sortedTasks.length} of {myTasks.length} tasks
-        </FiltersandActions>
+        {loading ? (
+          <FiltersAndActionsSkeleton />
+        ) : (
+          <FiltersandActions
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+            showMobileFilters={showMobileFilters}
+            setShowMobileFilters={setShowMobileFilters}
+            hasActiveFilters={hasActiveFilters}
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+            selectedPriority={selectedPriority}
+            setSelectedPriority={setSelectedPriority}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            clearFilters={clearFilters}
+            label="not started"
+          >
+            Showing {sortedTasks.length} of {myTasks.length} tasks
+          </FiltersandActions>
+        )}
 
         {/* grid View */}
-        {viewMode === "grid" && (
-          <div className="space-y-3 sm:space-y-4">
-            {sortedTasks.map((task, index) => {
-              const daysUntilDue = getDaysUntilDue(task.dueDate);
-              const isOverdue = daysUntilDue < 0 && task.status !== "Completed";
-              const isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 3;
+        {loading ? (
+          <TableSkeleton />
+        ) : (
+          viewMode === "grid" && (
+            <div className="space-y-3 sm:space-y-4">
+              {sortedTasks.map((task, index) => {
+                const daysUntilDue = getDaysUntilDue(task.dueDate);
+                const isOverdue =
+                  daysUntilDue < 0 && task.status !== "Completed";
+                const isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 3;
 
-              return (
-                <div
-                  key={index}
-                  className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-5 hover:shadow-lg transition-all duration-200 cursor-pointer group`}
-                >
-                  {/* Card Header */}
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <span
-                          className={`text-xs font-medium ${colors.textMuted}`}
-                        >
-                          {task.id}
-                        </span>
-                        <span
-                          className={`px-2 py-0.5 ${colors.bgSidebar} rounded text-xs font-medium`}
-                        >
-                          {task.category}
-                        </span>
-                        {isOverdue && (
-                          <span className="px-2 py-0.5 bg-red-900/30 border border-red-800/50 text-red-400 rounded text-xs font-medium">
-                            Overdue
-                          </span>
-                        )}
-                        {isDueSoon && task.status !== "Completed" && (
-                          <span className="px-2 py-0.5 bg-amber-900/30 border border-amber-800/50 text-amber-400 rounded text-xs font-medium">
-                            Due Soon
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="font-semibold text-sm sm:text-base mb-2 group-hover:text-blue-400 transition-colors">
-                        {task.title}
-                      </h3>
-                      <p
-                        className={`text-xs sm:text-sm ${colors.textMuted} line-clamp-2`}
-                      >
-                        {task.description}
-                      </p>
-                    </div>
-                    <button
-                      className={`p-2 ${colors.hover} rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0`}
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-                  </div>
-
-                  {/* Metadata */}
+                return (
                   <div
-                    className={`flex items-center justify-between py-3 border-t border-b ${colors.border} mb-3`}
+                    key={index}
+                    className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-5 hover:shadow-lg transition-all duration-200 cursor-pointer group`}
                   >
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar
-                          size={14}
-                          className={`${colors.textMuted} shrink-0`}
-                        />
-                        <div>
-                          <p className="text-xs sm:text-sm font-medium">
-                            {new Date(task.dueDate).toLocaleDateString(
-                              "en-US",
-                              {
-                                month: "short",
-                                day: "numeric",
-                              },
-                            )}
-                          </p>
-                          <p className={`text-xs ${colors.textMuted}`}>
-                            {isOverdue
-                              ? `${Math.abs(daysUntilDue)} days overdue`
-                              : `${daysUntilDue} days left`}
-                          </p>
+                    {/* Card Header */}
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                          <span
+                            className={`text-xs font-medium ${colors.textMuted}`}
+                          >
+                            {task.id}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 ${colors.bgSidebar} rounded text-xs font-medium`}
+                          >
+                            {task.category}
+                          </span>
+                          {isOverdue && (
+                            <span className="px-2 py-0.5 bg-red-900/30 border border-red-800/50 text-red-400 rounded text-xs font-medium">
+                              Overdue
+                            </span>
+                          )}
+                          {isDueSoon && task.status !== "Completed" && (
+                            <span className="px-2 py-0.5 bg-amber-900/30 border border-amber-800/50 text-amber-400 rounded text-xs font-medium">
+                              Due Soon
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-sm sm:text-base mb-2 group-hover:text-blue-400 transition-colors">
+                          {task.title}
+                        </h3>
+                        <p
+                          className={`text-xs sm:text-sm ${colors.textMuted} line-clamp-2`}
+                        >
+                          {task.description}
+                        </p>
+                      </div>
+                      <button
+                        className={`p-2 ${colors.hover} rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0`}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                    </div>
+
+                    {/* Metadata */}
+                    <div
+                      className={`flex items-center justify-between py-3 border-t border-b ${colors.border} mb-3`}
+                    >
+                      <div className="flex items-center gap-4 flex-wrap">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar
+                            size={14}
+                            className={`${colors.textMuted} shrink-0`}
+                          />
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium">
+                              {new Date(task.dueDate).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )}
+                            </p>
+                            <p className={`text-xs ${colors.textMuted}`}>
+                              {isOverdue
+                                ? `${Math.abs(daysUntilDue)} days overdue`
+                                : `${daysUntilDue} days left`}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <Clock
+                            size={14}
+                            className={`${colors.textMuted} shrink-0`}
+                          />
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium">
+                              {task.hoursLogged}/{task.estimatedHours}h
+                            </p>
+                            <p className={`text-xs ${colors.textMuted}`}>
+                              Logged
+                            </p>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1.5">
-                        <Clock
-                          size={14}
-                          className={`${colors.textMuted} shrink-0`}
-                        />
-                        <div>
-                          <p className="text-xs sm:text-sm font-medium">
-                            {task.hoursLogged}/{task.estimatedHours}h
-                          </p>
-                          <p className={`text-xs ${colors.textMuted}`}>
-                            Logged
-                          </p>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}
+                        >
+                          {task.priority}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${priorityColors[task.priority]}`}
-                      >
-                        {task.priority}
-                      </span>
-                    </div>
-                  </div>
+                    {/* Progress and Status */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${statusColors[task.status]}`}
+                        >
+                          {getStatusIcon(task.status)}
+                          {task.status}
+                        </span>
 
-                  {/* Progress and Status */}
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${statusColors[task.status]}`}
-                      >
-                        {getStatusIcon(task.status)}
-                        {task.status}
-                      </span>
-
-                      {/* <div className="flex items-center gap-3">
+                        {/* <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1 text-xs sm:text-sm">
                           <MessageSquare
                             size={14}
@@ -297,47 +318,48 @@ function MyTasksPage() {
                           <span>{task.attachments}</span>
                         </div>
                       </div> */}
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span
+                            className={`text-xs font-medium ${colors.textMuted}`}
+                          >
+                            Progress
+                          </span>
+                          <span className="text-sm font-semibold">
+                            {task.progress}%
+                          </span>
+                        </div>
+                        <div className="relative bg-gray-700/50 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="absolute inset-y-0 left-0 bg-linear-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
+                            style={{ width: `${task.progress}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
 
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span
-                          className={`text-xs font-medium ${colors.textMuted}`}
-                        >
-                          Progress
-                        </span>
-                        <span className="text-sm font-semibold">
-                          {task.progress}%
-                        </span>
+                    {/* Tags */}
+                    {task.tags && task?.tags?.length > 0 && (
+                      <div
+                        className={`flex flex-wrap gap-1.5 mt-3 pt-3 border-t ${colors.border}`}
+                      >
+                        {task?.tags?.map((tag, index) => (
+                          <span
+                            key={index}
+                            className={`px-2 py-1 ${colors.bgSidebar} border ${colors.border} rounded text-xs`}
+                          >
+                            #{tag}
+                          </span>
+                        ))}
                       </div>
-                      <div className="relative bg-gray-700/50 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="absolute inset-y-0 left-0 bg-linear-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-500"
-                          style={{ width: `${task.progress}%` }}
-                        />
-                      </div>
-                    </div>
+                    )}
                   </div>
-
-                  {/* Tags */}
-                  {task.tags && task?.tags?.length > 0 && (
-                    <div
-                      className={`flex flex-wrap gap-1.5 mt-3 pt-3 border-t ${colors.border}`}
-                    >
-                      {task?.tags?.map((tag, index) => (
-                        <span
-                          key={index}
-                          className={`px-2 py-1 ${colors.bgSidebar} border ${colors.border} rounded text-xs`}
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )
         )}
 
         {/* Table View */}
@@ -579,9 +601,13 @@ function MyTasksPage() {
 
                         {/* Actions */}
                         <td className="px-2 sm:px-3 py-4 text-center">
-                          <button className={`p-2 ${colors.hover} rounded-lg`}>
+                          <Button
+                            variant={"ghost"}
+                            size={"icon"}
+                            className={`p-2 ${colors.hover} rounded-lg`}
+                          >
                             <MoreVertical size={16} />
-                          </button>
+                          </Button>
                         </td>
                       </tr>
                     );

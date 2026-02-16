@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation"; // Changed from "next/router"
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 interface WithAuthOptions {
@@ -33,7 +33,7 @@ export function withAuth<P extends object>(
 
     // Show loading state while checking auth
     if (user === null) {
-      return <div>Loading...</div>;
+      return null;
     }
 
     // Don't render if wrong role

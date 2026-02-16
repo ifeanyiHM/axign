@@ -13,10 +13,14 @@ import { navItems } from "./data";
 import { CircleCheckBig, ClipboardList, Clock, Loader2 } from "lucide-react";
 import { useTask } from "@/context/TaskContext";
 import { useTaskStats } from "@/hooks/useTaskStats";
+import StatusCardSkeleton from "@/components/skeletons/StatusCardSkeleton";
+import TableSkeleton from "@/components/skeletons/TableSkeleton";
+import ChartSkeleton from "@/components/skeletons/ChartSkeleton";
+import HeaderSkeleton from "@/components/skeletons/HeaderSkeleton";
 
 function EmployeeDashboard() {
   const { user } = useAuth();
-  const { myTasks } = useTask();
+  const { myTasks, loading } = useTask();
   const myTaskStats = useTaskStats();
 
   const statsConfig = [
@@ -53,26 +57,46 @@ function EmployeeDashboard() {
   return (
     <>
       <DashboardLayout links={navItems}>
-        <Header
-          user={user}
-          title="My Dashboard"
-          subtitle="Welcome back,"
-          className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
-        />
+        {loading ? (
+          <HeaderSkeleton
+            className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+            hasButton={false}
+          />
+        ) : (
+          <Header
+            user={user}
+            title="My Dashboard"
+            subtitle="Welcome back,"
+            className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
+          />
+        )}
+
         {/* Main Content */}
         <div className="p-4 sm:px-6 sm:py-0">
           <div>
             {/* Personal Stats Cards */}
-            <StatusCard status={statsConfig} />
+            {loading ? (
+              <StatusCardSkeleton />
+            ) : (
+              <StatusCard status={statsConfig} />
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
               {/* Task Status Pie Chart */}
               <section>
-                <PieChartComponent pieData={pieData} title="My Task Status" />
+                {loading ? (
+                  <ChartSkeleton type="pie" />
+                ) : (
+                  <PieChartComponent pieData={pieData} title="My Task Status" />
+                )}
               </section>
 
               {/* My Tasks Table */}
-              <TaskTable taskList={myTasks} title="My Tasks" />
+              {loading ? (
+                <TableSkeleton />
+              ) : (
+                <TaskTable taskList={myTasks} title="My Tasks" />
+              )}
             </div>
           </div>
         </div>

@@ -31,18 +31,20 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { navItems } from "../../data";
 import { Button } from "@/components/ui/button";
 import Avatar from "@/components/dashboard/Avatar";
-import { InfoRow } from "./InfoRow";
 import { priorityColors } from "@/utils/constant";
+import { InfoRow } from "@/components/dashboard/taskId/InfoRow";
+import TaskDetailsSkeleton from "@/components/skeletons/TaskDetailsSkeleton";
 
 function TaskDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { theme } = useTheme();
   const colors = themes[theme];
-  const { allTasks, updateTask } = useTask();
+  const { allTasks, updateTask, loading } = useTask();
 
   const taskId = params.taskId as string;
   const task = allTasks.find((t) => t.id === taskId);
+  // const task = !loading ? allTasks.find((t) => t.id === taskId) : undefined;
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [showStatusMenu, setShowStatusMenu] = useState(false);
@@ -90,6 +92,10 @@ function TaskDetailsPage() {
       setIsUpdating(false);
     }
   };
+
+  if (loading) {
+    return <TaskDetailsSkeleton />;
+  }
 
   if (!task) {
     return (

@@ -84,13 +84,13 @@ const calculateMonthlyPerformance = (tasks: any[]) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const calculateTasksByCategory = (tasks: any[]) => {
   const categoryColors: Record<string, string> = {
-    Audit: "#3b82f6",
-    Documentation: "#10b981",
-    Training: "#f59e0b",
-    Reporting: "#8b5cf6",
-    Maintenance: "#ef4444",
-    Assessment: "#06b6d4",
-    default: "#64748b",
+    Audit: "#2563EB",
+    Documentation: "#15803D",
+    Training: "#D97706",
+    Reporting: "#7C3AED",
+    Maintenance: "#DC2626",
+    Assessment: "#0E7490",
+    default: "#64748B",
   };
 
   const categoryCounts: Record<string, number> = {};
@@ -110,10 +110,11 @@ const calculateTasksByCategory = (tasks: any[]) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const calculateTasksByStatus = (tasks: any[]) => {
   const statusColors = {
-    Completed: "#10b981",
-    "In Progress": "#3b82f6",
-    "Not Started": "#6b7280",
-    "Pending Review": "#8b5cf6",
+    Completed: "#064E3B4D",
+    "In Progress": "#1E3A8A99",
+    "Not Started": "#064E3B99",
+    "Pending Review": "#581C8799",
+    Overdue: "#b91c1c",
   };
 
   const statusCounts: Record<string, number> = {
@@ -304,36 +305,6 @@ function ReportsPage() {
       ? Math.round((onTimeTasks.length / tasksWithDeadlines.length) * 100)
       : 0;
 
-  // // Calculate trends (comparing to last month)
-  // const currentMonth = new Date().getMonth();
-  // const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  // const currentMonthTasks = monthlyPerformance[currentMonth]?.completed || 0;
-  // const lastMonthTasks = monthlyPerformance[lastMonth]?.completed || 1;
-  // const completionTrend =
-  //   lastMonthTasks > 0
-  //     ? Number(
-  //         (
-  //           ((currentMonthTasks - lastMonthTasks) / lastMonthTasks) *
-  //           100
-  //         ).toFixed(1),
-  //       )
-  //     : 0;
-
-  //     //sample usage
-  // <div
-  //   className={`flex items-center gap-1 text-xs sm:text-sm ${completionTrend >= 0 ? "text-emerald-400" : "text-red-400"}`}
-  // >
-  //   {completionTrend >= 0 ? (
-  //     <TrendingUp size={14} />
-  //   ) : (
-  //     <TrendingDown size={14} />
-  //   )}
-  //   <span>
-  //     {completionTrend >= 0 ? "+" : ""}
-  //     {completionTrend}%
-  //   </span>
-  // </div>;
-
   const periodOptions = [
     { label: "This Week", value: "week" },
     { label: "This Month", value: "month" },
@@ -374,10 +345,6 @@ function ReportsPage() {
       icon: Clock,
     },
   ];
-
-  // if (loading) {
-  //   return <ReportsPageSkeleton />;
-  // }
 
   if (loading) {
     return <ReportsPageSkeleton />;
@@ -619,7 +586,7 @@ function ReportsPage() {
                           {category.value}
                         </span>
                       </div>
-                      <div className="relative h-2 bg-gray-700/50 rounded-full overflow-hidden">
+                      <div className="relative h-2 bg-gray-500/50 rounded-full overflow-hidden">
                         <div
                           className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
                           style={{

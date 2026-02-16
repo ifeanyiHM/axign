@@ -281,7 +281,11 @@ function CEOTaskDetailsPage() {
   };
 
   if (loading) {
-    return <TaskDetailsSkeleton />;
+    return (
+      <DashboardLayout links={links}>
+        <TaskDetailsSkeleton />
+      </DashboardLayout>
+    );
   }
 
   if (!task) {

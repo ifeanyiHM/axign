@@ -47,11 +47,11 @@ function EmployeeDashboard() {
   ];
 
   const pieData: PieDataItem[] = [
-    { name: "Completed", value: myTaskStats.completed, color: "#059669" }, // green
-    { name: "In Progress", value: myTaskStats.inProgress, color: "#1e40af" }, // blue
-    { name: "Pending Review", value: myTaskStats.pending, color: "#64748b" }, // slate
-    { name: "Overdue", value: myTaskStats.overdue, color: "#b91c1c" }, // red
-    { name: "Not Started", value: myTaskStats.notStarted, color: "#38bdf8" }, // 👈 soft gray-slate
+    { name: "Completed", value: myTaskStats.completed, color: "#064E3B4D" },
+    { name: "In Progress", value: myTaskStats.inProgress, color: "#1E3A8A99" },
+    { name: "Pending Review", value: myTaskStats.pending, color: "#581C8799" },
+    { name: "Overdue", value: myTaskStats.overdue, color: "#b91c1c" },
+    { name: "Not Started", value: myTaskStats.notStarted, color: "#064E3B99" },
   ];
 
   return (

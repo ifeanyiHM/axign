@@ -69,11 +69,11 @@ function CeoDashboard() {
   ];
 
   const pieData: PieDataItem[] = [
-    { name: "Completed", value: myTaskStats.completed, color: "#059669" },
-    { name: "In Progress", value: myTaskStats.inProgress, color: "#1e40af" },
-    { name: "Pending Review", value: myTaskStats.pending, color: "#64748b" },
+    { name: "Completed", value: myTaskStats.completed, color: "#064E3B4D" },
+    { name: "In Progress", value: myTaskStats.inProgress, color: "#1E3A8A99" },
+    { name: "Pending Review", value: myTaskStats.pending, color: "#581C8799" },
     { name: "Overdue", value: myTaskStats.overdue, color: "#b91c1c" },
-    { name: "Not Started", value: myTaskStats.notStarted, color: "#38bdf8" },
+    { name: "Not Started", value: myTaskStats.notStarted, color: "#064E3B99" },
   ];
 
   //  Calculate weekly bar chart data from allTasks API

@@ -188,13 +188,22 @@ const getUpcomingDeadlines = (tasks: any[]) => {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// const categoryColors: Record<string, string> = {
+//   Audit: "bg-blue-500/15 text-blue-400",
+//   Documentation: "bg-emerald-500/15 text-emerald-400",
+//   Training: "bg-amber-500/15 text-amber-400",
+//   Reporting: "bg-purple-500/15 text-purple-400",
+//   Maintenance: "bg-red-500/15 text-red-400",
+//   Assessment: "bg-cyan-500/15 text-cyan-400",
+// };
 const categoryColors: Record<string, string> = {
-  Audit: "bg-blue-500/15 text-blue-400",
-  Documentation: "bg-emerald-500/15 text-emerald-400",
-  Training: "bg-amber-500/15 text-amber-400",
-  Reporting: "bg-purple-500/15 text-purple-400",
-  Maintenance: "bg-red-500/15 text-red-400",
-  Assessment: "bg-cyan-500/15 text-cyan-400",
+  Audit: "#2563EB",
+  Documentation: "#15803D",
+  Training: "#D97706",
+  Reporting: "#7C3AED",
+  Maintenance: "#DC2626",
+  Assessment: "#0E7490",
+  default: "#64748B",
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -284,12 +293,12 @@ function OverviewPage() {
       : 0;
 
   const taskStatusBreakdown: PieDataItem[] = [
-    { name: "Completed", value: myTaskStats.completed, color: "#059669" },
-    { name: "In Progress", value: myTaskStats.inProgress, color: "#1e40af" },
-    { name: "Pending Review", value: myTaskStats.pending, color: "#64748b" },
+    { name: "Completed", value: myTaskStats.completed, color: "#064E3B4D" },
+    { name: "In Progress", value: myTaskStats.inProgress, color: "#1E3A8A99" },
+    { name: "Pending Review", value: myTaskStats.pending, color: "#581C8799" },
     { name: "Overdue", value: myTaskStats.overdue, color: "#b91c1c" },
-    { name: "Not Started", value: myTaskStats.notStarted, color: "#38bdf8" },
-  ].filter((item) => item.value > 0); // Only show statuses with tasks
+    { name: "Not Started", value: myTaskStats.notStarted, color: "#064E3B99" },
+  ].filter((item) => item.value > 0);
 
   if (loading) {
     return <OverviewSkeleton />;

@@ -94,7 +94,11 @@ function TaskDetailsPage() {
   };
 
   if (loading) {
-    return <TaskDetailsSkeleton />;
+    return (
+      <DashboardLayout links={navItems}>
+        <TaskDetailsSkeleton />
+      </DashboardLayout>
+    );
   }
 
   if (!task) {

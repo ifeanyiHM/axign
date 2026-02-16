@@ -8,7 +8,7 @@ interface TableSkeletonProps {
 }
 
 export default function TableSkeleton({
-  rows = 5,
+  rows = 8,
   columns = 6,
 }: TableSkeletonProps) {
   const { theme } = useTheme();
@@ -25,7 +25,7 @@ export default function TableSkeleton({
           style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}
         >
           {Array.from({ length: columns }).map((_, i) => (
-            <Skeleton key={i} className="h-4 w-3/4" />
+            <Skeleton key={i} className="h-3 w-1/4 rounded-[3px]" />
           ))}
         </div>
       </div>
@@ -45,15 +45,12 @@ export default function TableSkeleton({
                 {colIndex === 0 ? (
                   // First column with avatar
                   <div className="flex items-center gap-3">
-                    <Skeleton variant="circular" className="w-8 h-8" />
-                    <Skeleton className="h-4 w-24" />
+                    <Skeleton variant="circular" className="w-4 h-4" />
+                    <Skeleton className="h-3 w-24 rounded-[3px]" />
                   </div>
-                ) : colIndex === columns - 1 ? (
-                  // Last column with action button
-                  <Skeleton className="h-8 w-8 rounded-lg ml-auto" />
                 ) : (
                   // Regular columns
-                  <Skeleton className="h-4 w-full max-w-30" />
+                  <Skeleton className="h-3 w-full rounded-[3px] max-w-30" />
                 )}
               </div>
             ))}

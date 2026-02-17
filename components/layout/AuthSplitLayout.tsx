@@ -37,7 +37,9 @@ export const AuthSplitLayout = ({
         <section className="flex w-full bg-white">
           <div className="flex min-h-screen w-full flex-col">
             <div className="sticky top-0 z-10 bg-white px-6 pt-6">
-              <div className="flex items-start">{header}</div>
+              <div className="flex items-start">
+                <Link href={"/"}>{header}</Link>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto px-6 pb-10 pt-10">
               <div className="mx-auto w-full max-w-md space-y-6">

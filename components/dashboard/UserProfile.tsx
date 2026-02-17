@@ -28,6 +28,7 @@ import { Alert } from "../ui/alert";
 import SelectField from "../primitives/form/SelectField";
 import Avatar from "./Avatar";
 import { UserProfileSkeleton } from "../skeletons/UserProfileSkeleton";
+import TextareaField from "../primitives/form/TextareaField";
 
 export function UserProfile() {
   const { user } = useAuth();
@@ -340,7 +341,9 @@ export function UserProfile() {
             >
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100">
+                  <div
+                    className={`flex items-center justify-center w-9 h-9 rounded-lg ${colors.bg} ${colors.text}`}
+                  >
                     <User size={20} className="" />
                   </div>
 
@@ -352,7 +355,7 @@ export function UserProfile() {
                   <Button
                     variant={"outline"}
                     onClick={() => setIsEditing(true)}
-                    className={`px-3 sm:px-4 py-2 rounded-lg text-sm`}
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-sm ${theme === "light" ? "" : colors.button}`}
                   >
                     Edit Profile
                   </Button>
@@ -370,6 +373,7 @@ export function UserProfile() {
                     disabled={!isEditing}
                     error={profileErrors?.username?.message}
                     className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    labelClassName={colors.textMuted}
                   />
 
                   {/* Email */}
@@ -380,6 +384,7 @@ export function UserProfile() {
                     disabled={!isEditing}
                     error={profileErrors?.email?.message}
                     className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    labelClassName={colors.textMuted}
                   />
 
                   {/* Phone */}
@@ -389,6 +394,7 @@ export function UserProfile() {
                     {...registerProfile("phone")}
                     disabled={!isEditing}
                     className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    labelClassName={colors.textMuted}
                   />
 
                   {/* Location */}
@@ -398,6 +404,7 @@ export function UserProfile() {
                     {...registerProfile("location")}
                     disabled={!isEditing}
                     className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    labelClassName={colors.textMuted}
                   />
 
                   {/* Position */}
@@ -407,6 +414,7 @@ export function UserProfile() {
                     {...registerProfile("position")}
                     disabled={!isEditing}
                     className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    labelClassName={colors.textMuted}
                   />
 
                   {/* Department (read-only) */}
@@ -416,27 +424,20 @@ export function UserProfile() {
                     {...registerProfile("department")}
                     disabled={!isEditing}
                     className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    labelClassName={colors.textMuted}
                   />
                 </div>
 
                 {/* Bio */}
                 <div className="mt-4">
-                  <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                    Bio
-                  </label>
-                  <textarea
+                  <TextareaField
+                    label="Bio"
                     {...registerProfile("bio")}
                     disabled={!isEditing}
                     rows={4}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
-                      profileErrors.bio ? "ring-2 ring-red-500" : ""
-                    }`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm ${colors.input}`}
+                    labelClassName={colors.textMuted}
                   />
-                  {profileErrors.bio && (
-                    <p className="text-red-400 text-xs mt-1">
-                      {profileErrors.bio.message}
-                    </p>
-                  )}
                 </div>
 
                 {/* Action Buttons */}
@@ -479,7 +480,9 @@ export function UserProfile() {
               className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-6`}
             >
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100">
+                <div
+                  className={`flex items-center justify-center w-9 h-9 rounded-lg ${colors.bg} ${colors.text}`}
+                >
                   <Building2 size={18} className="" />
                 </div>
                 <h3 className="text-base font-semibold">Organization</h3>
@@ -543,7 +546,9 @@ export function UserProfile() {
               className={`${colors.bgCard} rounded-xl border ${colors.border} p-4 sm:p-6`}
             >
               <div className="flex items-center gap-2 mb-4 sm:mb-6">
-                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100">
+                <div
+                  className={`flex items-center justify-center w-9 h-9 rounded-lg ${colors.bg} ${colors.text}`}
+                >
                   <Shield size={20} className="" />
                 </div>
 
@@ -561,127 +566,98 @@ export function UserProfile() {
                         Last changed 3 months ago
                       </p>
                     </div>
-                    <button
+                    <Button
+                      variant={"secondary"}
                       onClick={() => setShowPasswordForm(true)}
-                      className={`px-3 sm:px-4 py-2 bg-gray-100 rounded-lg text-xs sm:text-sm`}
+                      className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm ${theme === "light" ? "" : colors.button}`}
                     >
                       Change Password
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
                   <div className="space-y-4">
                     {/* Current Password */}
-                    <div>
-                      <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                        Current Password <span className="text-red-400">*</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showCurrentPassword ? "text" : "password"}
-                          {...registerPassword("currentPassword")}
-                          className={`w-full px-3 sm:px-4 py-2 pr-10 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            passwordErrors.currentPassword
-                              ? "ring-2 ring-red-500"
-                              : ""
-                          }`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setShowCurrentPassword(!showCurrentPassword)
-                          }
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                        >
-                          {showCurrentPassword ? (
-                            <EyeOff size={18} className={colors.textMuted} />
-                          ) : (
-                            <Eye size={18} className={colors.textMuted} />
-                          )}
-                        </button>
-                      </div>
-                      {passwordErrors.currentPassword && (
-                        <p className="text-red-400 text-xs mt-1">
-                          {passwordErrors.currentPassword.message}
-                        </p>
-                      )}
+                    <div className="relative">
+                      <InputField
+                        type={showCurrentPassword ? "text" : "password"}
+                        label=" Current Password *"
+                        {...registerPassword("currentPassword")}
+                        error={passwordErrors?.currentPassword?.message}
+                        className={`w-full px-3 sm:px-4 py-2.5 text-sm border  ${colors.input}`}
+                        labelClassName={colors.textMuted}
+                      />
+                      <Button
+                        variant={"ghost"}
+                        size={"icon"}
+                        type="button"
+                        onClick={() =>
+                          setShowCurrentPassword(!showCurrentPassword)
+                        }
+                        className={`p-0 hover:bg-0 absolute right-3 ${passwordErrors?.currentPassword ? "top-1/2" : "top-2/3"} transform -translate-y-1/2`}
+                      >
+                        {showCurrentPassword ? (
+                          <EyeOff size={18} className={colors.textMuted} />
+                        ) : (
+                          <Eye size={18} className={colors.textMuted} />
+                        )}
+                      </Button>
                     </div>
 
                     {/* New Password */}
-                    <div>
-                      <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                        New Password <span className="text-red-400">*</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showNewPassword ? "text" : "password"}
-                          {...registerPassword("newPassword")}
-                          className={`w-full px-3 sm:px-4 py-2 pr-10 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            passwordErrors.newPassword
-                              ? "ring-2 ring-red-500"
-                              : ""
-                          }`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                        >
-                          {showNewPassword ? (
-                            <EyeOff size={18} className={colors.textMuted} />
-                          ) : (
-                            <Eye size={18} className={colors.textMuted} />
-                          )}
-                        </button>
-                      </div>
-                      {passwordErrors.newPassword && (
-                        <p className="text-red-400 text-xs mt-1">
-                          {passwordErrors.newPassword.message}
-                        </p>
-                      )}
+                    <div className="relative">
+                      <InputField
+                        type={showNewPassword ? "text" : "password"}
+                        label=" New Password *"
+                        {...registerPassword("newPassword")}
+                        error={passwordErrors?.newPassword?.message}
+                        className={`w-full px-3 sm:px-4 py-2.5 text-sm border ${colors.input}`}
+                        labelClassName={colors.textMuted}
+                      />
+                      <Button
+                        variant={"ghost"}
+                        size={"icon"}
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        className={`p-0 hover:bg-0 absolute right-3 ${passwordErrors?.newPassword ? "top-1/2" : "top-2/3"} transform -translate-y-1/2`}
+                      >
+                        {showNewPassword ? (
+                          <EyeOff size={18} className={colors.textMuted} />
+                        ) : (
+                          <Eye size={18} className={colors.textMuted} />
+                        )}
+                      </Button>
                     </div>
 
                     {/* Confirm Password */}
-                    <div>
-                      <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2">
-                        Confirm New Password{" "}
-                        <span className="text-red-400">*</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type={showConfirmPassword ? "text" : "password"}
-                          {...registerPassword("confirmPassword")}
-                          className={`w-full px-3 sm:px-4 py-2 pr-10 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            passwordErrors.confirmPassword
-                              ? "ring-2 ring-red-500"
-                              : ""
-                          }`}
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                          className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                        >
-                          {showConfirmPassword ? (
-                            <EyeOff size={18} className={colors.textMuted} />
-                          ) : (
-                            <Eye size={18} className={colors.textMuted} />
-                          )}
-                        </button>
-                      </div>
-                      {passwordErrors.confirmPassword && (
-                        <p className="text-red-400 text-xs mt-1">
-                          {passwordErrors.confirmPassword.message}
-                        </p>
-                      )}
+                    <div className="relative">
+                      <InputField
+                        type={showConfirmPassword ? "text" : "password"}
+                        label="Confirm Password *"
+                        {...registerPassword("confirmPassword")}
+                        error={passwordErrors?.confirmPassword?.message}
+                        className={`w-full px-3 sm:px-4 py-2.5 text-sm border ${colors.input}`}
+                        labelClassName={colors.textMuted}
+                      />
+                      <Button
+                        variant={"ghost"}
+                        size={"icon"}
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className={`p-0 hover:bg-0 absolute right-3 ${passwordErrors?.confirmPassword ? "top-1/2" : "top-2/3"} transform -translate-y-1/2`}
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff size={18} className={colors.textMuted} />
+                        ) : (
+                          <Eye size={18} className={colors.textMuted} />
+                        )}
+                      </Button>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
-                      <button
+                      <Button
                         type="submit"
                         disabled={isSubmittingPassword}
                         className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 ${colors.button} rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -697,9 +673,10 @@ export function UserProfile() {
                             Change Password
                           </>
                         )}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        variant={"secondary"}
                         onClick={() => {
                           setShowPasswordForm(false);
                           resetPassword();
@@ -710,7 +687,7 @@ export function UserProfile() {
                       >
                         <X size={18} />
                         Cancel
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </form>

@@ -188,3 +188,28 @@ body {
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
 }
+
+/* for carousel */
+@keyframes scrollReverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.slider {
+  display: flex;
+  width: max-content;
+  animation: scroll 20s linear infinite;
+}

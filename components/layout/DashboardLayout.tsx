@@ -49,15 +49,19 @@ export default function DashboardLayout({
         } lg:flex lg:flex-col overflow-y-auto`}
       >
         <div className={`p-4 sm:px-6 sm:py-6 border-b ${colors.border}`}>
-          <Image
-            src={
-              theme === "light" ? "/new_axign_logo.png" : "/new_axign_black.png"
-            }
-            alt="CCG logo"
-            width={107}
-            height={60}
-            priority
-          />
+          <Link href={"/"}>
+            <Image
+              src={
+                theme === "light"
+                  ? "/new_axign_logo.png"
+                  : "/new_axign_black.png"
+              }
+              alt="CCG logo"
+              width={107}
+              height={60}
+              priority
+            />
+          </Link>
         </div>
 
         <nav className="flex-1 px-3 py-6 space-y-1">

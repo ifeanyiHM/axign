@@ -67,10 +67,7 @@ export default function LoginForm() {
 
       {/* Forgot password */}
       <div className="text-right">
-        <Link
-          href="/forgot-password"
-          className="text-sm text-blue-600 hover:underline"
-        >
+        <Link href="/forgot-password" className="text-sm hover:underline">
           Forgot Password?
         </Link>
       </div>
@@ -92,7 +89,7 @@ export default function LoginForm() {
         <span className="text-sm text-gray-600">
           Don&apos;t have an account?{" "}
         </span>
-        <Link href="/signup" className="text-sm text-blue-600 hover:underline">
+        <Link href="/signup" className="text-sm hover:underline">
           Sign Up
         </Link>
       </div>

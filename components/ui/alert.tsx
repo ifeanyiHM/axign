@@ -39,7 +39,7 @@ export interface AlertProps
     React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof alertVariants> {
   title?: string;
-  description?: string;
+  description?: React.ReactNode;
   footerText?: string;
   dismissible?: boolean;
   onClose?: () => void;

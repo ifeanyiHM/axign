@@ -74,7 +74,7 @@ export const AuthSplitLayout = ({
             <div className="px-4 pb-6 mt-32">
               {footer ?? (
                 <div className="flex flex-wrap items-center justify-center md:justify-between gap-4 text-xs text-neutral-900">
-                  <p>©2026 TCN Group. All rights reserved.</p>
+                  <p>©2026 Axign. All rights reserved.</p>
                   <div className="flex items-center gap-4">
                     <Link href={"/support"} className="hover:text-neutral-600">
                       Support

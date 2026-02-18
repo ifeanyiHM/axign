@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-// import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import InputField from "@/components/primitives/form/InputField";
+import { Alert } from "@/components/ui/alert";
 
 export default function ForgotPasswordPage() {
-  //   const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -28,7 +30,7 @@ export default function ForgotPasswordPage() {
 
       if (res.ok) {
         setSuccess(data.message);
-        setEmail(""); // Clear input
+        setEmail("");
       } else {
         setError(data.error || "Something went wrong");
       }
@@ -41,55 +43,75 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Forgot Password</h2>
+    <div
+      className="min-h-screen flex items-center justify-center bg-linear-to-tr from-gray-100 to-gray-50 relative overflow-hidden"
+      style={{
+        backgroundColor: "#f8fafc",
+        backgroundImage: `
+      radial-gradient(rgba(0,0,0,0.2) 2px, transparent 1px)
+    `,
+        backgroundSize: "24px 24px",
+      }}
+    >
+      {/* Subtle background decorations */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 60, ease: "linear" }}
+        className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-blue-200/30 blur-3xl"
+      />
+      <motion.div
+        animate={{ y: [0, -20, 0] }}
+        transition={{ repeat: Infinity, duration: 25, ease: "easeInOut" }}
+        className="absolute bottom-10 right-10 w-48 h-48 rounded-full bg-purple-200/30 blur-2xl"
+      />
 
-        <p className="text-gray-600 mb-6 text-sm text-center">
-          Enter your email address and we&apos;ll send you a link to reset your
-          password.
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white p-10 sm:p-12 rounded-2xl shadow-2xl w-full max-w-md relative z-10"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">
+          Forgot Password
+        </h2>
+
+        <p className="text-gray-600 mb-6 text-center text-sm">
+          Enter your email address and we&apos;ll send you a secure link to
+          reset your password.
         </p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <InputField
             type="email"
             placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="border px-3 py-2 rounded"
+            className="text-sm"
           />
 
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition disabled:bg-gray-400"
-            disabled={loading}
-          >
+          <Button type="submit" disabled={loading} className="text-sm">
             {loading ? "Sending..." : "Send Reset Link"}
-          </button>
+          </Button>
 
-          {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
-              {success}
-            </div>
+          {/* Success message */}
+          {(error || success) && (
+            <Alert
+              variant={error ? "danger" : "success"}
+              title={error ? "Failed" : "Success"}
+              description={error || success}
+              dismissible={false}
+            />
           )}
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
-              {error}
-            </div>
-          )}
-
-          <div className="text-center mt-4">
-            <Link
-              href="/login"
-              className="text-blue-600 hover:underline text-sm"
-            >
-              Back to Login
+          <div className="text-center mt-4 text-sm">
+            Back to{" "}
+            <Link href="/login" className="hover:underline text-xs">
+              Login
             </Link>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import LoginForm from "@/components/AuthForm/LoginForm";
 import AuthSplitLayout from "@/components/layout/AuthSplitLayout";
 import Image from "next/image";
 
-const heroImage = "/loginn.jpg";
+const heroImage = "/login.png";
 const logoSrc = "/new_axign_logo.png";
 
 export default function RegisterPage() {

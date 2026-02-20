@@ -37,7 +37,7 @@ import StatusCard from "@/components/dashboard/StatusCard";
 import { useTask } from "@/context/TaskContext";
 import { useTaskStats } from "@/hooks/useTaskStats";
 import { PieDataItem } from "@/components/dashboard/PieChartComponent";
-import { priorityColors } from "@/utils/constant";
+import { priorityColors } from "@/utils/constants";
 import { useMemo } from "react";
 import OverviewSkeleton from "@/components/skeletons/OverviewSkeleton";
 

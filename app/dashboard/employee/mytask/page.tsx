@@ -19,7 +19,7 @@ import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import StatusCard from "@/components/dashboard/StatusCard";
 import Header from "@/components/dashboard/Header";
-import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
+import { getStatusIcon, priorityColors, statusColors } from "@/utils/constants";
 import { useTask } from "@/context/TaskContext";
 import { useTaskStats } from "@/hooks/useTaskStats";
 import { useRouter } from "next/navigation";

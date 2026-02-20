@@ -31,7 +31,7 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { links } from "../../data";
 import { Button } from "@/components/ui/button";
 import Avatar from "@/components/dashboard/Avatar";
-import { priorityColors } from "@/utils/constant";
+import { priorityColors } from "@/utils/constants";
 import InputField from "@/components/primitives/form/InputField";
 import SelectField from "@/components/primitives/form/SelectField";
 import { InfoRow } from "@/components/dashboard/taskId/InfoRow";

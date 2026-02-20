@@ -20,7 +20,7 @@ import StatusCard from "@/components/dashboard/StatusCard";
 import { Button } from "@/components/ui/button";
 import FiltersandActions from "@/components/dashboard/FiltersandActions";
 import Header from "@/components/dashboard/Header";
-import { getStatusIcon, priorityColors, statusColors } from "@/utils/constant";
+import { getStatusIcon, priorityColors, statusColors } from "@/utils/constants";
 import { useTask } from "@/context/TaskContext";
 import Avatar from "@/components/dashboard/Avatar";
 import { useTaskStats } from "@/hooks/useTaskStats";

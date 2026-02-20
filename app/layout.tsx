@@ -5,6 +5,7 @@ import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { UserProvider } from "@/context/UserContext";
 import { TaskProvider } from "@/context/TaskContext";
+import { defaultMetadata } from "@/lib/seo/metadata";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -17,11 +18,7 @@ const sora = Sora({
   weight: ["300", "400", "600", "700", "800"],
 });
 
-export const metadata: Metadata = {
-  title: "Axign - Transform Team Productivity",
-  description:
-    "The all-in-one task management platform that brings clarity, accountability, and results.",
-};
+export const metadata: Metadata = defaultMetadata;
 
 export default function RootLayout({
   children,

@@ -1,5 +1,9 @@
 import { Clock, CheckCircle2, AlertCircle } from "lucide-react";
 
+export const SITE_NAME = "Axign";
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
 export const statusColors: Record<string, string> = {
   "Not Started": "bg-slate-800/30 border-slate-700/50",
   "In Progress": "bg-blue-900/30 border-blue-800/50",

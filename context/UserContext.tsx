@@ -41,6 +41,18 @@ const profilePayload: FullProfile = {
   performanceRating: 0,
 };
 
+interface InviteEmployeeData {
+  inviteeName: string;
+  inviteeEmail: string;
+}
+
+interface InviteEmployeeResponse {
+  success?: boolean;
+  message?: string;
+  error?: string;
+  isRegistered?: boolean;
+}
+
 interface UserContextType {
   getProfile: () => Promise<void>;
   fetchOrganizationUsers: () => Promise<void>;
@@ -51,6 +63,7 @@ interface UserContextType {
   organizationStaffs: FullProfile[];
   loadingOrgStaffs: boolean;
   loadingProfileDetails: boolean;
+  inviteEmployee: (data: InviteEmployeeData) => Promise<InviteEmployeeResponse>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -63,6 +76,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<FullProfile>(profilePayload);
   const [loadingProfileDetails, setLoadingProfileDetials] =
     useState<boolean>(false);
+
+  console.log("UserContext initialized with user:", profile);
 
   //GET USERS BY ORGANIZATION
   const organizationId = user?.organizationId;
@@ -209,6 +224,53 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  // Invite employee function - sends invite data to API route and handles response
+  const inviteEmployee = async (
+    data: InviteEmployeeData,
+  ): Promise<InviteEmployeeResponse> => {
+    try {
+      // Get user details from context
+      if (!user || !user.username) {
+        throw new Error("User information not available. Please login again.");
+      }
+
+      const requestBody = {
+        inviteeName: data.inviteeName,
+        inviteeEmail: data.inviteeEmail,
+        inviterUsername: user.username,
+        organizationName: profile?.companyName,
+      };
+
+      const res = await fetch("/api/invite", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(requestBody),
+      });
+
+      const responseData = await res.json();
+
+      if (!res.ok) {
+        throw new Error(responseData.error || "Failed to send invitation");
+      }
+
+      return {
+        success: true,
+        message: responseData.message,
+      };
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to send invitation";
+      console.error("Invite employee error:", errorMessage);
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -221,6 +283,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         loadingOrgStaffs,
         calculateTaskCounts,
         loadingProfileDetails,
+        inviteEmployee,
       }}
     >
       {children}

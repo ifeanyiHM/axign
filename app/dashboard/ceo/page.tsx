@@ -232,15 +232,25 @@ function CeoDashboard() {
                 </h3>
                 <div className="h-64 sm:h-72">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={barChartData}>
+                    <BarChart
+                      data={barChartData}
+                      margin={{ top: 20, right: 20, bottom: 20, left: 0 }}
+                    >
                       <XAxis
                         dataKey="name"
                         stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
+                        tickLine={false} // cleaner axis
+                        axisLine={false}
+                        tick={{ fontSize: 14 }}
                       />
                       <YAxis
                         stroke={theme === "light" ? "#6b7280" : "#9ca3af"}
+                        tickLine={false}
+                        axisLine={false}
+                        tick={{ fontSize: 14 }}
                       />
                       <Tooltip
+                        cursor={false} // remove hover highlight
                         contentStyle={{
                           backgroundColor:
                             theme === "light"
@@ -248,20 +258,36 @@ function CeoDashboard() {
                               : theme === "blue"
                                 ? "#1e3a8a"
                                 : "#1f2937",
-                          border: `1px solid ${theme === "light" ? "#e5e7eb" : theme === "blue" ? "#1e40af" : "#374151"}`,
-                          borderRadius: "8px",
+                          border: `1px solid ${
+                            theme === "light"
+                              ? "#e5e7eb"
+                              : theme === "blue"
+                                ? "#2563eb"
+                                : "#374151"
+                          }`,
+                          borderRadius: "10px",
+                          padding: "10px 14px",
                           color: theme === "light" ? "#111827" : "#f3f4f6",
+                          fontSize: "0.875rem",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                         }}
                       />
+
+                      {/* Professional Bar Colors */}
                       <Bar
                         dataKey="Completed"
-                        fill="#3b82f6"
-                        radius={[4, 4, 0, 0]}
+                        fill="#4f46e5"
+                        radius={[6, 6, 0, 0]}
                       />
                       <Bar
                         dataKey="Pending"
-                        fill="#64748b"
-                        radius={[4, 4, 0, 0]}
+                        fill="#f59e0b"
+                        radius={[6, 6, 0, 0]}
+                      />
+                      <Bar
+                        dataKey="InProgress"
+                        fill="#3b82f6"
+                        radius={[6, 6, 0, 0]}
                       />
                     </BarChart>
                   </ResponsiveContainer>

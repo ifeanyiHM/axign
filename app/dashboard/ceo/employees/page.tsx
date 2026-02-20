@@ -32,6 +32,7 @@ import HeaderSkeleton from "@/components/skeletons/HeaderSkeleton";
 import StatusCardSkeleton from "@/components/skeletons/StatusCardSkeleton";
 import FiltersAndActionsSkeleton from "@/components/skeletons/FiltersAndActionSkeleton";
 import EmployeeCardSkeleton from "@/components/skeletons/EmployeeCardSkeleton";
+import InviteEmployeeModal from "@/components/modal/InviteEmployeeModal";
 
 const statusColors: Record<string, string> = {
   active: "bg-emerald-600",
@@ -58,6 +59,7 @@ function EmployeesPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [showFilters, setShowFilters] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   // Filter and sort employees
   const filteredEmployees = organizationStaffs.filter((employee) => {
@@ -165,6 +167,11 @@ function EmployeesPage() {
 
   return (
     <DashboardLayout links={links}>
+      <InviteEmployeeModal
+        isOpen={isInviteModalOpen}
+        onClose={() => setIsInviteModalOpen(false)}
+      />
+
       {/* Header */}
       {loadingOrgStaffs ? (
         <HeaderSkeleton className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6" />
@@ -174,6 +181,7 @@ function EmployeesPage() {
           subtitle="Manage your team members and their information"
           buttonTitle="Add Employee"
           icon={UserPlus}
+          onClick={() => setIsInviteModalOpen(true)}
           className="border-b py-4 sm:py-5 px-3 sm:px-4 md:px-6"
         />
       )}

@@ -279,3 +279,81 @@ export async function sendTaskAssignmentEmails(
     }),
   );
 }
+
+export async function sendEmployeeInvitationEmail(
+  inviteeEmail: string,
+  inviteeName: string,
+  inviterUsername: string,
+  organizationName: string,
+) {
+  const signupUrl = `${process.env.NEXT_PUBLIC_APP_URL}/signup`;
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: inviteeEmail,
+    subject: `You're Invited to Join ${organizationName} on Axign`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #111827;">
+        <div style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%); padding: 30px; border-radius: 8px 8px 0 0;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 28px;">
+            You're Invited! 🎉
+          </h1>
+        </div>
+
+        <div style="background-color: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+          <h2 style="color: #111827; margin-top: 0;">Hi ${inviteeName},</h2>
+          
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            <strong>${inviterUsername}</strong> has invited you to join <strong style="color: #9b7a19;">${organizationName}</strong> on Axign — the all-in-one task management platform.
+          </p>
+
+          <div style="background-color: #f9fafb; border-left: 4px solid #9b7a19; padding: 20px; margin: 25px 0; border-radius: 4px;">
+            <h3 style="color: #111827; margin-top: 0; font-size: 18px;">
+              What is Axign?
+            </h3>
+            <p style="color: #6b7280; margin: 0; line-height: 1.6;">
+              Axign helps teams collaborate seamlessly with smart task management, real-time tracking, and powerful analytics — all in one place.
+            </p>
+          </div>
+
+          <p style="color: #374151; font-size: 16px; line-height: 1.6;">
+            Click the button below to create your account and start collaborating with your team:
+          </p>
+
+          <div style="margin: 35px 0; text-align: center;">
+            <a
+              href="${signupUrl}"
+              style="
+                background-color: #9b7a19;
+                color: #ffffff;
+                padding: 14px 32px;
+                text-decoration: none;
+                border-radius: 8px;
+                display: inline-block;
+                font-weight: 600;
+                font-size: 16px;
+              "
+            >
+              Join ${organizationName}
+            </a>
+          </div>
+
+          <p style="color: #6b7280; font-size: 14px;">
+            Or copy and paste this link into your browser:
+          </p>
+          <p style="color: #9b7a19; word-break: break-all; background-color: #f9fafb; padding: 12px; border-radius: 4px; font-size: 13px;">
+            ${signupUrl}
+          </p>
+
+          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+          <p style="color: #9ca3af; font-size: 12px; margin-bottom: 0;">
+            This invitation was sent by ${inviterUsername} from ${organizationName}. If you didn't expect this invitation, you can safely ignore this email.
+          </p>
+        </div>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}

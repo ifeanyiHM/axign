@@ -11,6 +11,7 @@ import InputField from "../primitives/form/InputField";
 import SelectField from "../primitives/form/SelectField";
 import { Button } from "../ui/button";
 import { Alert } from "../ui/alert";
+import { Loader2 } from "lucide-react";
 
 interface Organization {
   _id: string;
@@ -204,7 +205,14 @@ export default function SignupForm() {
         {/* Submit */}
 
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Sign Up"}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin" size={18} />
+              Submitting...
+            </>
+          ) : (
+            "Sign Up"
+          )}
         </Button>
       </form>
       {/* Login */}

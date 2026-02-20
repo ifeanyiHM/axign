@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { LoginFormValues, loginSchema } from "@/schemas/loginSchema";
 import InputField from "../primitives/form/InputField";
 import { Button } from "../ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -74,7 +74,14 @@ export default function LoginForm() {
 
       {/* Submit */}
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Logging in..." : "Login"}
+        {isSubmitting ? (
+          <>
+            <Loader2 className="animate-spin" size={18} />
+            Logging in...
+          </>
+        ) : (
+          "Login"
+        )}
       </Button>
 
       {/* Error */}

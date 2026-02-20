@@ -17,6 +17,7 @@ import {
 import Image from "next/image";
 import CarouselRow from "@/components/landing/CarouselRow";
 import { Button } from "@/components/ui/button";
+import ScrollToTop from "@/utils/ScrollToTop";
 const logoSrc = "/new_axign_logo.png";
 const logoSrc2 = "/new_axign_black.png";
 
@@ -315,7 +316,7 @@ export default function LandingPage() {
                 // repeat: Infinity,
                 ease: "linear",
               }}
-              className="absolute top-0 md:top-2/6 left-[5%] md:left-[25%] w-24 h-24 sm:w-36 sm:h-36 rounded-lg z-10"
+              className="absolute top-0 md:top-2/6 left-[5%] md:left-[75%] lg:left-[25%] w-24 h-24 sm:w-36 sm:h-36 rounded-lg z-10"
               style={{
                 backgroundImage: `radial-gradient(rgba(0,0,0,0.4) 2px, transparent 1px)`,
                 backgroundSize: "24px 24px",
@@ -358,7 +359,7 @@ export default function LandingPage() {
               <motion.h1
                 variants={fadeInUp}
                 // className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-medium mb-4 sm:mb-6 font-['Sora'] text-gray-950"
-                className="tracking-tight text-gray-900 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold mb-4 sm:mb-6"
+                className="tracking-tight text-gray-900 text-3xl sm:text-4xl md:text-6xl lg:text-5xl xl:text-7xl font-semibold mb-4 sm:mb-6"
               >
                 <span className="text-gray-950">Transform</span> how your team
                 works with <span style={{ color: theme.accent }}>Axign</span>
@@ -548,8 +549,7 @@ export default function LandingPage() {
                 Product Features
               </span>
 
-              {/* <h2 className="text-4xl lg:text-5xl font-bold text-gray-950 leading-tight font-['Sora'] mb-6"> */}
-              <h2 className="text-3xl font-semibold tracking-tight leading-tight text-gray-900 md:text-5xl xl:text-[3.25rem] mb-6">
+              <h2 className="md:max-w-lg text-3xl font-semibold tracking-tight text-gray-900 md:text-5xl mb-6">
                 Built for modern teams that value clarity & speed
               </h2>
 
@@ -596,19 +596,14 @@ export default function LandingPage() {
           </div>
 
           {/* Feature Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-6 xl:gap-8">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group relative bg-white rounded-2xl p-8 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-1"
+                className="group relative bg-white rounded-2xl p-8 lg:p-6 xl:p-8 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-1"
               >
                 {/* Accent top bar on hover */}
-                <div
-                  // style={{
-                  //   background: `linear-gradient(to right, ${theme.accent}, ${theme.accentHover})`,
-                  // }}
-                  className="absolute top-0 left-0 w-full h-1 rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                />
+                <div className="absolute top-0 left-0 w-full h-1 rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Icon */}
                 <div
@@ -660,7 +655,7 @@ export default function LandingPage() {
             </span>
 
             {/* <h2 className="text-4xl lg:text-5xl font-bold text-gray-950 leading-tight font-['Sora'] mb-6"> */}
-            <h2 className="text-3xl font-semibold tracking-tight text-gray-900 md:text-5xl mb-6">
+            <h2 className="text-3xl font-semibold tracking-tight text-gray-900 md:text-5xl mb-6 md:max-w-lg lg:max-w-full">
               A simple workflow designed for real teams
             </h2>
 
@@ -739,12 +734,6 @@ export default function LandingPage() {
             className="animate-[scrollReverse_60s_linear_infinite]"
           />
         </div>
-
-        {/* Footer text */}
-        <p className="mt-12 max-w-md px-6 text-neutral-50 md:mt-20 md:text-lg">
-          We bring people together by purpose, passion, and life stage, so no
-          one grows alone.
-        </p>
       </section>
 
       {/* CTA Section */}
@@ -773,7 +762,7 @@ export default function LandingPage() {
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",
             }}
-            className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 lg:p-16 text-center overflow-hidden"
+            className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl md:rounded-3xl p-6 md:p-12 lg:p-16 text-center overflow-hidden"
           >
             {/* Accent top line */}
             <div
@@ -783,17 +772,17 @@ export default function LandingPage() {
               className="absolute top-0 left-0 w-full h-px"
             />
 
-            <h2 className="text-4xl lg:text-5xl xl:text-6xl font-medium text-white leading-tight font-['Sora'] mb-6">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-medium text-white leading-tight font-['Sora'] mb-6">
               Ready to elevate your team&apos;s workflow?
             </h2>
 
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-sm md:text-lg text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
               Join teams that rely on Axign to streamline operations, improve
               accountability, and move faster — without added complexity.
             </p>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="max-w-50 mx-auto md:max-w-full flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/signup"
                 style={{ backgroundColor: theme.accent }}
@@ -925,6 +914,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      <ScrollToTop />
     </div>
   );
 }

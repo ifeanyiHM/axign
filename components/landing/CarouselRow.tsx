@@ -16,7 +16,7 @@ export default function CarouselRow({ images, className }: Props) {
           return (
             <div
               key={i}
-              className="h-60 w-55 shrink-0 overflow-hidden lg:h-60 lg:w-98"
+              className="w-55 md:w-98 lg:h-60 shrink-0 overflow-hidden"
             >
               <Image
                 src={dashboardImage}

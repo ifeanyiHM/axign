@@ -36,6 +36,9 @@ import HeaderSkeleton from "@/components/skeletons/HeaderSkeleton";
 import StatusCardSkeleton from "@/components/skeletons/StatusCardSkeleton";
 import TableSkeleton from "@/components/skeletons/TableSkeleton";
 import ChartSkeleton from "@/components/skeletons/ChartSkeleton";
+import QuickCreateTaskSkeleton from "@/components/skeletons/QuickCreateTaskSkeleton";
+import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "next/navigation";
 
 function CeoDashboard() {
   const { user } = useAuth();
@@ -44,6 +47,8 @@ function CeoDashboard() {
 
   const { allTasks, loading } = useTask();
   const myTaskStats = useTaskStats();
+
+  const router = useRouter();
 
   const statsConfig = [
     {
@@ -151,61 +156,71 @@ function CeoDashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
             {/* Quick Create Task */}
-            <section
-              className={`${colors.bgCard} rounded-xl p-5 sm:p-6 h-fit`}
-              style={{ boxShadow: colors.cardShadow }}
-            >
-              <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
-                <Plus size={20} className="text-blue-400" /> Quick Create Task
-              </h3>
-              <form className="space-y-3 sm:space-y-4">
-                <InputField
-                  type="text"
-                  placeholder="Task Title"
-                  inputClassName={`text-sm ${colors.input}`}
-                />
-                <textarea
-                  placeholder="Description"
-                  rows={4}
-                  className={`w-full p-3 ${colors.input} border rounded-lg text-sm focus:outline-none`}
-                />
-                <SelectField
-                  placeholder="Assign to..."
-                  selectClassName={`text-sm ${colors.select}`}
-                  options={[
-                    { label: "Aisha Bello", value: "aisha" },
-                    { label: "Michael Okoro", value: "michael" },
-                    { label: "Fatima Yusuf", value: "fatima" },
-                  ]}
-                />
-                <div className="grid grid-cols-2 gap-4">
+            {loading ? (
+              <QuickCreateTaskSkeleton />
+            ) : (
+              <section
+                className={`${colors.bgCard} rounded-xl p-5 sm:p-6 h-fit`}
+                style={{ boxShadow: colors.cardShadow }}
+              >
+                <h3 className="text-base font-semibold mb-4 flex items-center gap-2">
+                  <Plus size={20} className={colors.text} /> Task Sample Form
+                </h3>
+                <form className="space-y-3 sm:space-y-4">
                   <InputField
-                    type="date"
+                    type="text"
+                    placeholder="Task Title"
                     inputClassName={`text-sm ${colors.input}`}
+                    disabled
+                  />
+                  <Textarea
+                    placeholder="Description"
+                    rows={4}
+                    className={`w-full p-3 ${colors.input}`}
+                    disabled
                   />
                   <SelectField
-                    placeholder="Priority"
+                    placeholder="Assign to..."
                     selectClassName={`text-sm ${colors.select}`}
                     options={[
-                      { label: "High", value: "high" },
-                      { label: "Medium", value: "medium" },
-                      { label: "Low", value: "low" },
+                      { label: "Sample A", value: "a" },
+                      { label: "Sample B", value: "b" },
+                      { label: "sample C", value: "c" },
                     ]}
+                    disabled
                   />
-                </div>
-                <Button
-                  className={`w-full text-sm mt-0.5 font-semibold ${colors.button}`}
-                  type="submit"
-                >
-                  Create Task
-                </Button>
-              </form>
-            </section>
+                  <div className="grid grid-cols-2 gap-4">
+                    <InputField
+                      type="date"
+                      inputClassName={`text-sm w-full ${colors.input}`}
+                      disabled
+                    />
+                    <SelectField
+                      placeholder="Priority"
+                      selectClassName={`text-sm ${colors.select}`}
+                      options={[
+                        { label: "High", value: "high" },
+                        { label: "Medium", value: "medium" },
+                        { label: "Low", value: "low" },
+                      ]}
+                      disabled
+                    />
+                  </div>
+                  <Button
+                    className={`w-full text-sm mt-0.5 font-semibold ${colors.button}`}
+                    type="button"
+                    onClick={() => router.push("/dashboard/ceo/create")}
+                  >
+                    Create Task
+                  </Button>
+                </form>
+              </section>
+            )}
 
             {/* Recent Tasks – horizontal scroll on mobile */}
 
             {loading ? (
-              <TableSkeleton />
+              <TableSkeleton rows={7} />
             ) : (
               <TaskTable taskList={allTasks} title="Recent Tasks" />
             )}

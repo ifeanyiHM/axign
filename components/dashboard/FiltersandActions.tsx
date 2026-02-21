@@ -89,7 +89,7 @@ export default function FiltersandActions({
       >
         <div className="flex flex-col gap-3 sm:gap-4">
           {/* Search and Main Actions */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <div className="flex flex-col md:items-center sm:flex-row gap-2 sm:gap-3">
             {/* Search */}
             <div className="flex-1 relative">
               <Search
@@ -106,7 +106,7 @@ export default function FiltersandActions({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center justify-center md:justify-normal">
               {/* Filter Toggle */}
               <Button
                 variant="ghost"
@@ -117,7 +117,7 @@ export default function FiltersandActions({
                 className={`text-xs sm:text-sm relative ${colors.hover}`}
               >
                 <Filter size={16} className="sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Filters</span>
+                <span className="">Filters</span>
                 {hasActiveFilters && (
                   <span className="absolute right-12 -top-0.5 md:-top-1 md:-right-1 sm:static sm:ml-2 px-1.5 sm:px-2 py-0.5 bg-blue-600 text-white rounded-full text-xs">
                     {
@@ -137,7 +137,7 @@ export default function FiltersandActions({
                 className={`text-xs sm:text-sm ${colors.hover}`}
               >
                 <Download size={16} className="sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Export</span>
+                <span className="">Export</span>
               </Button>
 
               {/* View Toggle - Desktop Only */}
@@ -360,7 +360,7 @@ export default function FiltersandActions({
                 label="Status"
                 containerClassName="sm:gap-2"
                 value={selectedStatus}
-                selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select}`}
+                selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select} ${colors.bg}`}
                 onValueChange={(value) => setSelectedStatus(value)}
                 options={[
                   { label: "All Statues", value: "all" },
@@ -375,7 +375,7 @@ export default function FiltersandActions({
                 <SelectField
                   label="Priority"
                   containerClassName="sm:gap-2"
-                  selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select}`}
+                  selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select} ${colors.bg}`}
                   value={selectedPriority}
                   onValueChange={(value) => setSelectedPriority(value)}
                   options={[
@@ -391,7 +391,7 @@ export default function FiltersandActions({
                 <SelectField
                   label="Department"
                   containerClassName="sm:gap-2"
-                  selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select}`}
+                  selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select} ${colors.bg}`}
                   value={selectedDepartment}
                   onValueChange={(value) => setSelectedDepartment(value)}
                   options={[
@@ -407,7 +407,7 @@ export default function FiltersandActions({
                 <SelectField
                   label="Category"
                   containerClassName="sm:gap-2"
-                  selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select}`}
+                  selectClassName={`w-full border-0 px-3 py-2 text-sm ${colors.select} ${colors.bg}`}
                   value={selectedCategory}
                   onValueChange={(value) => setSelectedCategory(value)}
                   options={[
@@ -425,7 +425,7 @@ export default function FiltersandActions({
 
               <div className="flex gap-2 pt-2">
                 <Button
-                  className={`flex-1 px-4 py-2 ${colors.button} rounded-lg`}
+                  className={`flex-1 px-4 py-2 ${colors.button} rounded`}
                   onClick={() => {
                     clearFilters();
                     setShowMobileFilters(false);
@@ -434,8 +434,10 @@ export default function FiltersandActions({
                   Clear all
                 </Button>
                 <Button
+                  variant={theme === "light" ? "secondary" : "ghost"}
                   onClick={() => setShowMobileFilters(false)}
-                  className={`flex-1 px-4 py-2 ${colors.button} rounded-lg`}
+                  // className={`flex-1 px-4 py-2 ${colors.button} rounded-lg`}
+                  className={`flex-1 px-4 py-2 rounded text-sm ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`}
                 >
                   Apply filters
                 </Button>
@@ -453,14 +455,16 @@ export default function FiltersandActions({
       {/* View Mode Toggle - Mobile Only */}
       <div className={`sm:hidden flex gap-2 mb-4 p-1 rounded-lg`}>
         <Button
+          variant={theme === "light" ? "default" : "ghost"}
           onClick={() => setViewMode("table")}
-          className={`w-full rounded text-sm ${colors.button}`}
+          className={`w-full rounded text-sm ${theme === "light" ? colors.button : `border ${colors.border} ${colors.hover}`}`}
         >
           Table {viewMode === "table" && <CheckCircle2 size={18} />}
         </Button>
         <Button
+          variant={theme === "light" ? "default" : "ghost"}
           onClick={() => setViewMode("grid")}
-          className={`w-full rounded text-sm ${colors.button}`}
+          className={`w-full rounded text-sm ${theme === "light" ? colors.button : `border ${colors.border} ${colors.hover}`}`}
         >
           Grid {viewMode === "grid" && <CheckCircle2 size={18} />}
         </Button>

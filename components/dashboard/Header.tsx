@@ -37,8 +37,9 @@ export default function Header({
       </div>
       {buttonTitle && (
         <Button
+          variant={theme === "light" ? "default" : "ghost"}
           onClick={onClick}
-          className={`mt-2 md:mt-0 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-md md:rounded-lg font-medium flex items-center gap-2 text-xs md:text-sm cursor-pointer ${colors.button}`}
+          className={`mt-2 md:mt-0 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-md md:rounded-lg font-medium flex items-center gap-2 text-xs md:text-sm cursor-pointer ${theme === "light" ? colors.button : `border ${colors.border} ${colors.hover}`}`}
         >
           <Plus size={18} /> {buttonTitle}
         </Button>

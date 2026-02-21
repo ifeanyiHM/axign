@@ -370,13 +370,13 @@ function ReportsPage() {
             options={periodOptions}
             placeholder="Choose period"
             icon={<Calendar size={16} />}
-            selectClassName="w-full sm:w-auto flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg text-sm"
+            selectClassName={`w-full sm:w-auto flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg text-sm ${colors.border} ${colors.bg}`}
           />
 
           {/* Export Button */}
           <Button
-            variant="secondary"
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 ${colors.button} rounded-lg text-sm`}
+            variant={theme === "light" ? "secondary" : "ghost"}
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} rounded-lg text-sm`}
           >
             <Download size={16} />
             Export Report
@@ -639,7 +639,7 @@ function ReportsPage() {
                       className={`flex items-center justify-between p-3 sm:p-4 ${colors.bgSidebar} border ${colors.border} rounded-lg`}
                     >
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-blue-600 text-white font-semibold text-sm">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-700 text-white font-semibold text-sm">
                           {index + 1}
                         </div>
                         <div className="min-w-0">

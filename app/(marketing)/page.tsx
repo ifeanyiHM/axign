@@ -744,8 +744,8 @@ export default function LandingPage() {
           backgroundImage: `
             repeating-linear-gradient(
               135deg,
-              rgba(0,0,0,0.03),
-              rgba(0,0,0,0.03) 1px,
+              rgba(0,0,0,0.08),
+              rgba(0,0,0,0.08) 1px,
               transparent 1px,
               transparent 30px
             )

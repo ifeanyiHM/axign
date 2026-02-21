@@ -300,7 +300,8 @@ function CreateTaskPage() {
                     placeholder="Enter task title"
                     {...register("title")}
                     error={errors.title?.message}
-                    className={`w-full text-sm border-0 ${colors.input}`}
+                    className={`w-full text-sm border-0 ${colors.input} ${colors.bg}`}
+                    labelClassName={`${colors.text}`}
                   />
                   {/* Description */}
                   <TextareaField
@@ -309,7 +310,8 @@ function CreateTaskPage() {
                     {...register("description")}
                     error={errors.description?.message}
                     rows={4}
-                    className={`w-full border-0 text-sm resize-none ${colors.input}`}
+                    className={`w-full border-0 text-sm resize-none ${colors.input} ${colors.bg}`}
+                    labelClassName={`${colors.text}`}
                   />
                   {/* Category */}
                   <Controller
@@ -325,7 +327,7 @@ function CreateTaskPage() {
                               label="Category *"
                               placeholder="Select a category"
                               containerClassName={`sm:gap-2`}
-                              selectClassName={`w-full border-0 text-sm ${colors.input}`}
+                              selectClassName={`w-full border-0 text-sm ${colors.input} ${colors.bg}`}
                               options={[
                                 ...categories.map((cat) => ({
                                   label: cat,
@@ -354,7 +356,7 @@ function CreateTaskPage() {
                               <InputField
                                 type="text"
                                 placeholder="Enter custom category"
-                                className={`w-full text-sm border-0 ${colors.input}`}
+                                className={`w-full text-sm border-0 ${colors.input} ${colors.bg}`}
                                 value={field.value}
                                 onChange={(e) => field.onChange(e.target.value)}
                                 autoFocus
@@ -385,12 +387,13 @@ function CreateTaskPage() {
                       Assign To <span className="text-red-400">*</span>
                     </label>
                     <div className="relative">
-                      <button
+                      <Button
+                        variant={"ghost"}
                         type="button"
                         onClick={() =>
                           setShowEmployeeDropdown(!showEmployeeDropdown)
                         }
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm ${colors.input} rounded-lg text-left flex items-center justify-between ${
+                        className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm ${colors.input} ${colors.bg} ${theme === "light" ? "" : `border ${colors.hover}`} rounded-lg text-left flex items-center justify-between ${
                           errors.assignedTo ? "ring-2 ring-red-500" : ""
                         }`}
                       >
@@ -400,7 +403,7 @@ function CreateTaskPage() {
                             : `${assignedTo.length} employee(s) selected`}
                         </span>
                         <Users size={18} className="shrink-0 sm:w-5 sm:h-5" />
-                      </button>
+                      </Button>
 
                       {showEmployeeDropdown && (
                         <>
@@ -412,7 +415,9 @@ function CreateTaskPage() {
                           <div
                             className={`fixed bottom-0 left-0 right-0 lg:relative z-50 lg:z-10 w-full mt-0 lg:mt-2 ${colors.bgCard} border ${colors.border} rounded-t-xl lg:rounded-lg shadow-lg max-h-80 overflow-y-auto`}
                           >
-                            <div className="sticky top-0 lg:hidden flex items-center justify-between p-4 border-b border-gray-700 bg-gray-900">
+                            <div
+                              className={`sticky top-0 lg:hidden flex items-center justify-between p-4 border-b ${colors.border} ${colors.bg}`}
+                            >
                               <h3 className="font-semibold">
                                 Select Employees
                               </h3>
@@ -517,8 +522,9 @@ function CreateTaskPage() {
                       type="date"
                       {...register("startDate")}
                       error={errors.startDate?.message}
-                      className={`w-full text-sm border-0 ${colors.input}`}
+                      className={`w-full text-sm border-0 ${colors.input} ${colors.bg}`}
                       containerClassName="sm:gap-2"
+                      labelClassName={`${colors.text}`}
                     />
                     {/* Due Date */}
                     <InputField
@@ -526,8 +532,9 @@ function CreateTaskPage() {
                       type="date"
                       {...register("dueDate")}
                       error={errors.dueDate?.message}
-                      className={`w-full text-sm border-0 ${colors.input}`}
+                      className={`w-full text-sm border-0 ${colors.input} ${colors.bg}`}
                       containerClassName="sm:gap-2"
+                      labelClassName={`${colors.text}`}
                     />{" "}
                   </div>
 
@@ -540,7 +547,7 @@ function CreateTaskPage() {
                         label="Priority *"
                         containerClassName="sm:gap-2"
                         placeholder="Select priority"
-                        selectClassName={`w-full border-0 text-sm ${colors.input}`}
+                        selectClassName={`w-full border-0 text-sm ${colors.input} ${colors.bg}`}
                         options={[
                           // { label: "Select Priority", value: "Not set" },
                           { label: "Low", value: "Low" },
@@ -566,7 +573,7 @@ function CreateTaskPage() {
                         placeholder="e.g., 8"
                         min="0"
                         step="0.5"
-                        className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        className={`w-full ${colors.bg} px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base ${colors.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
                       />
                       <Clock
                         size={16}
@@ -623,13 +630,14 @@ function CreateTaskPage() {
                             handleAddCustomTag();
                           }
                         }}
-                        className={`text-sm border-0 ${colors.input}`}
+                        className={`text-sm border-0 ${colors.input} ${colors.bg}`}
                         containerClassName="flex-1"
                       />
                       <Button
+                        variant={theme === "light" ? "default" : "ghost"}
                         type="button"
                         onClick={handleAddCustomTag}
-                        className={` ${colors.button} shrink-0`}
+                        className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} shrink-0`}
                       >
                         <Plus size={18} className="sm:w-5 sm:h-5" />
                       </Button>
@@ -738,11 +746,14 @@ function CreateTaskPage() {
               </div>
 
               {/* Mobile Action Buttons */}
-              <div className="lg:hidden space-y-2 sm:space-y-3 sticky bottom-0 bg-gray-950 p-4 -mx-4 border-t border-gray-800">
+              <div
+                className={`lg:hidden space-y-2 sm:space-y-3 sticky bottom-0 p-4 -mx-4 border-t ${colors.border} ${colors.bg} z-10`}
+              >
                 <Button
+                  variant={theme === "light" ? "default" : "ghost"}
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-2.5 sm:py-3 ${colors.button}`}
+                  className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} w-full px-4 py-2.5 sm:py-3`}
                 >
                   {isSubmitting ? (
                     <>
@@ -759,19 +770,20 @@ function CreateTaskPage() {
 
                 <div className="grid grid-cols-2 gap-2">
                   <Button
+                    variant={theme === "light" ? "default" : "ghost"}
                     type="button"
                     onClick={handleSaveDraft}
                     disabled={isSubmitting}
-                    className={`px-4 py-2 ${colors.button}`}
+                    className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} w-full px-4 py-2.5 sm:py-3`}
                   >
                     Save Draft
                   </Button>
 
                   <Button
-                    type="button"
+                    variant={theme === "light" ? "default" : "ghost"}
                     onClick={() => router.back()}
                     disabled={isSubmitting}
-                    className={`px-4 py-2 ${colors.button}`}
+                    className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} w-full px-4 py-2.5 sm:py-3`}
                   >
                     Cancel
                   </Button>
@@ -888,9 +900,10 @@ function CreateTaskPage() {
               {/* Desktop Action Buttons */}
               <div className="space-y-3">
                 <Button
+                  variant={theme === "light" ? "default" : "ghost"}
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-3 ${colors.button}`}
+                  className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} w-full px-4 py-3`}
                 >
                   {isSubmitting ? (
                     <>
@@ -906,19 +919,21 @@ function CreateTaskPage() {
                 </Button>
 
                 <Button
+                  variant={theme === "light" ? "default" : "ghost"}
                   type="button"
                   onClick={handleSaveDraft}
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-3 ${colors.button}`}
+                  className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} w-full px-4 py-3`}
                 >
                   Save as Draft
                 </Button>
 
                 <Button
+                  variant={theme === "light" ? "default" : "ghost"}
                   type="button"
                   onClick={() => router.back()}
                   disabled={isSubmitting}
-                  className={`w-full px-4 py-3 ${colors.button}`}
+                  className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`} w-full px-4 py-3`}
                 >
                   Cancel
                 </Button>

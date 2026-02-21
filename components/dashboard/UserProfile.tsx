@@ -353,9 +353,9 @@ export function UserProfile() {
                 </div>
                 {!isEditing && (
                   <Button
-                    variant={"outline"}
+                    variant={theme === "light" ? "outline" : "ghost"}
                     onClick={() => setIsEditing(true)}
-                    className={`px-3 sm:px-4 py-2 rounded-lg text-sm ${theme === "light" ? "" : colors.button}`}
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-sm ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`}
                   >
                     Edit Profile
                   </Button>
@@ -372,7 +372,7 @@ export function UserProfile() {
                     {...registerProfile("username")}
                     disabled={!isEditing}
                     error={profileErrors?.username?.message}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input} ${isEditing ? "" : `${colors.bg}`}`}
                     labelClassName={colors.textMuted}
                   />
 
@@ -383,7 +383,7 @@ export function UserProfile() {
                     {...registerProfile("email")}
                     disabled={!isEditing}
                     error={profileErrors?.email?.message}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input} ${isEditing ? "" : `${colors.bg}`}`}
                     labelClassName={colors.textMuted}
                   />
 
@@ -393,7 +393,7 @@ export function UserProfile() {
                     type="tel"
                     {...registerProfile("phone")}
                     disabled={!isEditing}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input} ${isEditing ? "" : `${colors.bg}`}`}
                     labelClassName={colors.textMuted}
                   />
 
@@ -403,7 +403,7 @@ export function UserProfile() {
                     label="Location"
                     {...registerProfile("location")}
                     disabled={!isEditing}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input} ${isEditing ? "" : `${colors.bg}`}`}
                     labelClassName={colors.textMuted}
                   />
 
@@ -413,7 +413,7 @@ export function UserProfile() {
                     label="Position"
                     {...registerProfile("position")}
                     disabled={!isEditing}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input} ${isEditing ? "" : `${colors.bg}`}`}
                     labelClassName={colors.textMuted}
                   />
 
@@ -423,7 +423,7 @@ export function UserProfile() {
                     label="Department"
                     {...registerProfile("department")}
                     disabled={!isEditing}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input}`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input} ${isEditing ? "" : `${colors.bg}`}`}
                     labelClassName={colors.textMuted}
                   />
                 </div>
@@ -435,7 +435,7 @@ export function UserProfile() {
                     {...registerProfile("bio")}
                     disabled={!isEditing}
                     rows={4}
-                    className={`w-full px-3 sm:px-4 py-2.5 text-sm ${colors.input}`}
+                    className={`w-full px-3 sm:px-4 py-2.5 text-sm border-0 ${colors.input} ${isEditing ? "" : `${colors.bg}`}`}
                     labelClassName={colors.textMuted}
                   />
                 </div>
@@ -461,11 +461,11 @@ export function UserProfile() {
                       )}
                     </Button>
                     <Button
-                      variant={"secondary"}
+                      variant={theme === "light" ? "secondary" : "ghost"}
                       type="button"
                       onClick={handleCancelEdit}
                       disabled={isSubmittingProfile}
-                      className={`bg-gray-100 text-gray-900`}
+                      className={`px-4 sm:px-6 py-2.5 ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`}
                     >
                       <X size={18} />
                       Cancel
@@ -495,7 +495,11 @@ export function UserProfile() {
                   >
                     Organization Name
                   </label>
-                  <p className="font-medium text-sm">{profile?.companyName}</p>
+                  <p
+                    className={`font-medium text-sm ${colors.bg} px-3 sm:px-4 py-2.5 rounded-md`}
+                  >
+                    {profile?.companyName}
+                  </p>
                 </div>
                 <div>
                   <label
@@ -503,7 +507,9 @@ export function UserProfile() {
                   >
                     {profile?.userStatus === "employee" ? "Employee ID" : "ID"}
                   </label>
-                  <p className="font-medium text-sm">
+                  <p
+                    className={`font-medium text-sm ${colors.bg} px-3 sm:px-4 py-2.5 rounded-md`}
+                  >
                     {profile?._id
                       ? profile.userStatus === "employee"
                         ? `EMP-${profile._id.slice(0, 4)}`
@@ -517,7 +523,9 @@ export function UserProfile() {
                   >
                     Join Date
                   </label>
-                  <p className="font-medium text-sm">
+                  <p
+                    className={`font-medium text-sm ${colors.bg} px-3 sm:px-4 py-2.5 rounded-md`}
+                  >
                     {new Date(profile?.createdAt || "").toLocaleDateString(
                       "en-US",
                       {
@@ -534,7 +542,9 @@ export function UserProfile() {
                   >
                     Role
                   </label>
-                  <p className="font-medium text-sm capitalize">
+                  <p
+                    className={`font-medium text-sm capitalize ${colors.bg} px-3 sm:px-4 py-2.5 rounded-md`}
+                  >
                     {user?.userStatus}
                   </p>
                 </div>
@@ -644,7 +654,9 @@ export function UserProfile() {
                         variant={"ghost"}
                         size={"icon"}
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         className={`p-0 hover:bg-0 absolute right-3 ${passwordErrors?.confirmPassword ? "top-1/2" : "top-2/3"} transform -translate-y-1/2`}
                       >
                         {showConfirmPassword ? (
@@ -660,7 +672,7 @@ export function UserProfile() {
                       <Button
                         type="submit"
                         disabled={isSubmittingPassword}
-                        className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 ${colors.button} rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                        className={`px-4 sm:px-6 py-2.5 ${colors.button}`}
                       >
                         {isSubmittingPassword ? (
                           <>
@@ -676,14 +688,14 @@ export function UserProfile() {
                       </Button>
                       <Button
                         type="button"
-                        variant={"secondary"}
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={() => {
                           setShowPasswordForm(false);
                           resetPassword();
                           setErrorMessage("");
                         }}
                         disabled={isSubmittingPassword}
-                        className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 bg-gray-100 rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+                        className={`px-4 sm:px-6 py-2.5 ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`}
                       >
                         <X size={18} />
                         Cancel

@@ -102,11 +102,11 @@ export default function SignupForm() {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white w-full max-w-md flex flex-col gap-6"
       >
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-3 md:gap-6">
           {/* Full name */}
           <InputField
             label="Full Name"
-            placeholder="John Doe"
+            placeholder="Ifeanyi Emeka"
             error={errors.username?.message}
             {...register("username")}
           />
@@ -121,7 +121,7 @@ export default function SignupForm() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-3 md:gap-6">
           {/* Password */}
           <InputField
             label="Password"
@@ -140,8 +140,8 @@ export default function SignupForm() {
                 label="Account Type"
                 error={errors.userStatus?.message}
                 options={[
-                  { label: "Employee", value: "employee" },
-                  { label: "CEO", value: "ceo" },
+                  { label: "Team Member (Staff)", value: "employee" },
+                  { label: "Team Leader (CEO)", value: "ceo" },
                 ]}
                 value={field.value}
                 onValueChange={field.onChange}

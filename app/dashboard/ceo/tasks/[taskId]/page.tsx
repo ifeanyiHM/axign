@@ -320,7 +320,7 @@ function CEOTaskDetailsPage() {
   const ceoStatusConfig = {
     Overdue: {
       icon: XCircle,
-      bg: "bg-red-500/10",
+      bg: "bg-red-700",
     },
     Completed: {
       icon: CheckCircle2,
@@ -348,74 +348,97 @@ function CEOTaskDetailsPage() {
           className={`sticky top-0 z-20 border-b ${colors.border} backdrop-blur-lg bg-opacity-95`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-1 mb-1">
+              {/* mobile back button */}
+              <Button
+                variant="ghost"
+                onClick={() => router.back()}
+                className={`md:hidden p-2 ${colors.hover} rounded-lg shrink-0`}
+              >
+                <MoveLeft size={20} />
+              </Button>
+              <span
+                className={`md:hidden px-2 py-1 rounded text-xs font-medium ${priorityColors[task.priority]} shrink-0`}
+              >
+                {task.priority}
+              </span>
+            </div>
+            <div className="flex items-start md:items-center justify-between gap-4">
               {/* Title */}
               <div className="flex items-center gap-4 flex-1 min-w-0">
+                {/* desktop back button */}
                 <Button
                   variant="ghost"
                   onClick={() => router.back()}
-                  className={`p-2 ${colors.hover} rounded-lg shrink-0`}
+                  className={`hidden md:inline p-2 ${colors.hover} rounded-lg shrink-0`}
                 >
                   <MoveLeft size={20} />
                 </Button>
 
                 <div className="flex-1 min-w-0">
                   {!isEditingTitle ? (
-                    <div className="flex items-center gap-3">
-                      <h1 className="text-xl font-bold truncate">
-                        {task.title}
-                      </h1>
-                      <button
-                        onClick={() => setIsEditingTitle(true)}
-                        className={`p-1.5 ${colors.hover} rounded-lg shrink-0`}
-                      >
-                        <Edit2 size={14} />
-                      </button>
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${priorityColors[task.priority]} shrink-0`}
-                      >
-                        {task.priority}
-                      </span>
-                    </div>
+                    <>
+                      <div className="flex items-center gap-3">
+                        <h1 className="text-xl font-bold truncate">
+                          {task.title}
+                        </h1>
+                        <button
+                          onClick={() => setIsEditingTitle(true)}
+                          className={`p-1.5 ${colors.hover} rounded-lg shrink-0`}
+                        >
+                          <Edit2 size={14} />
+                        </button>
+                        <span
+                          className={`hidden md:inline px-2 py-1 rounded text-xs font-medium ${priorityColors[task.priority]} shrink-0`}
+                        >
+                          {task.priority}
+                        </span>
+                      </div>
+                      <p className={`text-sm ${colors.textMuted}`}>
+                        Task ID: T-{task.id.slice(0, 8)}
+                      </p>
+                    </>
                   ) : (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
                       <InputField
                         type="text"
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
-                        className={`text-lg font-bold ${colors.input}`}
+                        className={`py-1 md:py-2 font-bold ${colors.input}`}
                         containerClassName="flex-1"
                       />
-                      <Button
-                        variant="secondary"
-                        onClick={handleUpdateTitle}
-                        disabled={isUpdating}
-                      >
-                        <Save size={14} />
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        onClick={() => {
-                          setIsEditingTitle(false);
-                          setEditedTitle(task.title);
-                        }}
-                      >
-                        <CloseIcon size={14} />
-                      </Button>
+                      <div className="flex justist items-center gap-2">
+                        <Button
+                          variant={theme === "light" ? "secondary" : "ghost"}
+                          onClick={handleUpdateTitle}
+                          disabled={isUpdating}
+                          className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`}
+                        >
+                          <Save size={14} />
+                        </Button>
+                        <Button
+                          variant={theme === "light" ? "secondary" : "ghost"}
+                          onClick={() => {
+                            setIsEditingTitle(false);
+                            setEditedTitle(task.title);
+                          }}
+                          className={`${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`}
+                        >
+                          <CloseIcon size={14} />
+                        </Button>
+                      </div>
                     </div>
                   )}
-                  <p className={`text-sm ${colors.textMuted}`}>
-                    Task ID: T-{task.id.slice(0, 8)}
-                  </p>
                 </div>
               </div>
 
               {/* Status Dropdown - CEO can only set Overdue or Completed */}
               <div className="relative shrink-0">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setShowStatusMenu(!showStatusMenu)}
                   disabled={isUpdating}
-                  className={`group relative flex items-center gap-3 px-4 py-2.5 rounded-full backdrop-blur-md ${currentStatus.bg} border ${colors.border} shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md cursor-pointer`}
+                  className={`group relative flex items-center gap-1.5 md:gap-3 px-2 md:px-4 py-1.5 md:py-2.5 rounded-full backdrop-blur-md ${currentStatus.label === "Overdue" ? "text-gray-100" : ""} ${currentStatus.bg} border ${colors.border} shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md cursor-pointer`}
                 >
                   <StatusIcon size={18} className="shrink-0" />
                   <span className="text-sm font-semibold tracking-tight">
@@ -437,7 +460,7 @@ function CEOTaskDetailsPage() {
                       d="M19 9l-7 7-7-7"
                     />
                   </svg>
-                </button>
+                </Button>
 
                 {showStatusMenu && (
                   <>

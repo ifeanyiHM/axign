@@ -24,6 +24,7 @@ export default function DashboardLayout({
   links,
 }: DashboardLayoutProps) {
   const { logout } = useAuth();
+  const { user } = useAuth();
   const { theme } = useTheme();
   const colors = themes[theme];
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -49,7 +50,7 @@ export default function DashboardLayout({
         } lg:flex lg:flex-col overflow-y-auto`}
       >
         <div className={`p-4 sm:px-6 sm:py-6 border-b ${colors.border}`}>
-          <Link href={"/"}>
+          <Link href={`/dashboard/${user?.userStatus.toLocaleLowerCase()}`}>
             <Image
               src={
                 theme === "light"
@@ -57,9 +58,10 @@ export default function DashboardLayout({
                   : "/new_axign_black.png"
               }
               alt="CCG logo"
-              width={107}
+              width={106}
               height={60}
               priority
+              className="w-20 lg:w-26.5"
             />
           </Link>
         </div>
@@ -86,7 +88,7 @@ export default function DashboardLayout({
           <Button
             variant="ghost"
             onClick={logout}
-            className={`flex items-center w-full px-3 py-3 ${colors.text} rounded-lg justify-start`}
+            className={`flex items-center w-full px-3 py-3 ${colors.text} ${colors.hover} rounded-lg justify-start`}
           >
             <LogOut className="w-5 h-5 mr-3" />
             Logout

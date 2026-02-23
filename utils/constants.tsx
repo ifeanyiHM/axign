@@ -9,6 +9,7 @@ export const statusColors: Record<string, string> = {
   "In Progress": "bg-blue-900/30 border-blue-800/50",
   Completed: "bg-emerald-900/30 border-emerald-800/50",
   "Pending Review": "bg-purple-900/30 border-purple-800/50",
+  Overdue: "bg-red-700 border-red-800/50 text-gray-100",
 };
 
 export const priorityColors: Record<string, string> = {

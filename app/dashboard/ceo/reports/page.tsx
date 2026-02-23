@@ -419,7 +419,7 @@ function ReportsPage() {
                     style={{ fontSize: "12px" }}
                   />
                   <YAxis stroke={axisStroke} style={{ fontSize: "12px" }} />
-                  <Tooltip contentStyle={tooltipStyle} />
+                  <Tooltip cursor={false} contentStyle={tooltipStyle} />
                   <Legend />
                   <Bar
                     dataKey="completed"
@@ -477,6 +477,8 @@ function ReportsPage() {
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
+                      stroke="none"
+                      strokeWidth={0}
                     >
                       {tasksByStatus.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />

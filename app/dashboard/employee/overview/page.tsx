@@ -479,6 +479,8 @@ function OverviewPage() {
                         outerRadius={62}
                         paddingAngle={3}
                         dataKey="value"
+                        stroke="none"
+                        strokeWidth={0}
                       >
                         {taskStatusBreakdown.map((entry, i) => (
                           <Cell key={`cell-${i}`} fill={entry.color} />

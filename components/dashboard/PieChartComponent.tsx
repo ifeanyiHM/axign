@@ -35,6 +35,8 @@ export default function PieChartComponent({ pieData, title }: PieChartProps) {
               outerRadius={100}
               dataKey="value"
               label
+              stroke="none"
+              strokeWidth={0}
             >
               {pieData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />

@@ -7,13 +7,7 @@ import { Calendar, Filter, Search } from "lucide-react";
 import InputField from "../primitives/form/InputField";
 import SelectField from "../primitives/form/SelectField";
 import { Button } from "../ui/button";
-
-const statusColors: Record<string, string> = {
-  "Not Started": "bg-slate-700/40 border border-slate-600/50",
-  "In Progress": "bg-blue-700/40 border border-blue-600/50",
-  Completed: "bg-emerald-700/40 border border-emerald-600/50",
-  "Pending Review": "bg-purple-700/40 border border-purple-600/50",
-};
+import { statusColors } from "@/utils/constants";
 
 interface taskTableProps {
   taskList?: Task[];

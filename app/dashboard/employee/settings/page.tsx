@@ -2,49 +2,44 @@
 
 import { withAuth } from "@/utils/withAuth";
 
-import {
-  BarChart3,
-  LayoutDashboard,
-  ListTodo,
-  Settings,
-  User,
-} from "lucide-react";
+import { CircleCheckBig, ClipboardList, Clock, Loader2 } from "lucide-react";
 
-import DashboardLayout, { LinkItem } from "@/components/layout/DashboardLayout";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import DashboardSettings from "@/components/dashboard/DashboardSettings";
+import { useTask } from "@/context/TaskContext";
+import { useTaskStats } from "@/hooks/useTaskStats";
+import { navItems } from "../data";
 
 function CEOSettingsPage() {
-  const navItems: LinkItem[] = [
+  const { loading } = useTask();
+  const myTaskStats = useTaskStats();
+
+  const statsConfig = [
     {
-      href: "/dashboard/employee",
-      label: "Dashboard",
-      icon: LayoutDashboard,
+      label: "Total Tasks",
+      value: myTaskStats.total,
+      icon: ClipboardList,
     },
     {
-      href: "/dashboard/employee/mytask",
-      label: "My Tasks",
-      icon: ListTodo,
+      label: "Pending",
+      value: myTaskStats.pending,
+      icon: Clock,
     },
     {
-      href: "/dashboard/employee/overview",
-      label: "Overview",
-      icon: BarChart3,
+      label: "In Progress",
+      value: myTaskStats.inProgress,
+      icon: Loader2,
     },
     {
-      href: "/dashboard/employee/profile",
-      label: "Profile",
-      icon: User,
-    },
-    {
-      href: "/dashboard/employee/settings",
-      label: "Settings",
-      icon: Settings,
+      label: "Completed",
+      value: myTaskStats.completed,
+      icon: CircleCheckBig,
     },
   ];
 
   return (
     <DashboardLayout links={navItems}>
-      <DashboardSettings />
+      <DashboardSettings statsConfig={statsConfig} loading={loading} />
     </DashboardLayout>
   );
 }

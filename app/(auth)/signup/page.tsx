@@ -12,7 +12,14 @@ export default function RegisterPage() {
       title="Register Account Form"
       subtitle="Please fill in this form to create an account!"
       header={
-        <Image src={logoSrc} alt="CCG logo" width={120} height={60} priority />
+        <Image
+          src={logoSrc}
+          alt="CCG logo"
+          width={120}
+          height={60}
+          priority
+          className="w-20 lg:w-30"
+        />
       }
       form={<SignupForm />}
     />

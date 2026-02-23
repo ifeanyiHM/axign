@@ -12,7 +12,14 @@ export default function RegisterPage() {
       title="Login to Your Account"
       subtitle="Enter your login details."
       header={
-        <Image src={logoSrc} alt="CCG logo" width={120} height={60} priority />
+        <Image
+          src={logoSrc}
+          alt="CCG logo"
+          width={120}
+          height={60}
+          priority
+          className="w-20 lg:w-30"
+        />
       }
       form={<LoginForm />}
     />

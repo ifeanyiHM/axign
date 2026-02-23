@@ -12,27 +12,13 @@ export const defaultMetadata: Metadata = {
       "All-in-one task management platform for modern organizations.",
     url: SITE_URL,
     siteName: SITE_NAME,
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-      },
-    ],
-    // images: ["/og-image.png"],
+    images: ["/og-image.jpg"],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description:
       "All-in-one task management platform for modern organizations.",
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-      },
-    ],
-    // images: ["/og-image.png"],
+    images: ["/og-image.jpg"],
   },
 };

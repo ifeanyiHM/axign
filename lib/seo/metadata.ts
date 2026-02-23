@@ -2,23 +2,25 @@
 import type { Metadata } from "next";
 
 export const defaultMetadata: Metadata = {
-  title: SITE_NAME,
+  title: `${SITE_NAME} – Assign. Track. Drive Performance.`,
   description:
-    "Role-based dashboards for modern organizations. Manage tasks, employees, and performance seamlessly.",
+    "Axign is a comprehensive platform that helps modern organizations assign tasks, track progress, and enhance employee performance efficiently.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: SITE_NAME,
+    title: `${SITE_NAME} – Assign. Track. Drive Performance.`,
     description:
-      "All-in-one task management platform for modern organizations.",
+      "Axign is a comprehensive platform that helps modern organizations assign tasks, track progress, and enhance employee performance efficiently.",
     url: SITE_URL,
-    siteName: SITE_NAME,
+    siteName: `${SITE_NAME} – Assign. Track. Drive Performance.`,
     images: ["/og-image.jpg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_NAME,
+    title: `${SITE_NAME} – Assign. Track. Drive Performance.`,
     description:
-      "All-in-one task management platform for modern organizations.",
+      "Axign is a comprehensive platform that helps modern organizations assign tasks, track progress, and enhance employee performance efficiently.",
     images: ["/og-image.jpg"],
   },
 };
+
+// align the logo and header with the desktop showing the chat and make the header a little smaller and use a different font

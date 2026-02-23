@@ -47,7 +47,7 @@ export default function DashboardLayout({
       <aside
         className={`fixed inset-y-0 left-0 z-40 w-56 h-screen xl:w-64 ${colors.bgSidebar} border-r ${colors.border} transform transition-transform duration-300 lg:sticky lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:flex lg:flex-col overflow-y-auto`}
+        } flex flex-col overflow-y-auto`}
       >
         <div className={`p-4 sm:px-6 sm:py-6 border-b ${colors.border}`}>
           <Link href={`/dashboard/${user?.userStatus.toLocaleLowerCase()}`}>

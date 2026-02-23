@@ -26,6 +26,7 @@ import {
   X as CloseIcon,
   Plus,
   MoveLeft,
+  StickyNote,
 } from "lucide-react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { links } from "../../data";
@@ -36,6 +37,10 @@ import InputField from "@/components/primitives/form/InputField";
 import SelectField from "@/components/primitives/form/SelectField";
 import { InfoRow } from "@/components/dashboard/taskId/InfoRow";
 import TaskDetailsSkeleton from "@/components/skeletons/TaskDetailsSkeleton";
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
+import { CheckboxField } from "@/components/primitives/form/CheckboxField";
+import Link from "next/link";
 
 const categories = [
   "Audit",
@@ -543,36 +548,46 @@ function CEOTaskDetailsPage() {
                       className={`p-6 border-b border-dashed ${colors.border} flex items-center justify-between`}
                     >
                       <div className="flex items-center gap-2">
-                        <Edit2 size={20} className="opacity-80" />
+                        <StickyNote size={20} className="opacity-80" />
+
                         <h2 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground">
                           Description
                         </h2>
                       </div>
                       {!isEditingDescription ? (
                         <Button
-                          variant="secondary"
+                          variant={theme === "light" ? "secondary" : "ghost"}
                           onClick={() => setIsEditingDescription(true)}
-                          className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                          className={cn(
+                            `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                            ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                          )}
                         >
                           <Edit2 size={14} /> Edit
                         </Button>
                       ) : (
                         <div className="flex gap-2">
                           <Button
-                            variant="secondary"
+                            variant={theme === "light" ? "secondary" : "ghost"}
                             onClick={handleUpdateDescription}
                             disabled={isUpdating}
-                            className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                            className={cn(
+                              `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                            )}
                           >
                             <Save size={14} /> Save
                           </Button>
                           <Button
-                            variant="secondary"
+                            variant={theme === "light" ? "secondary" : "ghost"}
                             onClick={() => {
                               setIsEditingDescription(false);
                               setEditedDescription(task.description);
                             }}
-                            className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                            className={cn(
+                              `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                            )}
                           >
                             <CloseIcon size={14} />
                           </Button>
@@ -581,14 +596,14 @@ function CEOTaskDetailsPage() {
                     </div>
                     <div className="p-6">
                       {isEditingDescription ? (
-                        <textarea
+                        <Textarea
                           value={editedDescription}
                           onChange={(e) => setEditedDescription(e.target.value)}
                           rows={6}
-                          className={`w-full px-4 py-3 ${colors.input} rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                          className={`w-full px-4 py-3 ${colors.input} rounded-lg resize-none`}
                         />
                       ) : (
-                        <p className={`${colors.textMuted} leading-relaxed`}>
+                        <p className={`${colors.text} leading-relaxed`}>
                           {task.description || "No description provided."}
                         </p>
                       )}
@@ -635,29 +650,38 @@ function CEOTaskDetailsPage() {
                       </div>
                       {!isEditingAssignees ? (
                         <Button
-                          variant="secondary"
+                          variant={theme === "light" ? "secondary" : "ghost"}
                           onClick={() => setIsEditingAssignees(true)}
-                          className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                          className={cn(
+                            `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                          )}
                         >
                           <Edit2 size={14} /> Edit
                         </Button>
                       ) : (
                         <div className="flex gap-2">
                           <Button
-                            variant="secondary"
+                            variant={theme === "light" ? "secondary" : "ghost"}
                             onClick={handleUpdateAssignees}
                             disabled={isUpdating}
-                            className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                            className={cn(
+                              `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                            )}
                           >
                             <Save size={14} /> Save
                           </Button>
                           <Button
-                            variant="secondary"
+                            variant={theme === "light" ? "secondary" : "ghost"}
                             onClick={() => {
                               setIsEditingAssignees(false);
                               setEditedAssignees(task.assignedTo);
                             }}
-                            className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                            className={cn(
+                              `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                            )}
                           >
                             <CloseIcon size={14} />
                           </Button>
@@ -669,7 +693,7 @@ function CEOTaskDetailsPage() {
                       {isEditingAssignees ? (
                         <>
                           <div className="relative">
-                            <button
+                            <Button
                               type="button"
                               onClick={() =>
                                 setShowEmployeeDropdown(!showEmployeeDropdown)
@@ -681,7 +705,7 @@ function CEOTaskDetailsPage() {
                                 selected)
                               </span>
                               <Users size={18} />
-                            </button>
+                            </Button>
 
                             {showEmployeeDropdown && (
                               <>
@@ -695,35 +719,38 @@ function CEOTaskDetailsPage() {
                                   {organizationStaffs.map((employee) => (
                                     <label
                                       key={employee._id}
-                                      className={`flex items-center gap-3 px-4 py-3 ${colors.hover} cursor-pointer`}
+                                      className={`flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 ${colors.hover} cursor-pointer`}
                                     >
-                                      <input
-                                        type="checkbox"
+                                      <CheckboxField
+                                        id={employee._id}
                                         checked={editedAssignees.some(
                                           (a) => a.id === employee._id,
                                         )}
-                                        onChange={() =>
+                                        onCheckedChange={() =>
                                           handleAssigneeToggle({
                                             id: employee._id,
                                             name: employee.username,
                                             avatar: employee.avatar || "",
                                           })
                                         }
-                                        className="w-4 h-4 rounded"
                                       />
-                                      <Avatar
-                                        avatar={employee.avatar}
-                                        name={employee.username}
-                                        className="w-8 h-8"
-                                      />
-                                      <div className="flex-1">
-                                        <div className="font-medium text-sm">
-                                          {employee.username}
-                                        </div>
-                                        <div
-                                          className={`text-xs ${colors.textMuted}`}
-                                        >
-                                          {employee.email}
+
+                                      <div className="flex items-center gap-2 sm:gap-3">
+                                        <Avatar
+                                          avatar={employee.avatar}
+                                          name={employee?.username}
+                                          className="w-7 h-7 sm:w-8 sm:h-8"
+                                        />
+
+                                        <div className="flex-1 min-w-0">
+                                          <div className="font-medium text-sm truncate">
+                                            {employee.username}
+                                          </div>
+                                          <div
+                                            className={`text-xs ${colors.textMuted} truncate`}
+                                          >
+                                            {employee.email}
+                                          </div>
                                         </div>
                                       </div>
                                     </label>
@@ -753,12 +780,14 @@ function CEOTaskDetailsPage() {
                                   </p>
                                 </div>
                               </div>
-                              <button
+                              <Button
+                                variant={"ghost"}
+                                size="icon"
                                 onClick={() => handleAssigneeToggle(member)}
                                 className="p-1 hover:bg-red-500/10 rounded"
                               >
-                                <CloseIcon size={16} className="text-red-400" />
-                              </button>
+                                <CloseIcon size={16} className="" />
+                              </Button>
                             </div>
                           ))}
                         </>
@@ -793,15 +822,23 @@ function CEOTaskDetailsPage() {
 
               {activeTab === "files" && (
                 <div
-                  className={`${colors.bgCard} rounded-xl border ${colors.border} p-6`}
+                  className={`${colors.bgCard} rounded-2xl border ${colors.border} p-6`}
                 >
-                  <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
-                    <Paperclip size={20} />
-                    Attachments ({task.attachments.length})
-                  </h2>
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                      <Paperclip size={18} className="opacity-70" />
+                      Attachments
+                    </h2>
+
+                    <span className={`text-sm ${colors.textMuted}`}>
+                      {task.attachments.length} file
+                      {task.attachments.length !== 1 && "s"}
+                    </span>
+                  </div>
 
                   {task.attachments.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {task.attachments.map((file, index) => {
                         const isBase64 = file.startsWith("data:");
                         const fileType = isBase64
@@ -812,6 +849,7 @@ function CEOTaskDetailsPage() {
                         const fileName = isBase64
                           ? `file_${index + 1}.${fileType.split("/")[1] || "file"}`
                           : file;
+
                         const FileIcon = isImage
                           ? ImageIcon
                           : isPDF
@@ -821,23 +859,29 @@ function CEOTaskDetailsPage() {
                         return (
                           <div
                             key={index}
-                            className={`group p-4 rounded-lg border ${colors.border} ${colors.hover} transition-all`}
+                            className={`group rounded-xl border ${colors.border} p-4 transition-all hover:shadow-md`}
                           >
-                            <div className="flex items-start gap-4">
+                            <div className="flex items-center gap-4">
+                              {/* Icon */}
                               <div
-                                className={`p-3 rounded-lg ${colors.bgSidebar}`}
+                                className={`p-3 rounded-xl ${colors.bgSidebar}`}
                               >
-                                <FileIcon size={24} />
+                                <FileIcon size={20} className="opacity-80" />
                               </div>
+
+                              {/* Info */}
                               <div className="flex-1 min-w-0">
-                                <p className="font-medium truncate mb-1">
+                                <p className="font-medium truncate">
                                   {fileName}
                                 </p>
-                                <p className={`text-sm ${colors.textMuted}`}>
+
+                                <p
+                                  className={`text-xs ${colors.textMuted} mt-1`}
+                                >
                                   {isImage
                                     ? "Image"
                                     : isPDF
-                                      ? "PDF"
+                                      ? "PDF Document"
                                       : "Document"}{" "}
                                   • Uploaded{" "}
                                   {new Date(
@@ -845,32 +889,46 @@ function CEOTaskDetailsPage() {
                                   ).toLocaleDateString()}
                                 </p>
                               </div>
-                              <Button variant="secondary">
-                                <a
-                                  href={file}
-                                  download={fileName}
-                                  className="flex items-center gap-2"
+
+                              {/* Download */}
+                              <Link
+                                href={file}
+                                download={fileName}
+                                className="shrink-0"
+                              >
+                                <Button
+                                  variant={
+                                    theme === "light" ? "outline" : "ghost"
+                                  }
+                                  size="sm"
+                                  className={cn(
+                                    `flex items-center gap-2
+                                    ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                                  )}
                                 >
-                                  <Download size={16} />
+                                  <Download size={14} />
                                   Download
-                                </a>
-                              </Button>
+                                </Button>
+                              </Link>
                             </div>
+
+                            {/* Preview Section */}
                             {isImage && (
-                              <div className="mt-3 rounded-lg overflow-hidden border border-gray-700">
-                                {/*  eslint-disable-next-line @next/next/no-img-element */}
+                              <div className="mt-4 rounded-xl overflow-hidden border border-black/5 dark:border-white/5">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                   src={file}
                                   alt={fileName}
-                                  className="w-full h-auto max-h-96 object-contain bg-gray-900"
+                                  className="w-full h-auto max-h-80 object-contain bg-black/5 dark:bg-white/5"
                                 />
                               </div>
                             )}
+
                             {isPDF && (
-                              <div className="mt-3 rounded-lg overflow-hidden border border-gray-700">
+                              <div className="mt-4 rounded-xl overflow-hidden border border-black/5 dark:border-white/5">
                                 <iframe
                                   src={file}
-                                  className="w-full h-96"
+                                  className="w-full h-80"
                                   title={fileName}
                                 />
                               </div>
@@ -880,13 +938,15 @@ function CEOTaskDetailsPage() {
                       })}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <Paperclip
-                        size={48}
-                        className={`${colors.textMuted} mx-auto mb-4`}
-                      />
-                      <p className={`${colors.textMuted}`}>
-                        No files attached to this task
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                      <div
+                        className={`p-4 rounded-full ${colors.bgSidebar} mb-4`}
+                      >
+                        <Paperclip size={28} className="opacity-60" />
+                      </div>
+                      <p className="font-medium">No attachments yet</p>
+                      <p className={`text-sm mt-1 ${colors.textMuted}`}>
+                        Files uploaded to this task will appear here.
                       </p>
                     </div>
                   )}
@@ -910,13 +970,16 @@ function CEOTaskDetailsPage() {
                     !isEditingCategory &&
                     !isEditingDates && (
                       <Button
-                        variant="secondary"
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={() => {
                           setIsEditingPriority(true);
                           setIsEditingCategory(true);
                           setIsEditingDates(true);
                         }}
-                        className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                        className={cn(
+                          `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                        )}
                       >
                         <Edit2 size={14} /> Edit
                       </Button>
@@ -926,19 +989,22 @@ function CEOTaskDetailsPage() {
                     isEditingDates) && (
                     <div className="flex gap-2">
                       <Button
-                        variant="secondary"
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={async () => {
                           await handleUpdatePriority();
                           await handleUpdateCategory();
                           await handleUpdateDates();
                         }}
                         disabled={isUpdating}
-                        className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                        className={cn(
+                          `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                        )}
                       >
                         <Save size={14} /> Save
                       </Button>
                       <Button
-                        variant="secondary"
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={() => {
                           setIsEditingPriority(false);
                           setIsEditingCategory(false);
@@ -954,7 +1020,10 @@ function CEOTaskDetailsPage() {
                             new Date(task.dueDate).toISOString().split("T")[0],
                           );
                         }}
-                        className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                        className={cn(
+                          `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                        )}
                       >
                         <CloseIcon size={14} />
                       </Button>
@@ -974,12 +1043,18 @@ function CEOTaskDetailsPage() {
                         { label: "Medium", value: "Medium" },
                         { label: "High", value: "High" },
                       ]}
-                      selectClassName={colors.input}
+                      selectClassName={cn(
+                        colors.input,
+                        colors.textMuted,
+                        "text-sm",
+                      )}
                     />
                   ) : (
                     <div className="flex items-center justify-between">
-                      <span className={`text-sm ${colors.textMuted}`}>
-                        Priority
+                      <span
+                        className={`text-sm font-medium ${colors.textMuted}`}
+                      >
+                        PRIORITY
                       </span>
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${priorityColors[task.priority]}`}
@@ -999,7 +1074,11 @@ function CEOTaskDetailsPage() {
                         label: cat,
                         value: cat,
                       }))}
-                      selectClassName={colors.input}
+                      selectClassName={cn(
+                        colors.input,
+                        colors.textMuted,
+                        "text-sm",
+                      )}
                     />
                   ) : (
                     <InfoRow
@@ -1017,14 +1096,24 @@ function CEOTaskDetailsPage() {
                         type="date"
                         value={editedStartDate}
                         onChange={(e) => setEditedStartDate(e.target.value)}
-                        className={colors.input}
+                        className={cn(
+                          colors.input,
+                          colors.textMuted,
+                          "text-sm",
+                        )}
+                        labelClassName={colors.text}
                       />
                       <InputField
                         label="Due Date"
                         type="date"
                         value={editedDueDate}
                         onChange={(e) => setEditedDueDate(e.target.value)}
-                        className={colors.input}
+                        className={cn(
+                          colors.input,
+                          colors.textMuted,
+                          "text-sm",
+                        )}
+                        labelClassName={colors.text}
                       />
                     </>
                   ) : (
@@ -1097,29 +1186,38 @@ function CEOTaskDetailsPage() {
                   </h2>
                   {!isEditingTags ? (
                     <Button
-                      variant="secondary"
+                      variant={theme === "light" ? "secondary" : "ghost"}
                       onClick={() => setIsEditingTags(true)}
-                      className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                      className={cn(
+                        `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                      )}
                     >
                       <Edit2 size={14} /> Edit
                     </Button>
                   ) : (
                     <div className="flex gap-2">
                       <Button
-                        variant="secondary"
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={handleUpdateTags}
                         disabled={isUpdating}
-                        className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                        className={cn(
+                          `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                        )}
                       >
                         <Save size={14} /> Save
                       </Button>
                       <Button
-                        variant="secondary"
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={() => {
                           setIsEditingTags(false);
                           setEditedTags(task.tags || []);
                         }}
-                        className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                        className={cn(
+                          `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                        )}
                       >
                         <CloseIcon size={14} />
                       </Button>
@@ -1132,18 +1230,21 @@ function CEOTaskDetailsPage() {
                     <div className="space-y-4">
                       <div className="flex flex-wrap gap-2">
                         {predefinedTags.map((tag) => (
-                          <button
+                          <Button
+                            variant={
+                              editedTags.includes(tag) ? "default" : "ghost"
+                            }
                             key={tag}
                             type="button"
                             onClick={() => handleTagToggle(tag)}
                             className={`px-3 py-1 rounded-full text-xs border transition-colors ${
                               editedTags.includes(tag)
-                                ? "bg-blue-600 border-blue-500 text-white"
-                                : `${colors.bgSidebar} ${colors.border}`
+                                ? "bg-slate-700 border-slate-600 text-white"
+                                : `${colors.bgSidebar} ${colors.border} ${colors.hover}`
                             }`}
                           >
                             {tag}
-                          </button>
+                          </Button>
                         ))}
                       </div>
                       <div className="flex gap-2">
@@ -1170,7 +1271,7 @@ function CEOTaskDetailsPage() {
                           {editedTags.map((tag) => (
                             <div
                               key={tag}
-                              className="flex items-center gap-2 px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-full"
+                              className="flex items-center gap-2 px-3 py-1 bg-gray-700/20 border border-gray-600/30 rounded-full"
                             >
                               <span className="text-xs">{tag}</span>
                               <button
@@ -1232,24 +1333,30 @@ function CEOTaskDetailsPage() {
                   </h2>
                   {!isEditingRecurring ? (
                     <Button
-                      variant="secondary"
+                      variant={theme === "light" ? "secondary" : "ghost"}
                       onClick={() => setIsEditingRecurring(true)}
-                      className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                      className={cn(
+                        `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                      )}
                     >
                       <Edit2 size={14} /> Edit
                     </Button>
                   ) : (
                     <div className="flex gap-2">
                       <Button
-                        variant="secondary"
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={handleUpdateRecurring}
                         disabled={isUpdating}
-                        className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                        className={cn(
+                          `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                        )}
                       >
                         <Save size={14} /> Save
                       </Button>
                       <Button
-                        variant="secondary"
+                        variant={theme === "light" ? "secondary" : "ghost"}
                         onClick={() => {
                           setIsEditingRecurring(false);
                           setEditedRecurring(task.recurring);
@@ -1257,7 +1364,10 @@ function CEOTaskDetailsPage() {
                             task.recurringFrequency || "",
                           );
                         }}
-                        className={`px-3 py-1.5 rounded text-sm flex items-center gap-2`}
+                        className={cn(
+                          `px-3 py-1.5 rounded text-sm flex items-center gap-2 
+                              ${theme === "light" ? "" : `border ${colors.border} ${colors.hover}`}`,
+                        )}
                       >
                         <CloseIcon size={14} />
                       </Button>
@@ -1270,11 +1380,12 @@ function CEOTaskDetailsPage() {
                     <div className="space-y-4">
                       {/* Recurring Toggle */}
                       <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
+                        <CheckboxField
+                          id="recurring"
                           checked={editedRecurring}
-                          onChange={(e) => setEditedRecurring(e.target.checked)}
-                          className="w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-blue-500"
+                          onCheckedChange={(value) =>
+                            setEditedRecurring(!!value)
+                          }
                         />
                         <div>
                           <div className="font-medium text-sm">
@@ -1299,7 +1410,11 @@ function CEOTaskDetailsPage() {
                             { label: "Weekly", value: "weekly" },
                             { label: "Monthly", value: "monthly" },
                           ]}
-                          selectClassName={colors.input}
+                          selectClassName={cn(
+                            colors.input,
+                            colors.textMuted,
+                            "text-sm",
+                          )}
                           placeholder="Select frequency"
                         />
                       )}

@@ -19,6 +19,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   ClipboardList,
+  Star,
 } from "lucide-react";
 import {
   BarChart,
@@ -354,7 +355,7 @@ function ReportsPage() {
     <DashboardLayout links={links}>
       {/* Header */}
       <div
-        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b ${colors.border} my-3 sm:my-4 px-3 sm:px-4 md:px-6`}
+        className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b ${colors.border} my-3 sm:my-4 px-3 sm:px-4 md:px-6 pt-2 pb-4 md:py-0`}
       >
         <Header
           title="Reports & Analytics"
@@ -655,21 +656,28 @@ function ReportsPage() {
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
                         <div className="text-right">
-                          <p className="text-sm sm:text-base font-bold">
+                          <p className="text-sm sm:text-base font-semibold">
                             {completionRate}%
                           </p>
-                          <p className={`text-xs ${colors.textMuted}`}>
-                            ⭐ {employee.rating}
+
+                          <p
+                            className={`text-xs flex items-center justify-end gap-1 ${colors.textMuted}`}
+                          >
+                            <Star size={12} className="opacity-70" />
+                            {employee.rating}
                           </p>
                         </div>
+
                         <div
-                          className={`flex items-center gap-1 px-2 py-1 rounded ${
-                            completionRate >= 90
-                              ? "bg-emerald-900/30 text-emerald-400"
-                              : completionRate >= 75
-                                ? "bg-blue-900/30 text-blue-400"
-                                : "bg-amber-900/30 text-amber-400"
-                          }`}
+                          className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium
+      ${
+        completionRate >= 90
+          ? "bg-emerald-800/20 text-emerald-600"
+          : completionRate >= 75
+            ? "bg-slate-700/20 text-slate-600"
+            : "bg-rose-800/20 text-rose-600"
+      }
+    `}
                         >
                           {completionRate >= 90 ? (
                             <ArrowUpRight size={14} />

@@ -2,8 +2,18 @@ import { useTheme } from "@/context/ThemeContext";
 import { themes } from "@/lib/themes";
 import { Check, Moon, Sun, Waves } from "lucide-react";
 import Header from "./Header";
+import StatusCard, { StatusItem } from "./StatusCard";
+import StatusCardSkeleton from "../skeletons/StatusCardSkeleton";
 
-export default function DashboardSettings() {
+interface DashboardSettingsProps {
+  statsConfig: StatusItem[];
+  loading: boolean;
+}
+
+export default function DashboardSettings({
+  statsConfig,
+  loading,
+}: DashboardSettingsProps) {
   const { theme, setTheme } = useTheme();
   const colors = themes[theme];
 
@@ -59,7 +69,7 @@ export default function DashboardSettings() {
                   onClick={() => setTheme(option.id)}
                   className={`relative p-4 rounded-lg border-2 transition-all ${
                     isActive
-                      ? "border-blue-500 bg-blue-500/10"
+                      ? "border-gray-900 bg-blue-500/10"
                       : `${colors.border} ${colors.hover}`
                   }`}
                 >
@@ -82,7 +92,7 @@ export default function DashboardSettings() {
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold">{option.name}</h3>
                       {isActive && (
-                        <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                        <div className="w-5 h-5 bg-slate-700 rounded-full flex items-center justify-center">
                           <Check size={14} className="text-white" />
                         </div>
                       )}
@@ -99,7 +109,7 @@ export default function DashboardSettings() {
 
         {/* Preview Section */}
         <div
-          className={`${colors.bgCard} rounded-xl p-6 ${colors.border} border mt-6`}
+          className={`${colors.bgCard} rounded-xl px-6 pt-6 ${colors.border} border mt-6`}
         >
           <h2 className="text-xl font-semibold mb-4">Preview</h2>
           <div className="space-y-4">
@@ -107,7 +117,9 @@ export default function DashboardSettings() {
             <div className={`p-4 rounded-lg ${colors.border} border`}>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold">Sample Card</h3>
-                <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-xs">
+                <span
+                  className={`px-3 py-1 ${colors.button} rounded-full text-xs`}
+                >
                   Active
                 </span>
               </div>
@@ -117,20 +129,11 @@ export default function DashboardSettings() {
             </div>
 
             {/* Preview Stats */}
-            <div className="grid grid-cols-2 gap-4">
-              <div
-                className={`p-4 rounded-lg ${colors.stats.green} border ${colors.border}`}
-              >
-                <p className="text-xs mb-1">Completed</p>
-                <p className="text-2xl font-bold">184</p>
-              </div>
-              <div
-                className={`p-4 rounded-lg ${colors.stats.blue} border ${colors.border}`}
-              >
-                <p className="text-xs mb-1">In Progress</p>
-                <p className="text-2xl font-bold">43</p>
-              </div>
-            </div>
+            {loading ? (
+              <StatusCardSkeleton />
+            ) : (
+              <StatusCard status={statsConfig} />
+            )}
           </div>
         </div>
 
@@ -140,7 +143,9 @@ export default function DashboardSettings() {
         >
           <h2 className="text-xl font-semibold mb-4">Account Settings</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-gray-700">
+            <div
+              className={`flex items-center justify-between pt-3 pb-5 border-b ${colors.border}`}
+            >
               <div>
                 <h3 className="font-medium">Email Notifications</h3>
                 <p className={`text-sm ${colors.textMuted}`}>
@@ -153,7 +158,7 @@ export default function DashboardSettings() {
                   className="sr-only peer"
                   defaultChecked
                 />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div className="w-11 h-6 bg-gray-700 peer-focus:ring-2 peer-focus:ring-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-700"></div>
               </label>
             </div>
 
@@ -170,7 +175,7 @@ export default function DashboardSettings() {
                   className="sr-only peer"
                   defaultChecked
                 />
-                <div className="w-11 h-6 bg-gray-700 peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                <div className="w-11 h-6 bg-gray-700 peer-focus:ring-2 peer-focus:ring-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-700"></div>
               </label>
             </div>
           </div>

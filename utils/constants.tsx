@@ -30,3 +30,22 @@ export const getStatusIcon = (status: string) => {
       return <Clock size={16} />;
   }
 };
+
+export const theme = {
+  accent: "#9b7a19",
+  accentHover: "#7a5f13",
+  accentLight: "#9b7a1910",
+
+  // Dark / black tones
+  dark: "#030712",
+  darkCard: "#030712",
+  darkBorder: "#1f2937",
+
+  // Bar chart colors
+  barDefault: "#1f2937",
+  barDefaultTop: "#374151",
+
+  accentB: "#2C3E50",
+  barDefaultB: "#111c24",
+  barDefaultTopB: "#1e3040",
+};

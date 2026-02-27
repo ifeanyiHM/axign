@@ -53,6 +53,19 @@ interface InviteEmployeeResponse {
   isRegistered?: boolean;
 }
 
+type ContactPayload = {
+  fullName: string;
+  email: string;
+  company?: string;
+  subject: string;
+  message: string;
+};
+
+type ContactResponse = {
+  success: boolean;
+  message: string;
+};
+
 interface UserContextType {
   getProfile: () => Promise<void>;
   fetchOrganizationUsers: () => Promise<void>;
@@ -64,6 +77,8 @@ interface UserContextType {
   loadingOrgStaffs: boolean;
   loadingProfileDetails: boolean;
   inviteEmployee: (data: InviteEmployeeData) => Promise<InviteEmployeeResponse>;
+  sendContactMessage: (payload: ContactPayload) => Promise<ContactResponse>;
+  contactLoading: boolean;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -74,6 +89,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [organizationStaffs, setOrganizationStaffs] = useState([]);
   const [loadingOrgStaffs, setLoadingOrgStaffs] = useState(true);
   const [profile, setProfile] = useState<FullProfile>(profilePayload);
+  const [contactLoading, setContactLoading] = useState(false);
   const [loadingProfileDetails, setLoadingProfileDetials] =
     useState<boolean>(false);
 
@@ -271,6 +287,34 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  //send contail mail to admin
+  const sendContactMessage = async (
+    payload: ContactPayload,
+  ): Promise<ContactResponse> => {
+    setContactLoading(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Failed to send message");
+      }
+
+      return {
+        success: true,
+        message: data?.message || "Message sent successfully",
+      };
+    } finally {
+      setContactLoading(false);
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -284,6 +328,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         calculateTaskCounts,
         loadingProfileDetails,
         inviteEmployee,
+        sendContactMessage,
+        contactLoading,
       }}
     >
       {children}

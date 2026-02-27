@@ -30,6 +30,15 @@ type AssignedTask = {
   organizationName?: string;
 };
 
+function escapeHtml(input: string) {
+  return input
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 export async function sendVerificationEmail(
   email: string,
   token: string,
@@ -349,6 +358,102 @@ export async function sendEmployeeInvitationEmail(
 
           <p style="color: #9ca3af; font-size: 12px; margin-bottom: 0;">
             This invitation was sent by ${inviterUsername} from ${organizationName}. If you didn't expect this invitation, you can safely ignore this email.
+          </p>
+        </div>
+      </div>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+// export type ContactFormPayload = {
+//   fullName: string;
+//   email: string;
+//   company?: string;
+//   subject: string;
+//   message: string;
+// };
+
+export async function sendContactFormEmail(
+  fullName: string,
+  email: string,
+  subject: string,
+  message: string,
+  company?: string,
+) {
+  const supportInbox = process.env.EMAIL_FROM;
+
+  if (!supportInbox) {
+    throw new Error("CONTACT_RECEIVER_EMAIL is not set");
+  }
+
+  const dashboardUrl =
+    process.env.NEXT_PUBLIC_APP_URL || "https://axign.vercel.app";
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM,
+    to: supportInbox,
+    subject: `Contact Form: ${subject}`,
+    replyTo: email,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #111827;">
+        
+        <div style="background: linear-gradient(135deg, #111827 0%, #374151 100%); padding: 28px; border-radius: 8px 8px 0 0;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
+            New Contact Message 📩
+          </h1>
+          <p style="color: #e5e7eb; margin: 10px 0 0; font-size: 14px; line-height: 1.6;">
+            A message was submitted from the Axign Contact page.
+          </p>
+        </div>
+
+        <div style="background-color: #ffffff; padding: 28px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
+          
+          <h2 style="color: #111827; margin-top: 0;">Sender details</h2>
+
+          <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin: 16px 0 22px;">
+            <p style="margin: 0 0 8px;"><strong>👤 Full Name:</strong> ${escapeHtml(fullName)}</p>
+            <p style="margin: 0 0 8px;"><strong>✉️ Email:</strong> ${escapeHtml(email)}</p>
+            <p style="margin: 0 0 8px;"><strong>🏢 Company:</strong> ${escapeHtml(company || "—")}</p>
+            <p style="margin: 0;"><strong>🧾 Subject:</strong> ${escapeHtml(subject)}</p>
+          </div>
+
+          <h3 style="color: #111827; margin: 0 0 10px;">Message</h3>
+          <div style="background-color: #f9fafb; border-left: 4px solid #111827; padding: 16px; border-radius: 4px; margin-bottom: 20px;">
+            <p style="color: #374151; margin: 0; line-height: 1.7; white-space: pre-wrap;">
+              ${escapeHtml(message)}
+            </p>
+          </div>
+
+          <div style="margin: 28px 0; text-align: center;">
+            <a
+              href="${dashboardUrl}"
+              style="
+                background-color: #111827;
+                color: #ffffff;
+                padding: 12px 24px;
+                text-decoration: none;
+                border-radius: 8px;
+                display: inline-block;
+                font-weight: 600;
+                font-size: 14px;
+              "
+            >
+              Open Axign
+            </a>
+          </div>
+
+          <p style="color: #6b7280; font-size: 13px; line-height: 1.6;">
+            Tip: You can reply directly to this email to respond to <strong>${escapeHtml(
+              fullName,
+            )}</strong>.
+          </p>
+
+          <hr style="margin: 26px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+          <p style="color: #9ca3af; font-size: 12px; margin-bottom: 0;">
+            This is an automated email from Axign Contact page.
           </p>
         </div>
       </div>

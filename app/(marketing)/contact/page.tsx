@@ -8,15 +8,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
 import { theme } from "@/utils/constants";
-import {
-  Clock,
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  Phone,
-  Twitter,
-} from "lucide-react";
+import { Clock, Mail, MapPin, Phone, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -38,7 +30,7 @@ const request = {
 
 const styles = {
   input:
-    "w-full text-xs rounded-none border border-gray-400 placeholder-[#333333] p-3 xl:p-2.5 mb-8 xl:mb-6",
+    "w-full text-xs rounded-none placeholder-[#333333] p-3 xl:p-2.5 mb-8 xl:mb-6",
 };
 
 function ContactPage() {
@@ -100,7 +92,7 @@ function ContactPage() {
                 <h1 className="lg:hidden text-4xl font-bold"> Contact Us.</h1>
 
                 <ul className="flex items-center gap-3 lg:hidden my-5">
-                  <li>
+                  {/* <li>
                     <Link
                       href="https://www.instagram.com/raceeduservices1?igsh=dDZ2bTZ1anU2M2Z1"
                       target="_blank"
@@ -121,15 +113,26 @@ function ContactPage() {
                         <Facebook />
                       </span>
                     </Link>
-                  </li>
+                  </li> */}
                   <li>
                     <Link
-                      href="https://x.com/Raceduservices?t=UvnxM6yluN7mFkOhbUzUng&s=09"
+                      href="mailto:info@axiign@gmail.com"
                       target="_blank"
                       className="flex items-center gap-3"
                     >
                       <span className="text-[] font-bold text-xl">
-                        <Twitter />
+                        <Mail strokeWidth="1" />
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="tel:+2348145663725"
+                      target="_blank"
+                      className="flex items-center gap-3"
+                    >
+                      <span className="text-[] font-bold text-xl">
+                        <Smartphone strokeWidth="1" />
                       </span>
                     </Link>
                   </li>

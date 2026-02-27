@@ -69,23 +69,35 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-3 lg:gap-4">
               <Link
                 href="/login"
-                className="px-4 lg:px-8 py-2 lg:py-2.5 border border-gray-900 text-gray-900 rounded-full text-sm hover:bg-gray-900 hover:text-white transition-all"
+                style={{
+                  borderColor: theme.accent,
+                  color: theme.accent,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.accent;
+                  e.currentTarget.style.color = "white";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = theme.accent;
+                }}
+                className="px-4 lg:px-8 py-2 lg:py-2.5 border text-gray-900 rounded-full text-sm  hover:text-white transition-all"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                style={{
-                  backgroundColor: theme.accent,
-                  boxShadow: `0 4px 14px ${theme.accent}4D`,
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = theme.accentHover)
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = theme.accent)
-                }
-                className="group flex items-center gap-1.5 px-4 lg:px-4 py-2 lg:py-2.75 text-white rounded-full text-sm hover:shadow-md transition-all"
+                // style={{
+                //   backgroundColor: theme.accent,
+                //   boxShadow: `0 4px 14px ${theme.accent}4D`,
+                // }}
+                // onMouseEnter={(e) =>
+                //   (e.currentTarget.style.backgroundColor = theme.accentHover)
+                // }
+                // onMouseLeave={(e) =>
+                //   (e.currentTarget.style.backgroundColor = theme.accent)
+                // }
+                className="group flex bg-gray-900 hover:bg-gray-800 items-center gap-1.5 px-4 lg:px-4 py-2 lg:py-2.75 text-white rounded-full text-sm hover:shadow-md transition-all"
               >
                 Get Started
                 <ArrowRight
@@ -154,8 +166,8 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/signup"
-                style={{ backgroundColor: theme.accent }}
-                className="block w-full px-4 py-2.5 text-white rounded-full font-semibold text-center shadow-lg"
+                // style={{ backgroundColor: theme.accent }}
+                className="block w-full px-4 py-2.5 bg-gray-900 text-white rounded-full font-semibold text-center shadow-lg"
               >
                 Get Started Free
               </Link>

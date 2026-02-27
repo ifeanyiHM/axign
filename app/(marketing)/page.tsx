@@ -119,7 +119,6 @@ export default function LandingPage() {
             >
               <motion.h1
                 variants={fadeInUp}
-                // className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-medium mb-4 sm:mb-6 font-['Sora'] text-gray-950"
                 className="tracking-tight text-gray-900 text-3xl sm:text-4xl md:text-6xl lg:text-5xl xl:text-7xl font-semibold mb-4 sm:mb-6"
               >
                 <span className="text-gray-950">Transform</span> how your team
@@ -163,7 +162,7 @@ export default function LandingPage() {
                     e.currentTarget.style.backgroundColor = "transparent";
                     e.currentTarget.style.color = theme.accent;
                   }}
-                  className="px-6 sm:px-8 py-3 sm:py-3 border-2 rounded-full text-base transition-all"
+                  className="px-6 sm:px-8 py-3 sm:py-3 border rounded-full text-base transition-all"
                 >
                   Watch Demo
                 </Link>
@@ -449,21 +448,26 @@ export default function LandingPage() {
             <div className="max-w-50 mx-auto md:max-w-full flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/signup"
-                style={{ backgroundColor: theme.accent }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = theme.accentHover)
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = theme.accent)
-                }
-                className="px-10 py-4 text-white rounded-full text-sm hover:shadow-2xl transition-all duration-300"
+                className="px-10 py-4 bg-gray-200 hover:bg-gray-100 rounded-full text-sm hover:shadow-2xl transition-all duration-300"
               >
                 Start Today
               </Link>
 
               <Link
                 href="/contact"
-                className="px-10 py-4 border border-white/40 text-white rounded-full text-sm hover:bg-white hover:text-gray-950 transition-all duration-300"
+                style={{
+                  borderColor: theme.accent,
+                  color: theme.accent,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = theme.accent;
+                  e.currentTarget.style.color = "white";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = theme.accent;
+                }}
+                className="px-10 py-4 border rounded-full text-sm hover:text-gray-950 transition-all duration-300"
               >
                 Contact Us
               </Link>

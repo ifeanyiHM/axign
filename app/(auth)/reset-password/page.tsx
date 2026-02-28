@@ -56,9 +56,10 @@ function ResetPasswordContent() {
       } else {
         setError(data.error || "Password reset failed");
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Failed to reset password. Please try again.");
-      console.error(err);
+      // console.error(err);
     } finally {
       setLoading(false);
     }

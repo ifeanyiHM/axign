@@ -93,7 +93,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [loadingProfileDetails, setLoadingProfileDetials] =
     useState<boolean>(false);
 
-  console.log("UserContext initialized with user:", profile);
+  // console.log("UserContext initialized with user:", profile);
 
   //GET USERS BY ORGANIZATION
   const organizationId = user?.organizationId;
@@ -109,17 +109,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       const data = await res.json();
       setOrganizationStaffs(data.users);
-      // console.log("Organization users:", data);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     } catch (error: any) {
-      console.error("Error fetching organization users:", error);
+      // console.error("Error fetching organization users:", error);
     } finally {
       setLoadingOrgStaffs(false);
     }
   };
   useEffect(() => {
     if (!organizationId) {
-      console.log("No organizationId available yet");
+      // console.log("No organizationId available yet");
       return;
     }
     fetchOrganizationUsers();
@@ -142,8 +141,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setProfile(data.user);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Error fetching profile:", error);
+      // console.error("Error fetching profile:", error);
       // optional: set error state here
     } finally {
       setLoadingProfileDetials(false);
@@ -170,7 +170,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       return result;
     } catch (error) {
-      console.error("Update profile error:", error);
+      // console.error("Update profile error:", error);
       throw error;
     }
   };
@@ -192,7 +192,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       return result;
     } catch (error) {
-      console.error("Change password error:", error);
+      // console.error("Change password error:", error);
       throw error;
     }
   };
@@ -211,10 +211,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         (task) => task.status === "Completed",
       );
 
-      console.log("📊 Updating task counts:", {
-        tasksAssigned: myTasks.length,
-        tasksCompleted: myCompletedTasks.length,
-      });
+      // console.log("📊 Updating task counts:", {
+      //   tasksAssigned: myTasks.length,
+      //   tasksCompleted: myCompletedTasks.length,
+      // });
 
       // Update profile via API
       const res = await fetch("/api/profile", {
@@ -233,9 +233,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
       await res.json();
 
-      console.log("✅ Task counts updated successfully");
+      // console.log("✅ Task counts updated successfully");
     } catch (error) {
-      console.error("Calculate task counts error:", error);
+      // console.error("Calculate task counts error:", error);
       throw error;
     }
   };
@@ -279,7 +279,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to send invitation";
-      console.error("Invite employee error:", errorMessage);
+      // console.error("Invite employee error:", errorMessage);
       return {
         success: false,
         error: errorMessage,

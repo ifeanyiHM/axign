@@ -68,9 +68,7 @@ export default function FiltersandActions({
   const { theme } = useTheme();
   const colors = themes[theme];
 
-  const { organizationStaffs, loadingOrgStaffs } = useUser();
-
-  console.log(loadingOrgStaffs);
+  const { organizationStaffs } = useUser();
 
   // Get unique departments
   const departments = Array.from(

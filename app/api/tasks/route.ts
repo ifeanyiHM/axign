@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-    console.error("Error fetching tasks:", errorMessage);
+    // console.error("Error fetching tasks:", errorMessage);
     return NextResponse.json(
       { error: "Error fetching tasks", message: errorMessage },
       { status: 500 },
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-    console.error("Error creating task:", errorMessage);
+    // console.error("Error creating task:", errorMessage);
     return NextResponse.json(
       { error: "Error creating task", message: errorMessage },
       { status: 500 },

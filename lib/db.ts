@@ -21,10 +21,10 @@ const connectToDatabase = async () => {
       dbName: "axign",
       bufferCommands: true,
     });
-    console.log("Connected to MongoDB");
+    // console.log("Connected to MongoDB");
     return mongoose.connection.asPromise();
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    // console.error("Error connecting to MongoDB:", error);
     throw error;
   }
 };

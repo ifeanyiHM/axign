@@ -106,15 +106,16 @@ export function UserProfile() {
 
       await updateProfile(data);
 
-      console.log("Profile updated:", data);
+      // console.log("Profile updated:", data);
 
       setSuccessMessage("Profile updated successfully!");
       setIsEditing(false);
 
       setTimeout(() => setSuccessMessage(""), 3000);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setErrorMessage("Failed to update profile. Please try again.");
-      console.error(error);
+      // console.error(error);
     }
   };
 
@@ -128,16 +129,17 @@ export function UserProfile() {
         newPassword: data.newPassword,
       });
 
-      console.log("Password updated:", data);
+      // console.log("Password updated:", data);
 
       setSuccessMessage("Password changed successfully!");
       setShowPasswordForm(false);
       resetPassword();
 
       setTimeout(() => setSuccessMessage(""), 3000);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setErrorMessage("Failed to change password. Please try again.");
-      console.error(error);
+      // console.error(error);
     }
   };
 

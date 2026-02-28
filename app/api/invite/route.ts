@@ -54,7 +54,7 @@ export const POST = async (request: Request) => {
         organizationName,
       );
     } catch (emailError) {
-      console.error("Failed to send invitation email:", emailError);
+      // console.error("Failed to send invitation email:", emailError);
       return NextResponse.json(
         {
           error:
@@ -78,7 +78,7 @@ export const POST = async (request: Request) => {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-    console.error("Invite employee error:", errorMessage);
+    // console.error("Invite employee error:", errorMessage);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 };

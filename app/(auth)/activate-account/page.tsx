@@ -49,10 +49,11 @@ function ActivateAccountContent() {
           setStatus("error");
           setMessage(data.error || "Activation failed");
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setStatus("error");
         setMessage("An error occurred during activation");
-        console.error(error);
+        // console.error(error);
       }
     };
 

@@ -100,8 +100,7 @@ function CreateTaskPage() {
       recurringFrequency: "",
     },
   });
-  const { organizationStaffs, loadingOrgStaffs } = useUser();
-  console.log(loadingOrgStaffs);
+  const { organizationStaffs } = useUser();
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [customTag, setCustomTag] = useState("");
@@ -225,7 +224,7 @@ function CreateTaskPage() {
         router.push("/dashboard/ceo/tasks");
       }, 2000);
     } catch (error) {
-      console.error("Error creating task:", error);
+      // console.error("Error creating task:", error);
       setSubmitError(
         error instanceof Error
           ? error.message
@@ -235,8 +234,9 @@ function CreateTaskPage() {
   };
 
   const handleSaveDraft = () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const currentData = getValues();
-    console.log("Saving draft:", { ...currentData, attachments });
+    // console.log("Saving draft:", { ...currentData, attachments });
   };
 
   return (

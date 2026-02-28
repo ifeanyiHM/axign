@@ -49,10 +49,11 @@ function VerifyEmailContent() {
           setStatus("error");
           setMessage(data.error || "Verification failed");
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setStatus("error");
         setMessage("An error occurred during verification");
-        console.error(error);
+        // console.error(error);
       }
     };
 

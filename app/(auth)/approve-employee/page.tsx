@@ -38,10 +38,11 @@ function ApproveEmployeeContent() {
           setStatus("error");
           setMessage(data.error || "Approval process failed");
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setStatus("error");
         setMessage("An error occurred during the approval process");
-        console.error(error);
+        // console.error(error);
       }
     };
 

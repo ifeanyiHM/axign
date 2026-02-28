@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const savedUser = localStorage.getItem("user");
       return savedUser ? JSON.parse(savedUser) : null;
     } catch {
-      console.error("Invalid user in localStorage, clearing it");
+      // console.error("Invalid user in localStorage, clearing it");
       localStorage.removeItem("user");
       return null;
     }
@@ -81,10 +81,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(data.error || "Login failed");
       }
 
-      console.log("Login response:", data);
+      // console.log("Login response:", data);
 
       setUser(data.user);
-      console.log("LOGIN USER:", data.user);
+      // console.log("LOGIN USER:", data.user);
       setToken(data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("token", data.token);
@@ -97,10 +97,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         data.user.userStatus === "ceo"
           ? "/dashboard/ceo"
           : "/dashboard/employee";
-      console.log("Redirecting to:", dashboardPath);
+      // console.log("Redirecting to:", dashboardPath);
       router.push(dashboardPath);
     } catch (error) {
-      console.error("Login error:", error);
+      // console.error("Login error:", error);
       throw error;
     }
   };
@@ -114,13 +114,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const data = await res.json();
-      console.log("LKSJSLKFLKL", data);
 
       if (!res.ok) {
         throw new Error(data.error || "Signup failed");
       }
 
-      console.log("Signup response:", data);
+      // console.log("Signup response:", data);
       setMessage(data);
       setUser(data.user);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -130,7 +129,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           ? "User already exists. Please use a different email or username."
           : error.message,
       });
-      console.error("Signup error:", error);
+      // console.error("Signup error:", error);
       throw error;
     }
   };

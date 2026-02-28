@@ -13,8 +13,6 @@ export const GET = async (
     // Await params in Next.js 15+
     const { organizationId } = await context.params;
 
-    console.log("Received organizationId:", organizationId);
-
     // Validate organizationId
     if (!organizationId) {
       return NextResponse.json(
@@ -28,9 +26,9 @@ export const GET = async (
       .select("-password") // Exclude password field for security
       .sort({ createdAt: -1 }); // Sort by newest first
 
-    console.log(
-      `Found ${users.length} users for organization ${organizationId}`,
-    );
+    // console.log(
+    //   `Found ${users.length} users for organization ${organizationId}`,
+    // );
 
     // Return count along with users
     return NextResponse.json(

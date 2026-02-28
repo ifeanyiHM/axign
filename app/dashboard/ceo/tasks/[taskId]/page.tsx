@@ -133,8 +133,9 @@ function CEOTaskDetailsPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await updateTask(task.id, { status: newStatus as any });
       setShowStatusMenu(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update status:", error);
+      // console.error("Failed to update status:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -146,8 +147,9 @@ function CEOTaskDetailsPage() {
     try {
       await updateTask(task.id, { title: editedTitle });
       setIsEditingTitle(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update title:", error);
+      // console.error("Failed to update title:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -159,8 +161,9 @@ function CEOTaskDetailsPage() {
     try {
       await updateTask(task.id, { description: editedDescription });
       setIsEditingDescription(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update description:", error);
+      // console.error("Failed to update description:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -173,8 +176,9 @@ function CEOTaskDetailsPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await updateTask(task.id, { priority: editedPriority as any });
       setIsEditingPriority(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update priority:", error);
+      // console.error("Failed to update priority:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -186,8 +190,9 @@ function CEOTaskDetailsPage() {
     try {
       await updateTask(task.id, { category: editedCategory });
       setIsEditingCategory(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update category:", error);
+      // console.error("Failed to update category:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -202,8 +207,9 @@ function CEOTaskDetailsPage() {
         dueDate: editedDueDate,
       });
       setIsEditingDates(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update dates:", error);
+      // console.error("Failed to update dates:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -215,8 +221,9 @@ function CEOTaskDetailsPage() {
     try {
       await updateTask(task.id, { tags: editedTags });
       setIsEditingTags(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update tags:", error);
+      // console.error("Failed to update tags:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -228,8 +235,9 @@ function CEOTaskDetailsPage() {
     try {
       await updateTask(task.id, { assignedTo: editedAssignees });
       setIsEditingAssignees(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update assignees:", error);
+      // console.error("Failed to update assignees:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -246,8 +254,9 @@ function CEOTaskDetailsPage() {
           : "",
       });
       setIsEditingRecurring(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update recurring settings:", error);
+      // console.error("Failed to update recurring settings:", error);
     } finally {
       setIsUpdating(false);
     }

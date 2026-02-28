@@ -34,9 +34,10 @@ export default function ForgotPasswordPage() {
       } else {
         setError(data.error || "Something went wrong");
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError("Failed to send reset email. Please try again.");
-      console.error(err);
+      // console.error(err);
     } finally {
       setLoading(false);
     }

@@ -166,7 +166,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
       return newTask;
     } catch (err) {
-      console.error("Error creating task:", err);
+      // console.error("Error creating task:", err);
       const errorMessage =
         err instanceof Error ? err.message : "Failed to create task";
       setError(errorMessage);
@@ -207,10 +207,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         if (user?.organizationId) {
           await fetchOrganizationUsers();
         }
-        console.log("✅ User profiles refreshed after task completion");
+        // console.log("✅ User profiles refreshed after task completion");
       }
     } catch (err) {
-      console.error("Error updating task:", err);
+      // console.error("Error updating task:", err);
       setError(err instanceof Error ? err.message : "Failed to update task");
       throw err;
     } finally {
@@ -240,7 +240,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         await fetchOrganizationUsers();
       }
     } catch (err) {
-      console.error("Error deleting task:", err);
+      // console.error("Error deleting task:", err);
       setError(err instanceof Error ? err.message : "Failed to delete task");
       throw err;
     } finally {

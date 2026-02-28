@@ -52,8 +52,9 @@ export default function InviteEmployeeModal({
           text: result.error || "Failed to send invitation",
         });
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setMessage({
         type: "error",
         text: "An unexpected error occurred",

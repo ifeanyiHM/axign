@@ -48,7 +48,7 @@ export const POST = async (request: Request) => {
         message,
       );
     } catch (emailError) {
-      console.error("Failed to send contact email:", emailError);
+      // console.error("Failed to send contact email:", emailError);
       return NextResponse.json(
         {
           error: "Failed to send message. Please try again.",
@@ -68,7 +68,7 @@ export const POST = async (request: Request) => {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-    console.error("Contact API error:", errorMessage);
+    // console.error("Contact API error:", errorMessage);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 };

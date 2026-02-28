@@ -55,7 +55,7 @@ export const POST = async (request: Request) => {
       try {
         await sendVerificationEmail(email, verificationToken, username);
       } catch (emailError) {
-        console.error("Email sending failed:", emailError);
+        // console.error("Email sending failed:", emailError);
         return NextResponse.json(
           {
             error:
@@ -140,7 +140,7 @@ export const POST = async (request: Request) => {
           approvalToken,
         );
       } catch (emailError) {
-        console.error("Email sending failed:", emailError);
+        // console.error("Email sending failed:", emailError);
         return NextResponse.json(
           {
             error:
@@ -186,7 +186,7 @@ export const POST = async (request: Request) => {
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "An unknown error occurred";
-    console.error("Signup error:", errorMessage);
+    // console.error("Signup error:", errorMessage);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 };

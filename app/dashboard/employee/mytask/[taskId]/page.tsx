@@ -72,8 +72,9 @@ function TaskDetailsPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await updateTask(task.id, { status: newStatus as any });
       setShowStatusMenu(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update status:", error);
+      // console.error("Failed to update status:", error);
     } finally {
       setIsUpdating(false);
     }
@@ -86,8 +87,9 @@ function TaskDetailsPage() {
     try {
       await updateTask(task.id, { progress: editedProgress });
       setIsEditingProgress(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Failed to update progress:", error);
+      // console.error("Failed to update progress:", error);
     } finally {
       setIsUpdating(false);
     }

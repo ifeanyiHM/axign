@@ -49,8 +49,6 @@ function EmployeesPage() {
   const { theme } = useTheme();
   const colors = themes[theme];
 
-  console.log(loadingOrgStaffs);
-
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");

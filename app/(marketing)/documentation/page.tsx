@@ -1094,13 +1094,13 @@ export default function DocumentationPage() {
                       images={[
                         {
                           src: "/dashboardImage/dash-2.png",
-                          alt: "Axign My Tasks table view preview",
-                          caption: "My Tasks — Table view (sample)",
+                          alt: "ceo dashboard image preview",
+                          caption: "Ceo Dashboard - dark mode (sample)",
                         },
                         {
                           src: "/dashboardImage/dash-3.png",
-                          alt: "Axign My Tasks grid view preview",
-                          caption: "My Tasks — Grid view (sample)",
+                          alt: "ceo dashboard image preview",
+                          caption: "Ceo Dashboard - blue mode (sample)",
                         },
                       ]}
                     />
@@ -1316,13 +1316,13 @@ export default function DocumentationPage() {
                       images={[
                         {
                           src: "/dashboardImage/createtask1.png",
-                          alt: "Axign My Tasks table view preview",
-                          caption: "My Tasks — Table view (sample)",
+                          alt: "create task page image preview",
+                          caption: "Create Task - dark mode (sample)",
                         },
                         {
                           src: "/dashboardImage/createtask2.png",
-                          alt: "Axign My Tasks grid view preview",
-                          caption: "My Tasks — Grid view (sample)",
+                          alt: "create task page image preview",
+                          caption: "Create Task - blue mode (sample)",
                         },
                       ]}
                     />
@@ -1438,13 +1438,13 @@ export default function DocumentationPage() {
                       images={[
                         {
                           src: "/dashboardImage/employeedash1.png",
-                          alt: "Axign My Tasks table view preview",
-                          caption: "My Tasks — Table view (sample)",
+                          alt: "employee dashboard image preview",
+                          caption: "Employee Dashboard - dark mode (sample)",
                         },
                         {
                           src: "/dashboardImage/employeedash2.png",
-                          alt: "Axign My Tasks grid view preview",
-                          caption: "My Tasks — Grid view (sample)",
+                          alt: "employee dashboard image preview",
+                          caption: "Employee Dashboard - blue mode (sample)",
                         },
                       ]}
                     />
@@ -1715,13 +1715,13 @@ export default function DocumentationPage() {
                       images={[
                         {
                           src: "/dashboardImage/viewtask1.png",
-                          alt: "Axign My Tasks table view preview",
-                          caption: "My Tasks — Table view (sample)",
+                          alt: "Task List image preview",
+                          caption: "My Tasks — dark mode (sample)",
                         },
                         {
                           src: "/dashboardImage/viewtask2.png",
-                          alt: "Axign My Tasks grid view preview",
-                          caption: "My Tasks — Grid view (sample)",
+                          alt: "Task List image preview",
+                          caption: "My Tasks — blue mode (sample)",
                         },
                       ]}
                     />
@@ -1948,13 +1948,13 @@ export default function DocumentationPage() {
                       images={[
                         {
                           src: "/dashboardImage/update1.png",
-                          alt: "Axign My Tasks table view preview",
-                          caption: "My Tasks — Table view (sample)",
+                          alt: "task update view preview",
+                          caption: "Task Update — dark mode (sample)",
                         },
                         {
                           src: "/dashboardImage/update2.png",
-                          alt: "Axign My Tasks grid view preview",
-                          caption: "My Tasks — Grid view (sample)",
+                          alt: "task update view preview",
+                          caption: "Task Update — blue mode (sample)",
                         },
                       ]}
                     />
